@@ -1,5 +1,10 @@
 import React, { useEffect } from 'react'
 import G6 from '@antv/g6';
+import JournalNode from '/journal_app/shared/models/JournalNode.ts'
+
+let originNode = new JournalNode('node1', 'Testing out origin node from model')
+
+console.log("heyo!! \n ", originNode)
 
 let data = {
   nodes: [
@@ -7,6 +12,7 @@ let data = {
       id: 'node0',
       label: "Build an awesome\n graph journal"
     },
+    originNode
   ],
   edges: [
   ]
