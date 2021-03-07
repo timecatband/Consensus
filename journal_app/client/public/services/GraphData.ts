@@ -1,4 +1,4 @@
-import JournalNode from '/journal_app/shared/models/JournalNode.ts'
+import JournalNode from '@timecat/GraphJournalShared/models/JournalNode.ts'
 import BaseORM from './external_data/BaseORM.ts'
 
 /*

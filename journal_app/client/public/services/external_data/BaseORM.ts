@@ -1,5 +1,5 @@
-import JournalNode from '/journal_app/shared/models/JournalNode.ts'
-import JournalEdge from '/journal_app/shared/models/JournalEdge.ts'
+import JournalNode from '@timecat/GraphJournalShared/models/JournalNode.ts'
+import JournalEdge from '@timecat/GraphJournalShared/models/JournalEdge.ts'
 
 /*
   BaseORM defines methods that different children should implement for reading/writing

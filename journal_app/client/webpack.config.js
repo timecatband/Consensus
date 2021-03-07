@@ -9,7 +9,7 @@ module.exports = {
   entry: {
     g6InReact: [
       'webpack-dev-server/client?http://localhost:8080',
-      './journal_app/client/index.tsx'],
+      './public/index.tsx'],
   },
   output: {
     filename: '[name].min.js',
@@ -63,7 +63,7 @@ module.exports = {
     new webpack.NoEmitOnErrorsPlugin(),
     new webpack.optimize.AggressiveMergingPlugin(),
     new HTMLPlugin({
-      template: './journal_app/client/index.html'
+      template: './public/index.html'
     }),
     new UglifyJSWebpackPlguin({
       exclude: /node_modules/,

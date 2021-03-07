@@ -1,0 +1,26 @@
+{
+  "name": "@timecat/GraphJournalShared",
+  "version": "1.0.0",
+  "description": "shared lib for graph journal app",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/timecatband/Consensus.git"
+  },
+  "keywords": [
+    "consensus",
+    "graph"
+  ],
+  "author": "timecatband",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/timecatband/Consensus/issues"
+  },
+  "homepage": "https://github.com/timecatband/Consensus#readme",
+  "dependencies": {
+    "uuid": "^8.3.2"
+  }
+}
