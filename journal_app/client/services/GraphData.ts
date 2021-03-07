@@ -7,19 +7,27 @@ import BaseORM from './external_data/BaseORM.ts'
 */
 class GraphData {
   nodes: [string];
-  labels: [string];
+  edges: [string];
   ORM: BaseORM;
 
-  constructor(id: string, label: string) {
-    this.id = id;
-    this.label = label;
+  constructor() {
+    this.nodes = [];
+    this.edges = [];
 
-    this.ORM = ORMFactory.getInstance('sqlite')
+    //this.ORM = ORMFactory.getInstance('sqlite')
 
+  }
+
+  initializeGraphData() {
+    console.log("loading initial graph data");
+    this.nodes.push(new JournalNode('node0', 'Build an awesome\n graph journal'))
+    this.nodes.push(new JournalNode('node1', 'Testing out origin node from model'))
+    this.nodes.push(new JournalNode('node2', 'Heyoo!'))
   }
 
 }
 
-GraphDataSvc = new GraphData()
+let GraphDataSvc = new GraphData()
+GraphDataSvc.initializeGraphData()
 
 export default GraphDataSvc;

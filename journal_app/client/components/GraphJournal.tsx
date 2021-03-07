@@ -1,23 +1,8 @@
 import React, { useEffect } from 'react'
 import G6 from '@antv/g6';
-import JournalNode from '/journal_app/shared/models/JournalNode.ts'
+import GraphData from '../services/GraphData'
 
-let originNode = new JournalNode('node1', 'Testing out origin node from model')
-
-console.log("heyo!! \n ", originNode)
-
-let data = {
-  nodes: [
-    {
-      id: 'node0',
-      label: "Build an awesome\n graph journal"
-    },
-    originNode
-  ],
-  edges: [
-  ]
-};
-
+let data = GraphData;
 let graph = null;
 let focusedNode = null;
 
@@ -88,7 +73,6 @@ const DefaultGraphView = () => {
 
         graph.data(data)
         graph.render()
-
 
         graph.on('node:click', evt => {
           if (focusedNode != null) {
