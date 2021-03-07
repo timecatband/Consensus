@@ -4,7 +4,7 @@ import BaseORM from './BaseORM.ts'
   ServerAPI provides the BaseORM methods by reading/writing via our own journal server instance
   It's not obvious that we really need a server layer, so leaving this unimplemented for now - KW 2021-03
 */
-class ServerAPI extends BaseORM {
+class ServerAPI implements BaseORM {
   console.error("not implemented")
 }
 
