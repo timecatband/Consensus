@@ -8,4 +8,4 @@ class LocalSqlite extends BaseORM {
   console.error("not implemented")
 }
 
-export default ServerAPI;
+export default LocalSqlite;
