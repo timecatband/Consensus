@@ -12,10 +12,6 @@ async def receiveMessage(websocket, path):
     parsedMessage = json.loads(message)
     nodes = model.get_entities(parsedMessage["data"])
     edges = itertools.combinations(nodes, 2)
-   
-    graph_message = {}
-    graph_message["nodes"] = list(nodes)
-   #graph_message["bidirectionalEdges"] = list(edges)
     print(json.dumps({'nodes': list(nodes), 'bidirectionalEdges': list(edges)}))
 
 
