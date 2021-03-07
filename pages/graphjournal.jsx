@@ -4,11 +4,10 @@ import G6 from '@antv/g6';
 let data = {
   nodes: [
     { id: 'node0', label: "Build an awesome\n graph journal", 
-    labelCfg: {           // The configurations for the label
-      positions: 'center',// The relative position of the label
-      style: {            // The style properties of the label
-        fontSize: 5,     // The font size of the label
-        // ...            // Other style properties of the label
+    labelCfg: {
+      positions: 'center',
+      style: {            
+        fontSize: 5
       }
     },
     },
@@ -20,6 +19,33 @@ let data = {
 let graph = null;
 let focusedNode = null;
 
+function getDefaultNodeProperties() {
+   return {
+     shape: 'node',
+     size: 50,
+     labelCfg: {
+       style: {
+         fill: '#000000A6',
+         fontSize: 5
+      }
+     },
+     style: {
+       stroke: '#72CC4A',
+       width: 150
+     }
+   };
+}
+
+function getDefaultEdgeProperties() {
+   return {
+     type: 'line',
+     style: {
+       stroke: "#000000",
+       lineWidth:1
+     }
+    };
+}
+
 const DefaultGraphView = () => {
      const ref = React.useRef(null);
      useEffect(() => {
@@ -30,29 +56,8 @@ const DefaultGraphView = () => {
             modes: {
               default: ['drag-canvas', 'zoom-canvas']
             },
-            defaultNode: {
-              shape: 'node',
-              size: 50,
-              labelCfg: {
-                style: {
-                  fill: '#000000A6',
-                  fontSize: 5
-                }
-              },
-              style: {
-                stroke: '#72CC4A',
-                width: 150
-              }
-            },
-            defaultEdge: {
-              type: 'line',
-              
-              style: {
-                stroke: "#000000",
-                lineWidth:1
-              }
-            
-            },
+            defaultNode: getDefaultNodeProperties(),
+            defaultEdge: getDefaultEdgeProperties(),
             layout: {
               type:"dagre",
               preventOverlap: true,
@@ -91,7 +96,9 @@ const DefaultGraphView = () => {
 
           graph.setItemState(focusedNode, 'hover', true)
         })
+
     });
+
     function handleClick() {
       let text = document.getElementById("newName").value;
       data.nodes.push({id:text, label:text})
@@ -99,7 +106,6 @@ const DefaultGraphView = () => {
       data.edges.push({ source: focusedNode._cfg.id, target: text });
       graph.data(data)
       graph.render()
-
     }
     
     return  (<div><div ref={ref}></div><input id="newName" type='text'></input><button onClick={handleClick}> Add</button></div>)
