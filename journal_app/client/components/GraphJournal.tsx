@@ -3,37 +3,34 @@ import G6 from '@antv/g6';
 
 let data = {
   nodes: [
-    { id: 'node0', label: "Build an awesome\n graph journal", 
-    labelCfg: {
-      positions: 'center',
-      style: {            
-        fontSize: 5
-      }
+    {
+      id: 'node0',
+      label: "Build an awesome\n graph journal"
     },
-    },
-
   ],
   edges: [
-  ],
+  ]
 };
+
 let graph = null;
 let focusedNode = null;
 
 function getDefaultNodeProperties() {
-   return {
-     shape: 'node',
-     size: 50,
-     labelCfg: {
-       style: {
-         fill: '#000000A6',
-         fontSize: 5
+  return {
+    shape: 'node',
+    size: 50,
+    labelCfg: {
+      positions: 'center',
+      style: {
+        fill: '#000000A6',
+        fontSize: 5
       }
-     },
-     style: {
-       stroke: '#72CC4A',
-       width: 150
-     }
-   };
+    },
+    style: {
+      stroke: '#72CC4A',
+      width: 150
+    }
+  };
 }
 
 function getDefaultEdgeProperties() {
@@ -67,7 +64,7 @@ const DefaultGraphView = () => {
                 }
                 return 30;
               },
-          
+
             },
             nodeStateStyles: {
               hover: {
@@ -82,11 +79,11 @@ const DefaultGraphView = () => {
               }
             }
           })
-        
-        graph.data(data)      
+
+        graph.data(data)
         graph.render()
 
-       
+
         graph.on('node:click', evt => {
           if (focusedNode != null) {
             graph.setItemState(focusedNode, 'hover', false)
@@ -107,7 +104,7 @@ const DefaultGraphView = () => {
       graph.data(data)
       graph.render()
     }
-    
+
     return  (<div><div ref={ref}></div><input id="newName" type='text'></input><button onClick={handleClick}> Add</button></div>)
 
 }

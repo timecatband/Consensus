@@ -9,7 +9,7 @@ module.exports = {
   entry: {
     g6InReact: [
       'webpack-dev-server/client?http://localhost:8080',
-      './pages/index.js'],
+      './journal_app/client/index.tsx'],
   },
   output: {
     filename: '[name].min.js',
@@ -20,13 +20,13 @@ module.exports = {
   },
   target: 'web',
   resolve: {
-    // Add `.ts` as a resolvable extension.
-    extensions: ['.ts', '.js'],
+    extensions: ['.ts', '.js', '.tsx', '.jsx'],
   },
   module: {
     rules: [
       {
         test: /\.(js|jsx)$/,
+        exclude: /node_modules/,
         use: {
           loader: 'babel-loader',
           options: {
@@ -36,6 +36,7 @@ module.exports = {
       },
       {
         test: /\.(ts|tsx)$/,
+        exclude: /node_modules/,
         use: {
           loader: 'ts-loader',
           options: {
@@ -45,6 +46,7 @@ module.exports = {
       },
       {
         test: /\.(css)$/,
+        exclude: /node_modules/,
         use: [
           'style-loader',
           {
@@ -58,10 +60,10 @@ module.exports = {
     ],
   },
   plugins: [
-    new webpack.NoEmitOnErrorsPlugin(), 
+    new webpack.NoEmitOnErrorsPlugin(),
     new webpack.optimize.AggressiveMergingPlugin(),
     new HTMLPlugin({
-      template: './pages/index.html'
+      template: './journal_app/client/index.html'
     }),
     new UglifyJSWebpackPlguin({
       exclude: /node_modules/,
