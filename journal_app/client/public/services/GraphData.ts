@@ -1,6 +1,8 @@
 import JournalNode from '@timecat/GraphJournalShared/models/JournalNode.ts'
 import BaseORM from './external_data/BaseORM.ts'
 
+console.log("GraphData service called")
+
 /*
   GraphData is the singleton service which contains the locally loaded portion of a theoretically infinite graph of nodes
   All UI components should syncronize their interactions with graph state via this service
