@@ -6,8 +6,6 @@ const config = require("@timecat/GraphJournalShared/config/config.dev.json")
   Singleton service for the websocket connection
 */
 
-console.log("test in socket", config)
-
 const socket = io(config.serverAddress,
   {
     withCredentials: true,
@@ -16,7 +14,7 @@ const socket = io(config.serverAddress,
     }
   });
 
-console.log("Socket service called", socket.id)
+console.log("Socket service called")
 
 socket.on("connect", () => {
   console.log("Socket connected", socket.id);
