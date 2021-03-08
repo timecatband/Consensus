@@ -1,5 +1,5 @@
-import JournalNode from '../models/JournalNode.ts'
-import JournalEdge from '../models/JournalEdge.ts'
+import JournalNode from '../models/JournalNode'
+import JournalEdge from '../models/JournalEdge'
 
 /*
   BaseORM defines methods that different children should implement for reading/writing data from external sources
