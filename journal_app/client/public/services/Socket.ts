@@ -1,4 +1,3 @@
-console.log("hellooo")
 import { io } from "socket.io-client";
 const config = require("@timecat/GraphJournalShared/config/config.dev.json")
 
@@ -13,8 +12,6 @@ const socket = io(config.serverAddress,
       "timecat!": "band"
     }
   });
-
-console.log("Socket service called")
 
 socket.on("connect", () => {
   console.log("Socket connected", socket.id);

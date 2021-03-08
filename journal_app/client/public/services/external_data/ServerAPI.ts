@@ -1,4 +1,5 @@
 import BaseORM from '@timecat/GraphJournalShared/external_data/BaseORM.ts'
+import Socket from '../Socket'
 
 /*
   Singleton service ServerAPI provides the BaseORM methods for reading/writing via our own journal server instance
@@ -6,7 +7,6 @@ import BaseORM from '@timecat/GraphJournalShared/external_data/BaseORM.ts'
 class ServerAPI extends BaseORM {
   constructor() {
     super();
-    console.log("Hey its an API client");
   }
 
   getNodes() {
@@ -19,8 +19,9 @@ class ServerAPI extends BaseORM {
     return [];
   }
 
-  upsertNode() {
-    console.error("ServerAPI.getNodes is not implemented");
+  upsertNode(test: any) {
+    console.log("ServerAPI upsertNode called", test);
+    Socket.emit("upsert-graph-node", test)
     return;
   }
 

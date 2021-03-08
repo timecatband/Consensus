@@ -106,13 +106,24 @@ const DefaultGraphView = () => {
       }
 
       data.nodes.push({id:text, label:text})
-      console.log(focusedNode)
       data.edges.push({ source: focusedNode._cfg.id, target: text });
       graph.data(data)
       graph.render()
     }
 
-    return  (<div><div ref={ref}></div><input id="newName" type='text'></input><button onClick={onAddButtonClick}> Add</button></div>)
+    function onPingServerClick() {
+      console.log("got a click to ping the server")
+      GraphData.upsertNode("test message for server")
+    }
+
+    return  (
+      <div>
+        <div ref={ref}></div>
+        <input id="newName" type='text'></input>
+        <button onClick={onAddButtonClick}>Add node</button>
+        <button onClick={onPingServerClick}>Ping server</button>
+      </div>
+    )
 
 }
 
