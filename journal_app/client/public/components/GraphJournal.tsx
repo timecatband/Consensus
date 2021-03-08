@@ -1,10 +1,10 @@
 import React, { useEffect } from 'react'
-import G6 from '@antv/g6';
+import G6 = require('@antv/g6');
 import GraphData from '../services/GraphData'
 
 let data = GraphData;
-let graph = null;
-let focusedNode = null;
+let graph: G6.Graph;
+let focusedNode: any = null;
 
 function getDefaultNodeProperties() {
   return {
@@ -38,7 +38,7 @@ const DefaultGraphView = () => {
      const ref = React.useRef(null);
      useEffect(() => {
         graph = new G6.Graph({
-            container: ref.current,
+            container: 'container',
             width: 600,
             height: 400,
             modes: {
@@ -49,7 +49,7 @@ const DefaultGraphView = () => {
             layout: {
               type:"dagre",
               preventOverlap: true,
-              nodeStrength: d => {
+              nodeStrength: (d:any) => {
                 if (d.id === 'node0') {
                   return 100;
                 }
@@ -74,7 +74,7 @@ const DefaultGraphView = () => {
         graph.data(data)
         graph.render()
 
-        graph.on('node:click', evt => {
+        graph.on('node:click', (evt:any) => {
           if (focusedNode != null) {
             graph.setItemState(focusedNode, 'hover', false)
           }
@@ -87,7 +87,13 @@ const DefaultGraphView = () => {
     });
 
     function handleClick() {
-      let text = document.getElementById("newName").value;
+      let text: string | null;
+      let inputEl = document.getElementById("newName") as HTMLInputElement;
+      text = inputEl.value;
+      if (text == null) {
+        console.error("document element newName has no value")
+      }
+
       data.nodes.push({id:text, label:text})
       console.log(focusedNode)
       data.edges.push({ source: focusedNode._cfg.id, target: text });

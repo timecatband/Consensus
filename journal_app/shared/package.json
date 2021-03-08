@@ -21,6 +21,7 @@
   },
   "homepage": "https://github.com/timecatband/Consensus#readme",
   "dependencies": {
+    "@antv/g6": "^3.4.0",
     "uuid": "^8.3.2"
   }
 }

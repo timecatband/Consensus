@@ -1,16 +1,10 @@
 {
+  "extends": "../tsconfig.base.json",
   "compilerOptions": {
-    "target": "esnext",
-    "module": "esnext",
-    "moduleResolution": "node",
-    "importHelpers": true,
+    "preserveConstEnums": true,
     "jsx": "react",
-    "esModuleInterop": true,
-    "sourceMap": true,
-    "baseUrl": ".",
-    "paths": {
-      "@/*": ["pages/*"]
-    },
-    "allowSyntheticDefaultImports": true
-  }
+    "outDir": "tscompiled"
+  },
+  "include": ["public/**/*"],
+  "exclude": ["node_modules", "**/*.spec.ts"]
 }

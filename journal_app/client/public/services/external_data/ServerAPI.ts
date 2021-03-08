@@ -1,11 +1,31 @@
-import BaseORM from './BaseORM.ts'
+import BaseORM from '@timecat/GraphJournalShared/external_data/BaseORM.ts'
 
 /*
-  ServerAPI provides the BaseORM methods by reading/writing via our own journal server instance
-  It's not obvious that we really need a server layer, so leaving this unimplemented for now - KW 2021-03
+  Singleton service ServerAPI provides the BaseORM methods for reading/writing via our own journal server instance
 */
-class ServerAPI implements BaseORM {
-  console.error("not implemented")
+class ServerAPI extends BaseORM {
+  constructor() {
+    super();
+    console.log("Hey its an API client");
+  }
+
+  getNodes() {
+    console.error("ServerAPI.getNodes is not implemented");
+    return [];
+  }
+
+  getEdges() {
+    console.error("ServerAPI.getNodes is not implemented");
+    return [];
+  }
+
+  upsertNode() {
+    console.error("ServerAPI.getNodes is not implemented");
+    return;
+  }
+
 }
 
-export default ServerAPI;
+var ServerApiSvc = new ServerAPI()
+
+export default ServerApiSvc;
