@@ -9,7 +9,7 @@ const socket = io(config.serverAddress,
   {
     withCredentials: true,
     extraHeaders: {
-      "timecat!": "band"
+      "timecat!": "band" // TODO: figure out the proper way to handle this and the CORS stuff (see socketListener in server)
     }
   });
 

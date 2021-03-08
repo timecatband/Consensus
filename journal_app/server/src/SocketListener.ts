@@ -8,7 +8,7 @@ class SocketListener {
   constructor(http: any, sqlDb: any) { //this should be type http.Server but that wsnt working and I'm sick of chasing type defs
     this.sqlDb = sqlDb
     this.io = require('socket.io')(http, {
-      cors: {
+      cors: { // TODO: figure out the proper way to handle this and the CORS stuff (see socket in client also)
         origin: config.socketAllowedOrigin,
         methods: ["GET", "POST"],
         allowedHeaders: ["timecat!"],
@@ -25,7 +25,7 @@ class SocketListener {
 
       socket.on('upsert-graph-node', (message: any) => {
         console.log("got upsert: ", message)
-        this.sqlDb.query('create table nodes')
+        this.sqlDb.query('select * from sqlite_master')
       });
     });
 

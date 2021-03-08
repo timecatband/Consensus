@@ -51,7 +51,7 @@ class SqliteClient extends BaseORM {
         throw err;
       }
       rows.forEach((row:any) => {
-        console.log(row.name);
+        console.log(row);
       });
     });
   }
