@@ -7,7 +7,7 @@ import * as I from '@antv/g6/lib/types';
   GraphData is the singleton service which contains the locally loaded portion of a theoretically infinite graph of nodes
   All UI components should syncronize their interactions with graph state via this service
 */
-class GraphData implements I.GraphData { //I.GraphData {
+class GraphData implements I.GraphData {
   nodes: I.NodeConfig[];
   edges: I.EdgeConfig[];
   ORM: BaseORM;
