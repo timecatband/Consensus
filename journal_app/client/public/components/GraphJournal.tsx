@@ -9,16 +9,16 @@ let focusedNode: any = null;
 function getDefaultNodeProperties() {
   return {
     shape: 'node',
-    size: 50,
+    size: 150,
     labelCfg: {
       positions: 'center',
       style: {
         fill: '#000000A6',
-        fontSize: 5
+        fontSize: 12
       }
     },
     style: {
-      stroke: '#72CC4A',
+      stroke: '#777777',
       width: 150
     }
   };
@@ -39,8 +39,8 @@ const DefaultGraphView = () => {
      useEffect(() => {
         graph = new G6.Graph({
             container: 'container',
-            width: 600,
-            height: 400,
+            width: 1200,
+            height: 800,
             modes: {
               default: ['drag-canvas', 'zoom-canvas']
             },
@@ -59,7 +59,7 @@ const DefaultGraphView = () => {
             },
             nodeStateStyles: {
               hover: {
-                stroke: 'red',
+                stroke: 'black',
                 lineWidth: 3
               }
             },
@@ -75,18 +75,29 @@ const DefaultGraphView = () => {
         graph.render()
 
         graph.on('node:click', (evt:any) => {
+          //console.log("got node click")
           if (focusedNode != null) {
             graph.setItemState(focusedNode, 'hover', false)
           }
 
           focusedNode = evt.item;
-
           graph.setItemState(focusedNode, 'hover', true)
+
+        })
+
+        graph.on('click', (evt:any) => {
+          //console.log("got non-node click")
+
+          if (focusedNode != null) {
+            graph.setItemState(focusedNode, 'hover', false)
+          }
+
         })
 
     });
 
-    function handleClick() {
+    function onAddButtonClick() {
+      //console.log("got button click")
       let text: string | null;
       let inputEl = document.getElementById("newName") as HTMLInputElement;
       text = inputEl.value;
@@ -101,7 +112,7 @@ const DefaultGraphView = () => {
       graph.render()
     }
 
-    return  (<div><div ref={ref}></div><input id="newName" type='text'></input><button onClick={handleClick}> Add</button></div>)
+    return  (<div><div ref={ref}></div><input id="newName" type='text'></input><button onClick={onAddButtonClick}> Add</button></div>)
 
 }
 

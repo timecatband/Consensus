@@ -24,7 +24,7 @@ class GraphData implements I.GraphData { //I.GraphData {
     console.log("loading initial graph data");
 
     this.nodes.push(new JournalNode('node0', 'Build an awesome\n graph journal'));
-    this.nodes.push(new JournalNode('node1', 'Testing out origin node from model'));
+    this.nodes.push(new JournalNode('node1', 'Testing out origin \nnode from model'));
     this.nodes.push(new JournalNode('node2', 'Heyoo!'));
   }
 
