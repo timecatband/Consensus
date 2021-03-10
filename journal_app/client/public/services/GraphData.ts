@@ -1,20 +1,21 @@
-import JournalNode from '@timecat/GraphJournalShared/models/JournalNode.ts'
-import BaseORM from '@timecat/GraphJournalShared/external_data/BaseORM.ts'
+import BaseORM from '@timecat/GraphJournalShared/external_data/BaseORM'
+import Graph from '@timecat/GraphJournalShared/models/Graph'
+import JournalNode from '@timecat/GraphJournalShared/models/JournalNode'
 import ServerAPI from './external_data/ServerAPI.ts'
-import * as I from '@antv/g6/lib/types';
+//import * as I from '@antv/g6/lib/types';
 
 /*
-  GraphData is the singleton service which contains the locally loaded portion of a theoretically infinite graph of nodes
-  All UI components should syncronize their interactions with graph state via this service
+  GraphData is the singleton service which contains any locally loaded graphs, which may only be portions of theoretically infinite graphs of nodes
+  The service manages interactions with the server/database, and orchestrates shared graph state among components
 */
-class GraphData implements I.GraphData {
-  nodes: I.NodeConfig[];
-  edges: I.EdgeConfig[];
+class GraphData {
+  graphs: Graph[]; // a collection of graphs that have been loaded or created
+  DisplayedGraph: Graph; // the graph which is being displayed, may be a combination of multiple other graphs
   ORM: BaseORM;
 
   constructor(ORM: BaseORM) {
-    this.nodes = [];
-    this.edges = [];
+    this.graphs = []
+    this.DisplayedGraph = new Graph();
     this.ORM = ORM;
   }
 
@@ -24,9 +25,9 @@ class GraphData implements I.GraphData {
   initializeGraphData() {
     console.log("loading initial graph data");
 
-    this.nodes.push(new JournalNode('node0', 'Build an awesome\n graph journal'));
-    this.nodes.push(new JournalNode('node1', 'Testing out origin \nnode from model'));
-    this.nodes.push(new JournalNode('node2', 'Heyoo!'));
+    this.DisplayedGraph.nodes.push(new JournalNode('node0', 'Build an awesome\n graph journal'));
+    this.DisplayedGraph.nodes.push(new JournalNode('node1', 'Testing out origin \nnode from model'));
+    this.DisplayedGraph.nodes.push(new JournalNode('node2', 'Heyoo!'));
   }
 
   /*

@@ -2,7 +2,7 @@ import React, { useEffect } from 'react'
 import G6 = require('@antv/g6');
 import GraphData from '../services/GraphData'
 
-let data = GraphData;
+let data = GraphData.DisplayedGraph;
 let graph: G6.Graph;
 let focusedNode: any = null;
 
@@ -38,9 +38,9 @@ const DefaultGraphView = () => {
      const ref = React.useRef(null);
      useEffect(() => {
         graph = new G6.Graph({
-            container: 'container',
-            width: 1200,
-            height: 800,
+            container: 'graph-container',
+            width: 800,
+            height: 400,
             modes: {
               default: ['drag-canvas', 'zoom-canvas']
             },
@@ -122,6 +122,7 @@ const DefaultGraphView = () => {
         <input id="newName" type='text'></input>
         <button onClick={onAddButtonClick}>Add node</button>
         <button onClick={onPingServerClick}>Ping server</button>
+        <div id="graph-container"></div>
       </div>
     )
 
