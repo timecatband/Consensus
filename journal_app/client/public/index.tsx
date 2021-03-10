@@ -1,13 +1,13 @@
+import './index.scss';
 import React from 'react';
 import ReactDOM from 'react-dom';
-import DefaultGraphView from './components/GraphJournal';
+import GraphContainer from './components/GraphContainer';
 import SqlClientInterface from './components/SqlClientInterface';
-import './index.scss';
 
 ReactDOM.render(
 
   <React.StrictMode>
-    <DefaultGraphView />
+    <GraphContainer />
     <SqlClientInterface />
   </React.StrictMode>
 

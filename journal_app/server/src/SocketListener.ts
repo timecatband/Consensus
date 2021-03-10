@@ -4,10 +4,12 @@ const WebSocket = require("ws")
 
 class SocketListener {
   graphData: any
+  sqlServer: any
   server: any
 
-  constructor(graphData: any) {
+  constructor(graphData: any, sqlServer: any) {
       this.graphData = graphData
+      this.sqlServer = sqlServer
   }
 
   listen() {
@@ -35,6 +37,13 @@ class SocketListener {
                 case "GET_GRAPH":
                   const reply = this.graphData.serializeGraph();
                   socket.send(reply);
+                  break;
+
+                case "QUERY_SQL":
+                  let cb = (rows) => {
+                    socket.send(JSON.stringify({type:"SQL_QUERY_RSP", data:rows}, null, 4));
+                  }
+                  let rows = this.sqlServer.query(data.query, cb)
                   break;
 
                 default:

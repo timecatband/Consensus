@@ -22,7 +22,7 @@ class ServerGraphData {
   dumpFromSql(sqlDb: any) {
       // TODO
   }
-  
+
   serializeGraph() {
       return JSON.stringify({nodes: this.nodes, edges: this.edges});
   }
@@ -35,10 +35,8 @@ app.get('/', (req, res) => {
 });
 */
 
-let SqliteClientSvc = new SqliteClient()
 let graphData = new ServerGraphData();
-let SocketSingleton = new SocketListener(graphData);
+let SqlSingleton = new SqliteClient();
+let SocketSingleton = new SocketListener(graphData, SqlSingleton);
 
 SocketSingleton.listen();
-
-

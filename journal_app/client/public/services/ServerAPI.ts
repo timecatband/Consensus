@@ -10,10 +10,15 @@ class ServerAPI extends BaseORM {
     super();
   }
 
+  // pass through to the socket
+  registerResponseHandler(key: string, handler: Function) {
+    SocketClient.registerResponseHandler(key, handler)
+  }
+
   ping(data: any) {
     console.log("ServerAPI PING called");
     const payload = JSON.stringify({type:"PING", data:data})
-    SocketClient.send(payload);
+    SocketClient.socket.send(payload);
   }
 
   getNodes() {
@@ -29,7 +34,12 @@ class ServerAPI extends BaseORM {
   upsertNode(data: any) {
     console.log("ServerAPI upsertNode called", data);
     const payload = JSON.stringify({type:"UPSERT_NODE", data:data})
-    SocketClient.send(payload)
+    SocketClient.socket.send(payload)
+  }
+
+  querySql(query:string) {
+    const payload = JSON.stringify({type:"QUERY_SQL", query:query})
+    SocketClient.socket.send(payload)
   }
 
 }

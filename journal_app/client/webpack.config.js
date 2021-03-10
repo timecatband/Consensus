@@ -66,17 +66,9 @@ module.exports = {
     ]
   },
   plugins: [
-    new webpack.NoEmitOnErrorsPlugin(),
     new webpack.optimize.AggressiveMergingPlugin(),
     new HTMLPlugin({
       template: './public/index.html'
-    }),
-    new UglifyJSWebpackPlguin({
-      exclude: /node_modules/,
-      uglifyOptions: {
-        ecma: 5,
-        ie8: true
-      }
     })
   ],
   devtool: 'cheap-module-eval-source-map',
