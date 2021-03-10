@@ -106,7 +106,7 @@ const DefaultGraphView = () => {
       }
 
       data.nodes.push({id:text, label:text})
-      data.edges.push({ source: focusedNode._cfg.id, target: text });
+      //data.edges.push({ source: focusedNode._cfg.id, target: text });
       graph.data(data)
       graph.render()
     }

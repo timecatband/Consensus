@@ -13,7 +13,7 @@ function SqlClientInterface(props: any): any {
       <label> Sql client </label>
       <textarea id="query" rows={10} cols={50}></textarea>
       <button onClick={onQueryClick}>Send query</button>
-      <textarea id="result" rows={10} cols={50}>Result</textarea>
+      <textarea id="result" rows={10} cols={50}></textarea>
     </div>
   )
 
