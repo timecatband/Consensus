@@ -6,16 +6,9 @@ const HTMLPlugin = require('html-webpack-plugin');
 const UglifyJSWebpackPlguin  = require('uglifyjs-webpack-plugin')
 
 module.exports = {
-  entry: {
-    g6InReact: [
-      'webpack-dev-server/client?http://localhost:8080',
-      './public/index.tsx'],
-  },
+  entry:'./public/index.tsx',
   output: {
     filename: '[name].min.js',
-    library: 'G6',
-    libraryTarget: 'umd',
-    libraryExport: 'default',
     path: resolve(process.cwd(), 'dist/'),
   },
   target: 'web',
@@ -33,13 +26,13 @@ module.exports = {
             babelrc: true,
           },
         },
-      },{
+      }, {
         test: /\.(ts|tsx)$/,
         exclude: /node_modules/,
         use: {
           loader: 'ts-loader'
         },
-      },{
+      }, {
         test: /\.(css)$/,
         exclude: /node_modules/,
         use: [
@@ -49,7 +42,8 @@ module.exports = {
             options: {
               modules: true,
             },
-          },]
+          },
+        ]
       }, {
             test: /\.s[ac]ss$/i,
             exclude: /node_modules/,
@@ -69,7 +63,7 @@ module.exports = {
                 }
             ]
         }
-    ],
+    ]
   },
   plugins: [
     new webpack.NoEmitOnErrorsPlugin(),

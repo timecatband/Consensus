@@ -9,7 +9,7 @@ function SqlClientInterface(props: any): any {
   }
 
   return  (
-    <div>
+    <div className="com-sql-client">
       <label> Sql client </label>
       <textarea id="query" rows={10} cols={50}></textarea>
       <button onClick={onQueryClick}>Send query</button>

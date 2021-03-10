@@ -6,7 +6,7 @@ class SocketListener {
   graphData: any
   server: any
 
-  constructor(graphData: any) { //this should be type http.Server but that wsnt working and I'm sick of chasing type defs
+  constructor(graphData: any) {
       this.graphData = graphData
   }
 
@@ -20,7 +20,7 @@ class SocketListener {
                   const reply = this.graphData.serializeGraph();
                   socket.send(reply);
               }
-          });        
+          });
       });
   }
 }

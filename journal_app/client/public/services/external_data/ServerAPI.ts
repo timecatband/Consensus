@@ -1,5 +1,6 @@
 import BaseORM from '@timecat/GraphJournalShared/external_data/BaseORM.ts'
 import Socket from '../Socket'
+import SocketClient from '../SocketClient'
 
 /*
   Singleton service ServerAPI provides the BaseORM methods for reading/writing via our own journal server instance
