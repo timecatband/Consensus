@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react'
 import G6 = require('@antv/g6');
 import GraphData from '../services/GraphData'
+import ServerAPI from '../services/ServerAPI'
 
 let data = GraphData.DisplayedGraph;
 let graph: G6.Graph;
@@ -113,7 +114,7 @@ const DefaultGraphView = () => {
 
     function onPingServerClick() {
       console.log("got a click to ping the server")
-      GraphData.upsertNode("test message for server")
+      ServerAPI.ping("test message")
     }
 
     return  (

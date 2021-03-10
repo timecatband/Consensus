@@ -1,23 +1,24 @@
-const config = require("@timecat/GraphJournalShared/config/config.dev.json")
-const WebSocket = require("ws")
+/*
+  Singleton service for the websocket connection
+*/
 
-class SocketListener {
+class SocketClient {
   socket: any;
 
   constructor() {
       this.socket = new WebSocket("ws://localhost:3000");
+      this.socket.onopen = () => {
+        console.log("Socket connection opened")
+        this.socket.onmessage = this.messageHandler;
+      };
   }
 
   messageHandler(message: any) {
-      console.log(message);
+    console.log("Received socket message:", message);
   }
 
-  listen() {
-    this.socket.on("open", () => {
-        this.socket.on("message", this.messageHandler);
-        this.socket.send(JSON.stringify({type: "GET_GRAPH"}));
-    });
-  }
 }
 
-export default SocketListener;
+let SocketClientSvc = new SocketClient();
+
+export default SocketClientSvc.socket;

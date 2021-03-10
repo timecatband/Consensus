@@ -1,7 +1,7 @@
 import BaseORM from '@timecat/GraphJournalShared/external_data/BaseORM'
 import Graph from '@timecat/GraphJournalShared/models/Graph'
 import JournalNode from '@timecat/GraphJournalShared/models/JournalNode'
-import ServerAPI from './external_data/ServerAPI.ts'
+import ServerAPI from './ServerAPI'
 //import * as I from '@antv/g6/lib/types';
 
 /*
