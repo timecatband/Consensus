@@ -1,36 +1,28 @@
 const http = require('http')
 const config = require("@timecat/GraphJournalShared/config/config.dev.json")
+const WebSocket = require("ws")
 
 class SocketListener {
-  io: any; //this would ideally be typed as socket.io, but whatever no one is going to break this
-  sqlDb: any;
+  graphData: any
+  server: any
 
-  constructor(http: any, sqlDb: any) { //this should be type http.Server but that wsnt working and I'm sick of chasing type defs
-    this.sqlDb = sqlDb
-    this.io = require('socket.io')(http, {
-      cors: { // TODO: figure out the proper way to handle this and the CORS stuff (see socket in client also)
-        origin: config.socketAllowedOrigin,
-        methods: ["GET", "POST"],
-        allowedHeaders: ["timecat!"],
-        credentials: true
-      }
-    });
+  constructor(graphData: any) { //this should be type http.Server but that wsnt working and I'm sick of chasing type defs
+      this.graphData = graphData
   }
 
-  initializeSocketListeners() {
-    console.log("Socket listeners started")
-
-    this.io.on('connection', (socket: any) => {
-      console.log('a user connected', socket.id);
-
-      socket.on('upsert-graph-node', (message: any) => {
-        console.log("got upsert: ", message)
-        this.sqlDb.query('select * from sqlite_master')
+  listen() {
+      this.server = new WebSocket.Server({ port: 3000});
+      this.server.on("connection", (socket: any)=> {
+          socket.on("message", (message: any) => {
+              const data = JSON.parse(message);
+              switch (data.type) {
+                case "GET_GRAPH":
+                  const reply = this.graphData.serializeGraph();
+                  socket.send(reply);
+              }
+          });        
       });
-    });
-
   }
-
 }
 
 export default SocketListener
