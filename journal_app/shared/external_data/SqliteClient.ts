@@ -59,16 +59,14 @@ class SqliteClient extends BaseORM {
   query(query: string, callback: Function) {
     console.log("query called......", query)
     let result = [];
-    try
-
-    {
+    try {
       this.db.all(query, [], (err: any, rows: any) => {
         if (err) {
-          throw err;
-        }
-        SqliteClient.printQueryResult(rows);
-        if ( callback != undefined) {
-          callback(rows)
+          console.error(err);
+          if ( callback != undefined) {callback(err);}
+        } else {
+          SqliteClient.printQueryResult(rows);
+          if ( callback != undefined) { callback(rows) }
         }
       });
     } catch (error) {

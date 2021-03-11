@@ -1,10 +1,27 @@
 .com-graph-container {
     margin: 5px 5px 25px 5px;
     border: 3px solid black;
+    position: relative;
+
+    $topBarHeight: 20px;
 
     .graph-control-bar {
       padding: 6px 4px;
-      height: 20px;
+      height: $topBarHeight;
       border-bottom: 3px solid black;
+      display: flex;
+      justify-content: space-between;
     }
+
+    .graph-side-panel {
+      position: absolute;
+      right: 0;
+      top: $topBarHeight+15;
+      border-left: 3px solid black;
+      background: white;
+      width: 150px;
+      height: calc(100% - #{$topBarHeight+15});
+      color: red;
+    }
+
 }

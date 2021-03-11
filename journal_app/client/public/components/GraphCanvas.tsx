@@ -92,7 +92,7 @@ const GraphCanvas = (props) => {
       }
       focusedNode = evt.item;
       graph.setItemState(focusedNode, 'hover', true)
-
+      props.setShowPanel(true)
     })
 
     graph.on('click', (evt:any) => {
@@ -100,6 +100,7 @@ const GraphCanvas = (props) => {
       if (focusedNode != null) {
         graph.setItemState(focusedNode, 'hover', false)
       }
+      props.setShowPanel(false)
       //console.log("got non-node click")
     })
 

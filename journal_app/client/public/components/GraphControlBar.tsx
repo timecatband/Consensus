@@ -13,11 +13,21 @@ function GraphControlBar(props: any): any {
     ServerAPI.ping("test message")
   }
 
+  function editFilters() {
+    console.log("got a click to editFilters")
+  }
+
+
   return  (
     <div className="graph-control-bar">
-      <input id="newName" type='text'></input>
-      <button onClick={onAddButtonClick}>Add node</button>
-      <button onClick={onPingServerClick}>Ping server</button>
+      <div className="leftBar">
+        <input id="newName" type='text'></input>
+        <button onClick={onAddButtonClick}>Search</button>
+      </div>
+      <div className="rightBar">
+        <button onClick={onPingServerClick}>Ping server</button>
+        <button onClick={editFilters}>Filters</button>
+      </div>
     </div>
   )
 }

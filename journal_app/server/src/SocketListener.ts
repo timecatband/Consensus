@@ -49,7 +49,7 @@ class SocketListener {
                   let cb = (rows) => {
                     socket.send(JSON.stringify({type:"SQL_QUERY_RSP", data:rows}, null, 4));
                   }
-                  let rows = this.sqlServer.query(data.query, cb)
+                  let rows = this.sqlServer.query(data.data, cb)
                   break;
 
                 default:

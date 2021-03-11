@@ -13,7 +13,13 @@ body {
   button {
     outline: none;
     cursor: pointer;
+    background: white;
+    border: 2px solid black;
   }
+  button:hover {
+    background: rgb($teal,0.2);
+  }
+
 
   textarea {
     outline: none;

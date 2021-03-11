@@ -17,7 +17,7 @@ class GraphData {
   ServerAPI: BaseORM;
   ready: Promise<void>; // a promise to let the UI know that the first data load has finished
   readyResolver: Function; // a function to resolve the ready promise
-  initialized: boolean;
+  initialized: boolean; // a bool to make sure we only try to set the ready promise once... theres probably a better way to do this
 
   constructor(ORM: BaseORM) {
     this.graphs = []
@@ -38,10 +38,10 @@ class GraphData {
   handleServerGraphResponse(graphData: GraphModel) {
     this.DisplayedGraph = graphData
     if ( this.initialized == false ) {
+      // theres probably a better way to do this
       this.readyResolver()
       this.initialized = true;
     }
-    console.log("GraphData service DisplayedGraph has been set", this.DisplayedGraph)
   }
 
 }
