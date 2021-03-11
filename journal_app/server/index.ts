@@ -5,28 +5,7 @@ import { SqliteClient } from "@timecat/GraphJournalShared/external_data/SqliteCl
 
 import JournalNode from '@timecat/GraphJournalShared/models/JournalNode'
 import JournalEdge from '@timecat/GraphJournalShared/models/JournalEdge'
-
-
-class ServerGraphData {
-  nodes: JournalNode[];
-  edges: JournalEdge[];
-
-  constructor() {
-    this.nodes = [];
-    this.edges = [];
-  }
-
-  loadFromSql(sqlDb: any) {
-      // TODO
-  }
-  dumpFromSql(sqlDb: any) {
-      // TODO
-  }
-
-  serializeGraph() {
-      return JSON.stringify({nodes: this.nodes, edges: this.edges});
-  }
-}
+import GraphModel from "@timecat/GraphJournalShared/models/GraphModel"
 
 
 /*
@@ -35,7 +14,11 @@ app.get('/', (req, res) => {
 });
 */
 
-let graphData = new ServerGraphData();
+let graphData = new GraphModel();
+graphData.nodes.push(new JournalNode('node0', 'Build an awesome\n graph journal'));
+graphData.nodes.push(new JournalNode('node1', 'Testing out origin \nnode from model'));
+graphData.nodes.push(new JournalNode('node2', 'Heyoo!'));
+
 let SqlSingleton = new SqliteClient();
 let SocketSingleton = new SocketListener(graphData, SqlSingleton);
 

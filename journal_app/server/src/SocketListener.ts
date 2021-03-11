@@ -1,5 +1,6 @@
 const http = require('http')
 const config = require("@timecat/GraphJournalShared/config/config.dev.json")
+import GraphModel from "@timecat/GraphJournalShared/models/GraphModel"
 const WebSocket = require("ws")
 
 class SocketListener {
@@ -7,7 +8,7 @@ class SocketListener {
   sqlServer: any
   server: any
 
-  constructor(graphData: any, sqlServer: any) {
+  constructor(graphData: GraphModel, sqlServer: any) {
       this.graphData = graphData
       this.sqlServer = sqlServer
   }
@@ -18,6 +19,12 @@ class SocketListener {
       this.server.on("connection", (socket: any)=> {
           connectionCounter++;
           let connectionId = connectionCounter;
+
+          function formatAndSend(type: string, data: any) {
+            let payload = JSON.stringify({type:type, data:data})
+            console.log("sending!", payload)
+            socket.send(payload);
+          }
 
           socket.on("message", (message: any) => {
               let data;
@@ -35,8 +42,8 @@ class SocketListener {
                   break;
 
                 case "GET_GRAPH":
-                  const reply = this.graphData.serializeGraph();
-                  socket.send(reply);
+                  console.log('get graph got!', this.graphData)
+                  formatAndSend("GET_GRAPH_RSP", this.graphData)
                   break;
 
                 case "QUERY_SQL":

@@ -10,15 +10,26 @@ class ServerAPI extends BaseORM {
     super();
   }
 
+  formatAndSend(type:string, data?: any) {
+    SocketClient.socket.then( (socket) => {
+      const payload = JSON.stringify({type:type, data:data})
+      socket.send(payload);
+    })
+  }
+
   // pass through to the socket
-  registerResponseHandler(key: string, handler: Function) {
-    SocketClient.registerResponseHandler(key, handler)
+  registerResponseHandler(key: string, handler: Function): Promise<void> {
+    return SocketClient.registerResponseHandler(key, handler)
   }
 
   ping(data: any) {
     console.log("ServerAPI PING called");
-    const payload = JSON.stringify({type:"PING", data:data})
-    SocketClient.socket.send(payload);
+    this.formatAndSend("PING", data);
+  }
+
+  getGraph() {
+    console.log("sending GET_GRAPH")
+    this.formatAndSend("GET_GRAPH");
   }
 
   getNodes() {
@@ -32,14 +43,11 @@ class ServerAPI extends BaseORM {
   }
 
   upsertNode(data: any) {
-    console.log("ServerAPI upsertNode called", data);
-    const payload = JSON.stringify({type:"UPSERT_NODE", data:data})
-    SocketClient.socket.send(payload)
+    this.formatAndSend("UPSERT_NODE", data);
   }
 
   querySql(query:string) {
-    const payload = JSON.stringify({type:"QUERY_SQL", query:query})
-    SocketClient.socket.send(payload)
+    this.formatAndSend("QUERY_SQL", query);
   }
 
 }
