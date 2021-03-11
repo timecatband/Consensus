@@ -15,32 +15,32 @@ class GraphData {
   graphs: GraphModel[]; // a collection of graphs that have been loaded or created
   DisplayedGraph: GraphModel; // the graph which is being displayed, may be a combination of multiple other graphs
   ServerAPI: BaseORM;
+  ready: Promise<void>; // a promise to let the UI know that the first data load has finished
+  readyResolver: Function; // a function to resolve the ready promise
+  initialized: boolean;
 
   constructor(ORM: BaseORM) {
-    console.log("constructor????")
     this.graphs = []
     this.DisplayedGraph = new GraphModel();
     this.ServerAPI = ORM;
-    this.ServerAPI.registerResponseHandler('GET_GRAPH_RSP', this.handleServerGraphResponse.bind(this)).then( () => {
-      console.log("heyeloo?")
-      this.initializeGraphData()
-    });
-  }
+    this.ready = new Promise( (resolve) => {
+      this.readyResolver = resolve
+    })
+    this.initialized = false;
 
-  /*
-    Load the initial graph data, intended to query some subset of total data from the server according to user prefs
-  */
-  initializeGraphData() {
-    /*
-    this.DisplayedGraph.nodes.push(new JournalNode('node0', 'Build an awesome\n graph journal'));
-    this.DisplayedGraph.nodes.push(new JournalNode('node1', 'Testing out origin \nnode from model'));
-    this.DisplayedGraph.nodes.push(new JournalNode('node2', 'Heyoo!'));
-    */
-    this.ServerAPI.getGraph()
+    // call to the server for our initial graph, and register a listener for the socket response
+    this.ServerAPI.registerResponseHandler('GET_GRAPH_RSP', this.handleServerGraphResponse.bind(this)).then( () => {
+      this.ServerAPI.getGraph()
+    });
+
   }
 
   handleServerGraphResponse(graphData: GraphModel) {
     this.DisplayedGraph = graphData
+    if ( this.initialized == false ) {
+      this.readyResolver()
+      this.initialized = true;
+    }
     console.log("GraphData service DisplayedGraph has been set", this.DisplayedGraph)
   }
 

@@ -86,34 +86,33 @@ const GraphCanvas = (props) => {
     })
 
     graph.on('node:click', (evt:any) => {
-      //console.log("got node click")
+      // change the focused node to the clicked one
       if (focusedNode != null) {
         graph.setItemState(focusedNode, 'hover', false)
       }
-
       focusedNode = evt.item;
       graph.setItemState(focusedNode, 'hover', true)
 
     })
 
     graph.on('click', (evt:any) => {
-      //console.log("got non-node click")
-
+      // de-select nodes on clicks away from nodes
       if (focusedNode != null) {
         graph.setItemState(focusedNode, 'hover', false)
       }
-
+      //console.log("got non-node click")
     })
 
+
     //GraphDataSvc.registerRenderFn(renderGraph)
+    GraphDataSvc.ready.then( () => {
+      renderGraph(graph, GraphDataSvc.DisplayedGraph)
+    })
 
     // Handler to call on window resize
     function handleResize() {
       graph.changeSize(canvasRef?.current?.offsetWidth, canvasHeight)
-      renderGraph(graph, GraphDataSvc.DisplayedGraph)
     }
-
-    // Add event listener
     window.addEventListener("resize", handleResize);
 
     // Call handler right away so state gets updated with initial window size
@@ -123,24 +122,6 @@ const GraphCanvas = (props) => {
     return () => window.removeEventListener("resize", handleResize);
 
   }, []); // Empty array ensures that effect is only run on mount
-
-
-  function onAddButtonClick() {
-    //console.log("got button click")
-    let text: string | null;
-    let inputEl = document.getElementById("newName") as HTMLInputElement;
-    text = inputEl.value;
-    if (text == null) {
-      console.error("document element newName has no value")
-    }
-
-    console.error("add node not implemented")
-    //data.nodes.push({id:text, label:text})
-    //data.edges.push({ source: focusedNode._cfg.id, target: text });
-    //graph.data(data)
-    graph.render()
-  }
-
 
   return  (
     <div className="graph-canvas" ref={canvasRef} id="graph-container"></div>
