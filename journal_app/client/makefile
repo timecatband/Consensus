@@ -12,3 +12,8 @@ install:
 
 test:
 	NODE_ENV=test npm run spectest
+
+
+build:
+	npm link
+	npx webpack --config webpack.config.js --mode production

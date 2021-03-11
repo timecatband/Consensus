@@ -1,0 +1,7 @@
+Files to not send to the server, like gitignore.
+
+# this file
+.gcloudignore
+
+# Node.js dependencies
+node_modules/
