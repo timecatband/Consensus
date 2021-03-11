@@ -1,4 +1,4 @@
-.PHONY: clean install test
+.PHONY: clean install test deploy_client
 
 
 DIRS = journal_app
@@ -14,3 +14,7 @@ install:
 
 test:
 	-for d in $(DIRS); do $(MAKE) -C $$d test || exit 1; done
+
+deploy_client:
+	# builds, deploys client to the web
+	$(MAKE) -C build/client deploy
