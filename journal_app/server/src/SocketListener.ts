@@ -20,7 +20,7 @@ class SocketListener {
           connectionCounter++;
           let connectionId = connectionCounter;
 
-          function formatAndSend(type: string, data: any) {
+          function formatAndSend(type: string, data?: any) {
             let payload = JSON.stringify({type:type, data:data})
             console.log("sending!", payload)
             socket.send(payload);
@@ -37,16 +37,15 @@ class SocketListener {
 
               switch (data.type) {
                 case "PING":
-                  console.log("got ping from id", connectionId);
-                  socket.send("PingPang!");
+                  formatAndSend("PING_PANG")
                   break;
 
                 case "GET_GRAPH":
-                  console.log('get graph got!', this.graphData)
                   formatAndSend("GET_GRAPH_RSP", this.graphData)
                   break;
 
                 case "QUERY_SQL":
+                  console.log("got quertsql", data)
                   let cb = (rows) => {
                     socket.send(JSON.stringify({type:"SQL_QUERY_RSP", data:rows}, null, 4));
                   }

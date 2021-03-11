@@ -14,12 +14,12 @@ class SocketClient {
         const socket = new WebSocket("ws://localhost:3000");
         socket.onopen = () => {
           console.log("Socket connection opened", thisObj.responseHandlers)
-          thisObj.socket.onmessage = thisObj.messageHandler.bind(thisObj);
+          socket.onmessage = thisObj.messageHandler.bind(thisObj);
           resolve(socket)
         };
 
         socket.onclose = function(e) {
-          console.log('Socket is closed. Reconnect will be attempted in 1 second.', e.reason);
+          console.log('Socket is closed. Trying to reconnect...', e.reason);
           setTimeout(function() {
             connect(thisObj);
           }, 3000);
@@ -37,9 +37,8 @@ class SocketClient {
   }
 
   messageHandler(message: any) {
-    console.log("raw socket response", message)
     let parsed = JSON.parse(message.data);
-    console.log("Received socket message:", parsed.type);
+    console.log("Received socket message:", parsed.type, parsed.data);
     if ( parsed.type && this.responseHandlers && this.responseHandlers[parsed.type] ) {
       this.responseHandlers[parsed.type](parsed.data)
     }

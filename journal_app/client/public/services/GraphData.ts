@@ -7,17 +7,22 @@ import ServerAPI from './ServerAPI'
 /*
   GraphData is the singleton service which contains any locally loaded graphs, which may only be portions of theoretically infinite graphs of nodes
   The service manages interactions with the server/database, and orchestrates shared graph state among components
+
+  handy reference on the service pattern: https://medium.com/@alshdavid/react-state-and-services-edb95be48851
 */
+
 class GraphData {
   graphs: GraphModel[]; // a collection of graphs that have been loaded or created
   DisplayedGraph: GraphModel; // the graph which is being displayed, may be a combination of multiple other graphs
-  ORM: BaseORM;
+  ServerAPI: BaseORM;
 
   constructor(ORM: BaseORM) {
+    console.log("constructor????")
     this.graphs = []
     this.DisplayedGraph = new GraphModel();
-    this.ORM = ORM;
-    ServerAPI.registerResponseHandler('GET_GRAPH_RSP', this.handleServerGraphResponse).then( () => {
+    this.ServerAPI = ORM;
+    this.ServerAPI.registerResponseHandler('GET_GRAPH_RSP', this.handleServerGraphResponse.bind(this)).then( () => {
+      console.log("heyeloo?")
       this.initializeGraphData()
     });
   }
@@ -31,24 +36,16 @@ class GraphData {
     this.DisplayedGraph.nodes.push(new JournalNode('node1', 'Testing out origin \nnode from model'));
     this.DisplayedGraph.nodes.push(new JournalNode('node2', 'Heyoo!'));
     */
-    ServerAPI.getGraph()
+    this.ServerAPI.getGraph()
   }
 
   handleServerGraphResponse(graphData: GraphModel) {
-    console.log("got graph data from server");
     this.DisplayedGraph = graphData
-  }
-
-  /*
-    Wrapper around the the actual server API, allows us to handle any local caching or magic before deciding to send requests to the server
-  */
-  upsertNode(node: JournalNode) {
-    console.error("upsertNode is not really implemented");
-    ServerAPI.upsertNode(JournalNode)
+    console.log("GraphData service DisplayedGraph has been set", this.DisplayedGraph)
   }
 
 }
 
-let GraphDataSvc = new GraphData(ServerAPI);
+const GraphDataSvc = new GraphData(ServerAPI);
 
 export default GraphDataSvc;

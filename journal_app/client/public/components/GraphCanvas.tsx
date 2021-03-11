@@ -1,9 +1,9 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useContext } from 'react'
 import G6 = require('@antv/g6');
-import GraphData from '../services/GraphData'
+import GraphDataSvc from '../services/GraphData'
+import GraphModel from '@timecat/GraphJournalShared/models/GraphModel'
 
 let graph: G6.Graph;
-let data = GraphData.DisplayedGraph;
 let focusedNode: any = null;
 let canvasWidth:number = 100 //initial value only, resizes on first render to container width
 let canvasHeight:number = 500
@@ -40,15 +40,13 @@ function getDefaultEdgeProperties() {
 /////////////////////////////////////////////////////////////////
 // The React Element -------------------------------------------
 
-const GraphCanvas = () => {
+const GraphCanvas = (props) => {
   const canvasRef = React.useRef<HTMLDivElement>();
 
-  // Initialize state with undefined width/height so server and client renders match
-  // Learn more here: https://joshwcomeau.com/react/the-perils-of-rehydration/
-  const [windowSize, setWindowSize] = useState({
-    width: undefined,
-    height: undefined,
-  });
+  function renderGraph(g6graph: G6.Graph, newGraph: GraphModel) {
+    g6graph.data(newGraph)
+    g6graph.render()
+  }
 
   // this use effect will only call once on load to set up the graph and window listeners
   useEffect(() => {
@@ -87,9 +85,6 @@ const GraphCanvas = () => {
       }
     })
 
-    graph.data(data)
-    graph.render()
-
     graph.on('node:click', (evt:any) => {
       //console.log("got node click")
       if (focusedNode != null) {
@@ -110,14 +105,12 @@ const GraphCanvas = () => {
 
     })
 
+    //GraphDataSvc.registerRenderFn(renderGraph)
 
     // Handler to call on window resize
     function handleResize() {
-      // Set window width/height to state
-      setWindowSize({
-        width: window.innerWidth,
-        height: window.innerHeight,
-      });
+      graph.changeSize(canvasRef?.current?.offsetWidth, canvasHeight)
+      renderGraph(graph, GraphDataSvc.DisplayedGraph)
     }
 
     // Add event listener
@@ -128,13 +121,8 @@ const GraphCanvas = () => {
 
     // Remove event listener on cleanup
     return () => window.removeEventListener("resize", handleResize);
+
   }, []); // Empty array ensures that effect is only run on mount
-
-
-  //this useEffect will be called any time the state changes, including when the window resizes thanks to the state call above
-  useEffect(() => {
-    graph.changeSize(canvasRef?.current?.offsetWidth, canvasHeight)
-  });
 
 
   function onAddButtonClick() {
@@ -146,9 +134,10 @@ const GraphCanvas = () => {
       console.error("document element newName has no value")
     }
 
-    data.nodes.push({id:text, label:text})
+    console.error("add node not implemented")
+    //data.nodes.push({id:text, label:text})
     //data.edges.push({ source: focusedNode._cfg.id, target: text });
-    graph.data(data)
+    //graph.data(data)
     graph.render()
   }
 

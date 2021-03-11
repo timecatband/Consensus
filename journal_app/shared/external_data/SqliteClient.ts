@@ -19,6 +19,18 @@ class SqliteClient extends BaseORM {
     });
   }
 
+  registerResponseHandler(keys:string, handler: Function): Promise<any> {
+    console.error("registerResponseHandler not implemented, maybe this client should not be part of base ORM..?")
+    return new Promise( resolve => {resolve(true)})
+  };
+
+  /*
+    get all nodes from the db
+  */
+  getGraph() {
+    console.error("LocalSqlite.getGraph is not implemented");
+  }
+
   /*
     get all nodes from the db
   */
