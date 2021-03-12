@@ -60,28 +60,27 @@ const GraphCanvas = (props) => {
       width: canvasWidth,
       height: canvasHeight,
       modes: {
-
         default: [
-                  {
-                    type: 'drag-canvas',
-                    //enableOptimize: true, //this will hide text on drag
-                  },
-                  {
-                    type: 'zoom-canvas',
-                    //enableOptimize: true, //this will hide text on zoom
-                    //optimizeZoom: 0.01,
-                    sensitivity: 1
-                  } as I.ModeType,
-                  'drag-node',
-                  'click-select',
-                  // 'shortcuts-call', //https://g6.antv.vision/en/docs/manual/middle/states/defaultBehavior#shortcuts-call
-                ],
+          {
+            type: 'drag-canvas',
+            //enableOptimize: true, //this will hide text on drag
+          },
+          {
+            type: 'zoom-canvas',
+            //enableOptimize: true, //this will hide text on zoom
+            //optimizeZoom: 0.01,
+            sensitivity: 1
+          } as I.ModeType,
+          'drag-node',
+          'click-select',
+          // 'shortcuts-call', //https://g6.antv.vision/en/docs/manual/middle/states/defaultBehavior#shortcuts-call
+        ],
       },
       defaultNode: getDefaultNodeProperties(),
       defaultEdge: getDefaultEdgeProperties(),
       layout: {
         // https://g6.antv.vision/en/docs/api/graphLayout/dagre
-        type:"dagre",
+        type:"concentric",
         preventOverlap: true,
         nodeStrength: (d:any) => {
           if (d.id === 'node0') {
