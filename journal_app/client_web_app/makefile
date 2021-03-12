@@ -2,9 +2,9 @@
 
 build:
 	# builds client, then moves the resulting dist/ directory over here
-	$(MAKE) -C ../../journal_app/client build
+	$(MAKE) -C ../client build
 	rm -fr ./dist
-	mv ../../journal_app/client/dist .
+	mv ../client/dist .
 
 deploy: build
 	# builds and pushes the code up to gcp app engine
