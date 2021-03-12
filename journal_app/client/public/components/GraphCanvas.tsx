@@ -1,5 +1,6 @@
 import React, { useEffect, useState, useContext } from 'react'
 import G6 = require('@antv/g6');
+import * as I from '@antv/g6/lib/types';
 import GraphDataSvc from '../services/GraphData'
 import GraphModel from '@timecat/GraphJournalShared/models/GraphModel'
 
@@ -21,7 +22,11 @@ function getDefaultNodeProperties() {
     },
     style: {
       stroke: '#777777',
-      width: 150
+      width: 150,
+      fill: '#CCCCDD',
+      hover: {
+        fill: '#FFCCCC'
+      }
     }
   };
 }
@@ -55,7 +60,22 @@ const GraphCanvas = (props) => {
       width: canvasWidth,
       height: canvasHeight,
       modes: {
-        default: ['drag-canvas', 'zoom-canvas']
+
+        default: [
+                  {
+                    type: 'drag-canvas',
+                    //enableOptimize: true, //this will hide text on drag
+                  },
+                  {
+                    type: 'zoom-canvas',
+                    //enableOptimize: true, //this will hide text on zoom
+                    //optimizeZoom: 0.01,
+                    sensitivity: 1
+                  } as I.ModeType,
+                  'drag-node',
+                  'click-select',
+                  // 'shortcuts-call', //https://g6.antv.vision/en/docs/manual/middle/states/defaultBehavior#shortcuts-call
+                ],
       },
       defaultNode: getDefaultNodeProperties(),
       defaultEdge: getDefaultEdgeProperties(),
@@ -86,28 +106,26 @@ const GraphCanvas = (props) => {
     })
 
     graph.on('node:click', (evt:any) => {
-      // change the focused node to the clicked one
-      if (focusedNode != null) {
-        graph.setItemState(focusedNode, 'hover', false)
-      }
-      focusedNode = evt.item;
-      graph.setItemState(focusedNode, 'hover', true)
       props.setShowPanel(true)
     })
 
     graph.on('click', (evt:any) => {
-      // de-select nodes on clicks away from nodes
-      if (focusedNode != null) {
-        graph.setItemState(focusedNode, 'hover', false)
-      }
       props.setShowPanel(false)
-      //console.log("got non-node click")
+    })
+
+    graph.on('dblclick', (evt:any) => {
+      GraphDataSvc.addNewNode()
+    })
+
+    graph.on('nodeselectchange', e => {
+      GraphDataSvc.setSelected(e.selectedItems);
     })
 
 
     //GraphDataSvc.registerRenderFn(renderGraph)
     GraphDataSvc.ready.then( () => {
-      renderGraph(graph, GraphDataSvc.DisplayedGraph)
+      GraphDataSvc.renderGraph = () => {renderGraph(graph, GraphDataSvc.DisplayedGraph)}
+      GraphDataSvc.renderGraph()
     })
 
     // Handler to call on window resize

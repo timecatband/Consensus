@@ -23,7 +23,6 @@ function GraphControlBar(props: any): any {
       <div className="leftBar">
         <input id="newName" type='text'></input>
         <button onClick={onAddButtonClick}>Search</button>
-        <span className="muteText instructionLabel">Double-click to add a node</span>
       </div>
       <div className="rightBar">
         <button onClick={onPingServerClick}>Ping server</button>

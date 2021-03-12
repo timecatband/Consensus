@@ -1,7 +1,9 @@
+import _ from 'lodash'
+import ServerAPI from './ServerAPI'
 import BaseORM from '@timecat/GraphJournalShared/external_data/BaseORM'
 import GraphModel from '@timecat/GraphJournalShared/models/GraphModel'
 import JournalNode from '@timecat/GraphJournalShared/models/JournalNode'
-import ServerAPI from './ServerAPI'
+import EventEmitter from '@timecat/GraphJournalShared/models/EventEmitter'
 //import * as I from '@antv/g6/lib/types';
 
 /*
@@ -11,13 +13,17 @@ import ServerAPI from './ServerAPI'
   handy reference on the service pattern: https://medium.com/@alshdavid/react-state-and-services-edb95be48851
 */
 
-class GraphData {
-  graphs: GraphModel[]; // a collection of graphs that have been loaded or created
-  DisplayedGraph: GraphModel; // the graph which is being displayed, may be a combination of multiple other graphs
+class GraphData { // this thing should probably just extend EventEmitter
   ServerAPI: BaseORM;
   ready: Promise<void>; // a promise to let the UI know that the first data load has finished
   readyResolver: Function; // a function to resolve the ready promise
   initialized: boolean; // a bool to make sure we only try to set the ready promise once... theres probably a better way to do this
+  renderGraph: Function; // to be set by the external graph canvas
+
+  emitter: EventEmitter; // allows react components (and anything) to subscribe to changes in the graph model
+  graphs: GraphModel[]; // a collection of graphs that have been loaded or created
+  DisplayedGraph: GraphModel; // the graph which is being displayed, may be a combination of multiple other graphs
+  selectedItems: object;
 
   constructor(ORM: BaseORM) {
     this.graphs = []
@@ -27,12 +33,34 @@ class GraphData {
       this.readyResolver = resolve
     })
     this.initialized = false;
+    this.emitter = new EventEmitter();
 
     // call to the server for our initial graph, and register a listener for the socket response
     this.ServerAPI.registerResponseHandler('GET_GRAPH_RSP', this.handleServerGraphResponse.bind(this)).then( () => {
       this.ServerAPI.getGraph()
     });
 
+  }
+
+  //shortcut to the emitter
+  emit(event:string, data?:any) {
+    this.emitter.emit(event, data)
+  };
+
+  //shortcut to the emitter
+  on(event:string, fn:Function){
+    this.emitter.on(event,fn)
+  };
+
+  serializeSelected(items: any) {
+    return _.mapValues(items.nodes, (node) => {
+      return node._cfg.model
+    })
+  }
+
+  setSelected(items: object) {
+    this.selectedItems = items;
+    this.emit("selected-items", this.serializeSelected(items))
   }
 
   handleServerGraphResponse(graphData: GraphModel) {
@@ -42,6 +70,13 @@ class GraphData {
       this.readyResolver()
       this.initialized = true;
     }
+  }
+
+  addNewNode() {
+    this.DisplayedGraph.nodes.push(new JournalNode("new!", "some text"))
+    console.log("addNewNode in svc", this.DisplayedGraph)
+    this.renderGraph()
+    this.emit("new-node")
   }
 
 }

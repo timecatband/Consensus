@@ -11,17 +11,48 @@
       border-bottom: 3px solid black;
       display: flex;
       justify-content: space-between;
+
+      .leftBar {
+        width: 50%;
+      }
+
+      .instructionLabel {
+        margin: 0 10px;
+        font-size: 0.8em;
+      }
+
     }
 
     .graph-side-panel {
       position: absolute;
-      right: 0;
-      top: $topBarHeight+15;
-      border-left: 3px solid black;
-      background: white;
+      right: -3px;
+      top: $topBarHeight+13;
+      border: 3px solid black;
       width: 150px;
-      height: calc(100% - #{$topBarHeight+15});
-      color: red;
+      height: calc(100% - #{$topBarHeight+18});
+      overflow: scroll;
+      /* Hide scrollbar for IE, Edge and Firefox */
+      -ms-overflow-style: none;  /* IE and Edge */
+      scrollbar-width: none;  /* Firefox */
+      /* Hide scrollbar for Chrome, Safari and Opera */
+      &::-webkit-scrollbar {
+        display: none;
+      }
+
+
+      background: $light-yellow;
+
+      $transitionTime: 0.15s;
+      visibility: visible;
+      opacity: 1;
+      transition: visibility 0s, opacity $transitionTime linear;
+
+      &.hidden {
+        visibility: hidden;
+        opacity: 0;
+        transition: visibility $transitionTime, opacity $transitionTime linear;
+      }
+
     }
 
 }

@@ -1,3 +1,4 @@
+const uuid = require('uuid');
 import * as I from '@antv/g6/lib/types';
 
 class JournalNode implements I.NodeConfig {
@@ -5,9 +6,16 @@ class JournalNode implements I.NodeConfig {
   id: string;
   label: string;
 
-  constructor(id: string, label: string) {
-    this.id = id;
+  constructor(label: string, text?: string, id?: string) {
     this.label = label;
+    this.text = text
+
+    if ( id == undefined ) {
+      this.id = uuid.v4()
+    } else {
+      this.id = id
+    }
+
   }
 
 }
