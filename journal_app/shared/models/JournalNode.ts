@@ -19,7 +19,10 @@ class JournalNode implements I.NodeConfig {
     } else {
       this.id = id
     }
+  }
 
+  public static deSerialize(obj: any) {
+    return new JournalNode(obj.label, obj.text, obj.x, obj.y, obj.id)
   }
 
 }

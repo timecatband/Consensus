@@ -44,6 +44,10 @@ class SocketListener {
                   formatAndSend("GET_GRAPH_RSP", this.graphData)
                   break;
 
+                case "SAVE_GRAPH":
+                  console.log("its a graph!", data)
+                  break;
+
                 case "QUERY_SQL":
                   console.log("got quertsql", data)
                   let cb = (rows) => {

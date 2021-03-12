@@ -13,16 +13,21 @@
       justify-content: space-between;
 
       .leftBar {
-        width: 70%;
+        width: 65%;
+        overflow: hidden;
+        white-space: nowrap;
+      }
+
+      .rightBar{
+        min-width: 280px;
+        .confirmSave {
+          margin-right:10px;
+        }
       }
 
       .instructionLabel {
         margin: 0 10px;
         font-size: 0.8em;
       }
-
     }
-
-
-
 }

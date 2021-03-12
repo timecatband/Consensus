@@ -27,6 +27,11 @@ class ServerAPI extends BaseORM {
     this.formatAndSend("PING", data);
   }
 
+  saveGraph(graphData: any) {
+    console.log("sending SAVE_GRAPH")
+    this.formatAndSend("SAVE_GRAPH", graphData);
+  }
+
   getGraph() {
     console.log("sending GET_GRAPH")
     this.formatAndSend("GET_GRAPH");

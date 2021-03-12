@@ -88,6 +88,11 @@ class GraphData { // this thing should probably just extend EventEmitter
     this.emit("new-edge-added", newEdge)
   }
 
+  saveGraph() {
+    console.log("saveGraph called", this.DisplayedGraph)
+    ServerAPI.saveGraph(this.DisplayedGraph)
+  }
+
 
 }
 
