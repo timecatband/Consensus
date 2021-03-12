@@ -1,0 +1,53 @@
+@import '../styles.variables.scss';
+
+.com-graph-container {
+  .graph-side-panel {
+    position: absolute;
+    right: -3px;
+    top: $topBarHeight+13;
+    border: 3px solid black;
+    width: 20%;
+    min-width: 300px;
+    height: calc(100% - #{$topBarHeight+18});
+    overflow: scroll;
+    background: $light-yellow;
+    /* Hide scrollbar for IE, Edge and Firefox */
+    -ms-overflow-style: none;  /* IE and Edge */
+    scrollbar-width: none;  /* Firefox */
+    /* Hide scrollbar for Chrome, Safari and Opera */
+    &::-webkit-scrollbar {
+      display: none;
+    }
+    padding: 0 5px;
+
+    .panelHeader {
+      font-size: 1.2em;
+      font-weight: bold;
+      margin: 10px 0;
+    }
+
+    .panelActions {
+      margin-top: 15px;
+    }
+
+    .codeBlock {
+      border: 1px solid $gray;
+      font-size: 0.7em;
+      font-style: normal;
+      margin-top: 20px;
+      white-space: pre-wrap;
+    }
+
+    $transitionTime: 0.15s;
+    visibility: visible;
+    opacity: 1;
+    transition: visibility 0s, opacity $transitionTime linear;
+
+    &.hidden {
+      visibility: hidden;
+      opacity: 0;
+      transition: visibility $transitionTime, opacity $transitionTime linear;
+    }
+
+  }
+}

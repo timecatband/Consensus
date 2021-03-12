@@ -5,10 +5,14 @@ class JournalNode implements I.NodeConfig {
   [key: string]: any; // This is a required part of the interface but I dunno what it means - KW
   id: string;
   label: string;
+  x: number;
+  y: number;
 
-  constructor(label: string, text?: string, id?: string) {
+  constructor(label: string, text?: string, x?:number, y?:number, id?: string) {
     this.label = label;
     this.text = text
+    this.x = x;
+    this.y = y;
 
     if ( id == undefined ) {
       this.id = uuid.v4()

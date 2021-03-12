@@ -32,13 +32,13 @@ function getDefaultNodeProperties() {
 }
 
 function getDefaultEdgeProperties() {
-   return {
-     type: 'line',
-     style: {
-       stroke: "#000000",
-       lineWidth:1
-     }
-    };
+  return {
+    type: 'line',
+    style: {
+      stroke: "#000000",
+      lineWidth:1
+    }
+  };
 }
 
 
@@ -61,8 +61,7 @@ const GraphCanvas = (props) => {
       height: canvasHeight,
       modes: {
         default: [
-          {
-            type: 'drag-canvas',
+          { type: 'drag-canvas',
             //enableOptimize: true, //this will hide text on drag
           },
           {
@@ -113,7 +112,7 @@ const GraphCanvas = (props) => {
     })
 
     graph.on('dblclick', (evt:any) => {
-      GraphDataSvc.addNewNode()
+      GraphDataSvc.addNewNode(evt.canvasX, evt.canvasY)
     })
 
     graph.on('nodeselectchange', e => {
@@ -123,9 +122,16 @@ const GraphCanvas = (props) => {
 
     //GraphDataSvc.registerRenderFn(renderGraph)
     GraphDataSvc.ready.then( () => {
-      GraphDataSvc.renderGraph = () => {renderGraph(graph, GraphDataSvc.DisplayedGraph)}
-      GraphDataSvc.renderGraph()
-    })
+      renderGraph(graph, GraphDataSvc.DisplayedGraph)
+
+      GraphDataSvc.on('new-node-added', (newNode) => {
+        graph.addItem('node', newNode);
+      })
+
+      GraphDataSvc.on('new-edge-added', (newEdge) => {
+        graph.addItem('edge', newEdge);
+      })
+    });
 
     // Handler to call on window resize
     function handleResize() {

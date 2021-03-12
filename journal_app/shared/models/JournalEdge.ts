@@ -4,18 +4,19 @@ import JournalNode from './JournalNode.ts'
 
 class JournalEdge implements I.EdgeConfig {
   [key: string]: any; // This is a required part of the interface but I dunno what it means - KW
-  leftNode: JournalNode;
-  rightNode: JournalNode;
+  source: string; //node id
+  target: string; //node id
   strength: number;
   id: string;
   label?: string;
   meta?: object;
 
 
-  constructor(leftNode: JournalNode, rightNode: JournalNode, strength: number, meta?: object, id?: string) {
-    this.leftNode = leftNode;
-    this.rightNode = rightNode;
+  constructor(source: string, target: string, strength?: number, meta?: object, id?: string) {
+    this.source = source;
+    this.target = target;
     this.strength = strength;
+    this.meta = meta
 
     if ( id == undefined ) {
       this.id = uuid.v4()
@@ -23,17 +24,13 @@ class JournalEdge implements I.EdgeConfig {
       this.id = id
     }
 
-    if ( meta != undefined) {
-      this.meta = meta
-    }
-
   }
 
   serialize() {
     return {
       "id": this.id,
-      "leftNode": this.leftNode.id,
-      "rightNode": this.rightNode.id,
+      "source": this.source,
+      "target": this.target,
       "strength": this.strength,
       "meta": JSON.stringify(this.meta || {})
     }

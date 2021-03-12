@@ -3,6 +3,7 @@ import ServerAPI from './ServerAPI'
 import BaseORM from '@timecat/GraphJournalShared/external_data/BaseORM'
 import GraphModel from '@timecat/GraphJournalShared/models/GraphModel'
 import JournalNode from '@timecat/GraphJournalShared/models/JournalNode'
+import JournalEdge from '@timecat/GraphJournalShared/models/JournalEdge'
 import EventEmitter from '@timecat/GraphJournalShared/models/EventEmitter'
 //import * as I from '@antv/g6/lib/types';
 
@@ -52,6 +53,7 @@ class GraphData { // this thing should probably just extend EventEmitter
     this.emitter.on(event,fn)
   };
 
+  // TODO: this extracts a serializable object, doesnt really serialize. Not sure exactly what pattern is needed around here yet.
   serializeSelected(items: any) {
     return _.mapValues(items.nodes, (node) => {
       return node._cfg.model
@@ -72,12 +74,20 @@ class GraphData { // this thing should probably just extend EventEmitter
     }
   }
 
-  addNewNode() {
-    this.DisplayedGraph.nodes.push(new JournalNode("new!", "some text"))
+  addNewNode(x, y) {
+    let newNode = new JournalNode("new!", "some text", x, y)
+    this.DisplayedGraph.nodes.push(newNode)
     console.log("addNewNode in svc", this.DisplayedGraph)
-    this.renderGraph()
-    this.emit("new-node")
+    this.emit("new-node-added", newNode)
   }
+
+  addNewEdge(leftNodeId:string, rightNodeId:string) {
+    let newEdge = new JournalEdge(leftNodeId, rightNodeId)
+    this.DisplayedGraph.edges.push(newEdge)
+    console.log("addNewEdge in svc", this.DisplayedGraph)
+    this.emit("new-edge-added", newEdge)
+  }
+
 
 }
 
