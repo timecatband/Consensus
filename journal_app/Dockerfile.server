@@ -1,0 +1,19 @@
+FROM node:14
+
+WORKDIR /usr/src/journal_app
+
+# this copies a bit more than necessary into the container (hence the "rm -fr"s below)
+# the alternative is a bit ugly though
+COPY . .
+
+WORKDIR /usr/src/journal_app/shared
+RUN rm -fr node_modules
+RUN npm install
+
+WORKDIR /usr/src/journal_app/server
+RUN rm -fr node_modules
+RUN npm install
+
+EXPOSE 3000
+
+CMD [ "npm", "start" ]
