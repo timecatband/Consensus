@@ -19,5 +19,7 @@ test:
 docker-build-server:
 	docker build -t timecat/graph-socket-server -f Dockerfile.server .
 
+
 docker-run-server:
 	docker run -p 3000:3000 timecat/graph-socket-server
+
