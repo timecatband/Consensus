@@ -6,72 +6,41 @@ const sqlite3 = require('sqlite3').verbose();
   LocalSqlite is intended to allow reading and writing serialized GraphNodes from a local sqlite file which can be checked into the repo
   for demo purposes or easy initial dev versions.
 */
-class SqliteClient extends BaseORM {
-  db: any;
+class SqliteClient {
+  db: Promise<any>;
 
   constructor() {
-    super();
-    this.db = new sqlite3.Database(config.sqliteFilepath, (err: any) => {
-      if (err) {
-        return console.error(err.message);
-      }
-      console.log('Connected to the SQlite database.');
+    this.db = new Promise( (resolve) => {
+      const sql = new sqlite3.Database(config.sqliteFilepath, (err: any) => {
+        if (err) {
+          return console.error(err.message);
+        }
+        console.log('Connected to the SQlite database.');
+        resolve(sql)
+      });
     });
   }
 
-  registerResponseHandler(keys:string, handler: Function): Promise<any> {
-    console.error("registerResponseHandler not implemented, maybe this client should not be part of base ORM..?")
-    return new Promise( resolve => {resolve(true)})
-  };
+  query(query: string):Promise<any> {
+    return this.db.then( (sql) => {
+      return new Promise( (resolve, reject) => {
 
-  /*
-    get all nodes from the db
-  */
-  getGraph() {
-    console.error("LocalSqlite.getGraph is not implemented");
-  }
-
-  /*
-    get all nodes from the db
-  */
-  getNodes() {
-    console.error("LocalSqlite.getNodes is not implemented");
-    return [];
-  }
-
-  /*
-    get all edges from the db
-  */
-  getEdges() {
-    console.error("LocalSqlite.getNodes is not implemented");
-    return [];
-  }
-
-  /*
-    add or overwrite a single node
-  */
-  upsertNode() {
-    console.error("LocalSqlite.getNodes is not implemented");
-    return;
-  }
-
-
-  query(query: string, callback: Function) {
-    console.log("query called......", query)
-    let result = [];
-    try {
-      this.db.all(query, [], (err: any, rows: any) => {
-        if (err) {
-          console.error(err);
-          if ( callback != undefined) {callback(err);}
-        } else {
-          SqliteClient.printQueryResult(rows);
-          if ( callback != undefined) { callback(rows) }
+        let result = [];
+        try {
+          sql.all(query, [], (err: any, rows: any) => {
+            if (err) {
+              console.error(err);
+              reject(err);
+            } else {
+              resolve(rows);
+            }
+          });
+        } catch (error) {
+          console.error(error)
+          reject(error)
         }
-      });
-    } catch (error) {
-      console.error(error)
-    }
+
+    })})
   }
 
   static printQueryResult(rows) {

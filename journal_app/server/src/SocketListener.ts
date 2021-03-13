@@ -1,4 +1,4 @@
-import GraphModel from "@timecat/GraphJournalShared/models/GraphModel"
+import GraphDataManager from "./GraphDataManager"
 const WebSocket = require("ws")
 
 class SocketListener {
@@ -6,8 +6,8 @@ class SocketListener {
   sqlServer: any
   server: any
 
-  constructor(graphData: GraphModel, sqlServer: any) {
-      this.graphData = graphData
+  constructor(dataMgr: GraphDataManager, sqlServer: any) {
+      this.graphData = dataMgr
       this.sqlServer = sqlServer
   }
 
@@ -39,19 +39,23 @@ class SocketListener {
                   break;
 
                 case "GET_GRAPH":
-                  formatAndSend("GET_GRAPH_RSP", this.graphData)
+                  this.graphData.loadGraph(data.data).then( (graph) => {
+                    formatAndSend("GET_GRAPH_RSP", graph)
+                  })
                   break;
 
                 case "SAVE_GRAPH":
-                  console.log("its a graph!", data)
+                  this.graphData.overwriteGraph(data.data).then(() => {
+                    formatAndSend("SAVE_GRAPH_RSP", "success")
+                  });
                   break;
 
                 case "QUERY_SQL":
-                  console.log("got quertsql", data)
-                  let cb = (rows) => {
-                    socket.send(JSON.stringify({type:"SQL_QUERY_RSP", data:rows}, null, 4));
-                  }
-                  let rows = this.sqlServer.query(data.data, cb)
+                  this.sqlServer.query(data.data).then( (rows) => {
+                    socket.send( JSON.stringify({type:"SQL_QUERY_RSP", data:rows}, null, 4) );
+                  }).catch( (err) => {
+                    socket.send( JSON.stringify({type:"SQL_QUERY_RSP", data:err}, null, 4) )
+                  });
                   break;
 
                 default:

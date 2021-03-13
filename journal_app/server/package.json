@@ -24,10 +24,11 @@
   },
   "homepage": "https://github.com/timecatband/Consensus#readme",
   "dependencies": {
+    "@timecat/GraphJournalShared": "file:../shared",
     "express": "^4.17.1",
+    "lodash": "^4.17.21",
     "socket.io": "^3.1.2",
-    "typescript": "^4.2.3",
-    "@timecat/GraphJournalShared": "file:../shared"
+    "typescript": "^4.2.3"
   },
   "devDependencies": {
     "nodemon": "^2.0.7",
