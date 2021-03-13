@@ -1,4 +1,3 @@
-import BaseORM from './BaseORM'
 import config from '../config/config.dev.json'
 const sqlite3 = require('sqlite3').verbose();
 

@@ -1,6 +1,5 @@
 import _ from 'lodash'
 import ServerAPI from './ServerAPI'
-import BaseORM from '@timecat/GraphJournalShared/external_data/BaseORM'
 import GraphModel from '@timecat/GraphJournalShared/models/GraphModel'
 import JournalNode from '@timecat/GraphJournalShared/models/JournalNode'
 import JournalEdge from '@timecat/GraphJournalShared/models/JournalEdge'
@@ -15,7 +14,7 @@ import G6 = require('@antv/g6');
 */
 
 class GraphData { // this thing should probably just extend EventEmitter
-  ServerAPI: BaseORM;
+  ServerAPI: any;
   initialized: boolean; // a bool to make sure we only try to set the ready promise once... theres probably a better way to do this
   emitter: EventEmitter; // allows react components (and anything) to subscribe to changes in the graph model
 
@@ -24,9 +23,9 @@ class GraphData { // this thing should probably just extend EventEmitter
   DisplayedGraphKey: string // the key of the model that went into the DisplayedGraph
   selectedItems: object;
 
-  constructor(ORM: BaseORM) {
+  constructor(ServerAPI: any) {
     this.graphs = []
-    this.ServerAPI = ORM;
+    this.ServerAPI = ServerAPI;
     this.initialized = false;
     this.emitter = new EventEmitter();
 

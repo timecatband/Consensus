@@ -55,14 +55,25 @@ class GraphDataManager {
   }
 
 
-  loadGraph(key: string):Promise<GraphModel> {
-    return new Promise( (resolve) => {
+  async loadGraph(key: string):Promise<GraphModel> {
+    return new Promise( async (resolve) => {
       console.log("loading graph with key", key)
+
+      /*
       let graphData = new GraphModel();
       graphData.nodes.push(new JournalNode('node0', 'Build an awesome\n graph journal'));
       graphData.nodes.push(new JournalNode('node1', 'Testing out origin \nnode from model'));
       graphData.nodes.push(new JournalNode('node2', 'Heyoo!'));
-      resolve(graphData)
+      */
+      
+      // TODO: imeplement graph_key where clause stuff
+      const nodes = await this.sql.query("select * from nodes")
+      const edges = await this.sql.query("select * from edges")
+
+      const graphKey = nodes[0].graph_key
+      const graph = GraphModel.deSerialize({nodes: nodes, edges: edges, key: graphKey})
+
+      resolve(graph)
     });
   }
 
