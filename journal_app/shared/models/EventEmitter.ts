@@ -27,8 +27,7 @@ class EventEmitter {
     }
     this.subscribers[eventName].push(callback);
 
-    // TODO: this will fail if two different subscribers try to unsub, because the index positions will have changed after the first one
-    // so we should do this part better somehow
+    // TODO: will this fail if two different subscribers try to unsub, because the index positions will have changed after the first one?
     const index = this.subscribers[eventName].length - 1
     return {
       unsubscribe() {

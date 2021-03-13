@@ -1,5 +1,3 @@
-const http = require('http')
-const config = require("@timecat/GraphJournalShared/config/config.dev.json")
 import GraphModel from "@timecat/GraphJournalShared/models/GraphModel"
 const WebSocket = require("ws")
 

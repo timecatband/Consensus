@@ -5,7 +5,7 @@ import GraphModel from '@timecat/GraphJournalShared/models/GraphModel'
 import JournalNode from '@timecat/GraphJournalShared/models/JournalNode'
 import JournalEdge from '@timecat/GraphJournalShared/models/JournalEdge'
 import EventEmitter from '@timecat/GraphJournalShared/models/EventEmitter'
-//import * as I from '@antv/g6/lib/types';
+import G6 = require('@antv/g6');
 
 /*
   GraphData is the singleton service which contains any locally loaded graphs, which may only be portions of theoretically infinite graphs of nodes
@@ -16,23 +16,17 @@ import EventEmitter from '@timecat/GraphJournalShared/models/EventEmitter'
 
 class GraphData { // this thing should probably just extend EventEmitter
   ServerAPI: BaseORM;
-  ready: Promise<void>; // a promise to let the UI know that the first data load has finished
-  readyResolver: Function; // a function to resolve the ready promise
   initialized: boolean; // a bool to make sure we only try to set the ready promise once... theres probably a better way to do this
-  renderGraph: Function; // to be set by the external graph canvas
-
   emitter: EventEmitter; // allows react components (and anything) to subscribe to changes in the graph model
-  graphs: GraphModel[]; // a collection of graphs that have been loaded or created
-  DisplayedGraph: GraphModel; // the graph which is being displayed, may be a combination of multiple other graphs
+
+  graphs: GraphModel[]; // a collection of sub-graphs that have been loaded or created
+  DisplayedGraph: G6.Graph; // the graph which is being displayed on the canvas
+  DisplayedGraphKey: string // the key of the model that went into the DisplayedGraph
   selectedItems: object;
 
   constructor(ORM: BaseORM) {
     this.graphs = []
-    this.DisplayedGraph = new GraphModel();
     this.ServerAPI = ORM;
-    this.ready = new Promise( (resolve) => {
-      this.readyResolver = resolve
-    })
     this.initialized = false;
     this.emitter = new EventEmitter();
 
@@ -65,32 +59,67 @@ class GraphData { // this thing should probably just extend EventEmitter
     this.emit("selected-items", this.serializeSelected(items))
   }
 
+
+  /*
+    This is an important method, because it sets the DisplayedGraphKey
+
+    The DisplayedGraphKey is intended to match the graph which is rendered in the canvas, so that it can be attached to the graph data
+    if we try to serialize the DisplayedGraph. If multiple other graphs are combined into one to be displayed, the new result graph
+    should have its own key so that it does not overwrite any existing graph in the database
+
+    TODO: explain the importance of DisplayedGraphKey better, and determine a better pattern for multi-player graphing and combining sub-graphs.
+  */
+  setDisplayedGraph( graph: GraphModel ) {
+    this.DisplayedGraphKey = graph.key
+    //the event lets the canvas know that it should reset the render
+    this.emit("set-displayed-graph", graph)
+  }
+
   handleServerGraphResponse(graphData: GraphModel) {
-    this.DisplayedGraph = graphData
-    if ( this.initialized == false ) {
-      // theres probably a better way to do this
-      this.readyResolver()
-      this.initialized = true;
-    }
+    const newGraph = GraphModel.deSerialize(graphData)
+    this.graphs.push(newGraph)
+    this.setDisplayedGraph(newGraph)
   }
 
   addNewNode(x, y) {
     let newNode = new JournalNode("new!", "some text", x, y)
-    this.DisplayedGraph.nodes.push(newNode)
-    console.log("addNewNode in svc", this.DisplayedGraph)
+    this.DisplayedGraph.addItem('node', newNode)
     this.emit("new-node-added", newNode)
   }
 
   addNewEdge(leftNodeId:string, rightNodeId:string) {
     let newEdge = new JournalEdge(leftNodeId, rightNodeId)
-    this.DisplayedGraph.edges.push(newEdge)
-    console.log("addNewEdge in svc", this.DisplayedGraph)
+    this.DisplayedGraph.addItem('edge', newEdge)
     this.emit("new-edge-added", newEdge)
   }
 
+  // returns a serializable object, e.g. non-circular literal object. The serverAPI will handle actual stringification
+  serializeG6graph(key, g6graph) {
+    let nodes = _.values(_.mapValues(g6graph.cfg.nodes, (node) => {
+      let n = node._cfg?.model || {}
+      return {
+        id: n.id,
+        label: n.label,
+        text: n.text,
+        x: n.x,
+        y: n.y
+      }
+    }));
+
+    let edges = _.values(_.mapValues(g6graph.cfg.edges, (edge) => {
+      let e = edge._cfg?.model || {}
+      return {
+        id: e.id,
+        source: e.source,
+        target: e.target
+      }
+    }))
+
+    return {key, nodes, edges}
+  }
+
   saveGraph() {
-    console.log("saveGraph called", this.DisplayedGraph)
-    ServerAPI.saveGraph(this.DisplayedGraph)
+    ServerAPI.saveGraph(this.serializeG6graph(this.DisplayedGraphKey, this.DisplayedGraph))
   }
 
 

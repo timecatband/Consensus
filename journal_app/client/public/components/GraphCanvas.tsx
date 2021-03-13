@@ -4,7 +4,7 @@ import * as I from '@antv/g6/lib/types';
 import GraphDataSvc from '../services/GraphData'
 import GraphModel from '@timecat/GraphJournalShared/models/GraphModel'
 
-let graph: G6.Graph;
+let graphCanvas: G6.Graph;
 let focusedNode: any = null;
 let canvasWidth:number = 100 //initial value only, resizes on first render to container width
 let canvasHeight:number = 500
@@ -53,7 +53,7 @@ const GraphCanvas = (props) => {
 
   // this use effect will only call once on load to set up the graph and window listeners
   useEffect(() => {
-    graph = new G6.Graph({
+    graphCanvas = new G6.Graph({
       container: 'graph-container',
       width: canvasWidth,
       height: canvasHeight,
@@ -111,30 +111,30 @@ const GraphCanvas = (props) => {
     })
 
     /*
-    graph.on('node:click', (evt:any) => {
+    graphCanvas.on('node:click', (evt:any) => {
       //props.setShowPanel(true)
     })
     */
 
-    graph.on('node:mouseenter', (evt) => {
+    graphCanvas.on('node:mouseenter', (evt) => {
       const { item } = evt;
-      graph.setItemState(item, 'hover', true);
+      graphCanvas.setItemState(item, 'hover', true);
     });
 
-    graph.on('node:mouseleave', (evt) => {
+    graphCanvas.on('node:mouseleave', (evt) => {
       const { item } = evt;
-      graph.setItemState(item, 'hover', false);
+      graphCanvas.setItemState(item, 'hover', false);
     });
 
-    graph.on('click', (evt:any) => {
+    graphCanvas.on('click', (evt:any) => {
       props.setShowPanel(false)
     })
 
-    graph.on('dblclick', (evt:any) => {
+    graphCanvas.on('dblclick', (evt:any) => {
       GraphDataSvc.addNewNode(evt.canvasX, evt.canvasY)
     })
 
-    graph.on('nodeselectchange', e => {
+    graphCanvas.on('nodeselectchange', e => {
       console.log("node select change", e.selectedItems)
       if (e.selectedItems.nodes.length != 0) {
         props.setShowPanel(true)
@@ -145,23 +145,14 @@ const GraphCanvas = (props) => {
       GraphDataSvc.setSelected(e.selectedItems);
     })
 
-
-    //GraphDataSvc.registerRenderFn(renderGraph)
-    GraphDataSvc.ready.then( () => {
-      renderGraph(graph, GraphDataSvc.DisplayedGraph)
-
-      GraphDataSvc.on('new-node-added', (newNode) => {
-        graph.addItem('node', newNode);
-      })
-
-      GraphDataSvc.on('new-edge-added', (newEdge) => {
-        graph.addItem('edge', newEdge);
-      })
-    });
+    GraphDataSvc.DisplayedGraph = graphCanvas;
+    GraphDataSvc.on('set-displayed-graph', () => {
+      renderGraph(graphCanvas, GraphDataSvc.graphs[0])
+    })
 
     // Handler to call on window resize
     function handleResize() {
-      graph.changeSize(canvasRef?.current?.offsetWidth, canvasHeight)
+      graphCanvas.changeSize(canvasRef?.current?.offsetWidth, canvasHeight)
     }
     window.addEventListener("resize", handleResize);
 

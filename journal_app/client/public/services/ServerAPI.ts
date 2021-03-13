@@ -28,7 +28,7 @@ class ServerAPI extends BaseORM {
   }
 
   saveGraph(graphData: any) {
-    console.log("sending SAVE_GRAPH")
+    console.log("sending SAVE_GRAPH", graphData)
     this.formatAndSend("SAVE_GRAPH", graphData);
   }
 
