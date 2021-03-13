@@ -24,6 +24,7 @@ run-server:
 	docker run -p 3000:3000 timecat/graph-socket-server
 
 
-deploy-server-image:
+deploy: cook-server-image
 	docker tag timecat/graph-socket-server:latest gcr.io/consensus-307005/graph-server
 	docker push gcr.io/consensus-307005/graph-server
+	gcloud compute instances update-container graph-socket-server
