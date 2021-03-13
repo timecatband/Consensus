@@ -11,22 +11,20 @@ let canvasHeight:number = 500
 
 function getDefaultNodeProperties() {
   return {
-    shape: 'node',
-    size: 150,
+    shape: 'ellipse',
+    size: [150,80],
     labelCfg: {
       positions: 'center',
       style: {
         fill: '#000000A6',
-        fontSize: 12
+        fontSize: 14,
+        cursor: 'pointer'
       }
     },
     style: {
       stroke: '#777777',
-      width: 150,
-      fill: '#CCCCDD',
-      hover: {
-        fill: '#FFCCCC'
-      }
+      fill: '#C5EEEE',
+      //radius: 3
     }
   };
 }
@@ -92,7 +90,16 @@ const GraphCanvas = (props) => {
       nodeStateStyles: {
         hover: {
           stroke: 'black',
-          lineWidth: 3
+          lineWidth: 1,
+          fill: '#fff8e6',
+          cursor: 'pointer'
+        },
+        selected: {
+          //fill: '#A3DDDD',
+          fill: '#fff8e6',
+          stroke: '#298A8B',
+          lineWidth: 1,
+          shadowColor: '#A3DDDD'
         }
       },
       edgeStateStyles: {
@@ -103,9 +110,21 @@ const GraphCanvas = (props) => {
       }
     })
 
+    /*
     graph.on('node:click', (evt:any) => {
-      props.setShowPanel(true)
+      //props.setShowPanel(true)
     })
+    */
+
+    graph.on('node:mouseenter', (evt) => {
+      const { item } = evt;
+      graph.setItemState(item, 'hover', true);
+    });
+
+    graph.on('node:mouseleave', (evt) => {
+      const { item } = evt;
+      graph.setItemState(item, 'hover', false);
+    });
 
     graph.on('click', (evt:any) => {
       props.setShowPanel(false)
@@ -116,6 +135,13 @@ const GraphCanvas = (props) => {
     })
 
     graph.on('nodeselectchange', e => {
+      console.log("node select change", e.selectedItems)
+      if (e.selectedItems.nodes.length != 0) {
+        props.setShowPanel(true)
+      } else {
+        props.setShowPanel(false)
+      }
+
       GraphDataSvc.setSelected(e.selectedItems);
     })
 

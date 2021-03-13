@@ -8,13 +8,11 @@ function GraphSidePanel(props: any): any {
   const [numItems, setNumItems] = useState(0)
 
   function onAddEdgeClick(source:string, target:string) {
-    console.log("got add edge click")
     GraphDataSvc.addNewEdge(source, target)
   }
 
   useEffect(() => {
     GraphDataSvc.on('selected-items', setSelectedItems)
-    console.log("sidePanel sel", selectedItems)
     setNumItems(_.keys(selectedItems).length)
   },[selectedItems])
 
