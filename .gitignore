@@ -2,3 +2,4 @@
 **/tscompiled/
 **/dist/
 config.production.json
+journal.db
