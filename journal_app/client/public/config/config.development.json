@@ -1,0 +1,5 @@
+{
+    "graphServerHost": "localhost",
+    "graphServerPort": 3000,
+    "graphServerProtocol": "ws"
+}
