@@ -1,6 +1,7 @@
 /*
   Singleton service for the websocket connection
 */
+import config from '../config/config';
 
 class SocketClient {
   socket: Promise<any>;
@@ -11,7 +12,7 @@ class SocketClient {
 
     function connect(thisObj) {
       return new Promise( resolve => {
-        const socket = new WebSocket("ws://localhost:3000");
+        const socket = new WebSocket(`${config.graphServerProtocol}://${config.graphServerHost}:${config.graphServerPort}`);
         socket.onopen = () => {
           console.log("Socket connection opened", thisObj.responseHandlers)
           socket.onmessage = thisObj.messageHandler.bind(thisObj);

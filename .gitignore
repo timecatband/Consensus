@@ -1,3 +1,4 @@
 **/node_modules/
 **/tscompiled/
 **/dist/
+config.production.json

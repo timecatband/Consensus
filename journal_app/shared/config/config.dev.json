@@ -1,5 +1,3 @@
 {
-  "serverAddress": "localhost:3000",
-  "socketAllowedOrigin": "http://localhost:8080",
   "sqliteFilepath": "../../journal.db"
 }
