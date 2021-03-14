@@ -20,7 +20,7 @@ class SocketListener {
 
           function formatAndSend(type: string, data?: any) {
             let payload = JSON.stringify({type:type, data:data})
-            console.log("sending!", payload)
+            console.log("sending!", type)
             socket.send(payload);
           }
 
