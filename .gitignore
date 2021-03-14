@@ -1,5 +1,8 @@
 **/node_modules/
 **/tscompiled/
 **/dist/
-config.production.json
+
+# todo: maybe it's ok to expose this puppy
+journal_app/client/public/config/config.production.json
+
 journal.db
