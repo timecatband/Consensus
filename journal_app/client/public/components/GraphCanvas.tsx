@@ -46,17 +46,20 @@ const GraphCanvas = (props) => {
       defaultNode: getDefaultNodeProperties(),
       defaultEdge: getDefaultEdgeProperties(),
       layout: {
-
-        // https://g6.antv.vision/en/docs/api/graphLayout/dagre
-        type:"concentric",
-        preventOverlap: true,
-        nodeStrength: (d:any) => {
-          if (d.id === 'node0') {
-            return 1000;
-          }
-          return 300;
+        type: 'gForce',
+        center: [200, 200], // The center of the graph by default
+        linkDistance: 1,
+        nodeStrength: 1000,
+        edgeStrength: 200,
+        nodeSize: 30,
+        onTick: () => {
+          console.log('ticking');
         },
-
+        onLayoutEnd: () => {
+          console.log('force layout done');
+        },
+        workerEnabled: true, // Whether to activate web-worker
+        gpuEnabled: true     // Whether to enable the GPU parallel computing, supported by G6 4.0
       },
       nodeStateStyles: {
         hover: {
