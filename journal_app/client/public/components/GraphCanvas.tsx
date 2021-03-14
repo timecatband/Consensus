@@ -93,13 +93,21 @@ const GraphCanvas = (props) => {
     function getDefaultNodeProperties() {
       return {
         shape: 'ellipse',
-        size: [150,80],
+        size: [200,100],
         labelCfg: {
           positions: 'center',
           style: {
             fill: '#000000A6',
             fontSize: 14,
-            cursor: 'pointer'
+            cursor: 'pointer',
+            background: {
+                //fill: '#C5EEEE',
+                radius: 10,
+                cursor: 'pointer',
+                //stroke: '#298A8B',
+                //lineWidth?: number,
+                //padding: 5
+            }
           }
         },
         style: {
@@ -107,7 +115,7 @@ const GraphCanvas = (props) => {
           fill: '#C5EEEE',
           shadowColor: '#FFF',
           shadowBlur: 0,
-          //radius: 3
+          radius: 40
         }
       };
     }

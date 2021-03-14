@@ -2,9 +2,28 @@ import _ from 'lodash'
 import React, { useEffect, useState } from 'react'
 import GraphDataSvc from '../services/GraphData'
 
-console.log("initialize stuff here?")
+function wrapText(text: string) {
+  let words = text.replace('\n','').split(' ');
+  let wrapped = '';
+  let line = ''
+
+  for(let n = 0; n < words.length; n++) {
+    line = line + words[n].replace(' ','');
+    if (line.length > 20) {
+      wrapped = wrapped + line + '\n'
+      line = ''
+    }
+    else {line = line + ' '}
+  }
+
+  wrapped = wrapped + line
+  return wrapped.trim();
+}
 
 const updateModel = _.debounce( (nodeId:string, update: any) => {
+  if (update.label != undefined) {
+    update.label = wrapText(update.label)
+  }
   GraphDataSvc.updateNode(nodeId, update)
 },500)
 
@@ -19,9 +38,13 @@ function GraphSidePanel(props: any): any {
     GraphDataSvc.addNewEdge(source, target)
   }
 
+  function setLabelRemoveWrapping(label: string) {
+    setLabel(label.replace(/\n/g,' '))
+  }
+
   function updateItem(update:any) {
     if (update.text != undefined) { setText(update.text) }
-    if (update.label != undefined) { setLabel(update.label) }
+    if (update.label != undefined) { setLabelRemoveWrapping(update.label) }
     updateModel(selectedItems['0'].id, update)
   };
 
@@ -31,7 +54,7 @@ function GraphSidePanel(props: any): any {
         setSelectedItems(selected);
         setNumItems(_.keys(selected)?.length)
         setText(selected['0'].text)
-        setLabel(selected['0'].label)
+        setLabelRemoveWrapping(selected['0'].label)
       }
     })
   },[])
