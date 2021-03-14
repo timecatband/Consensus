@@ -33,7 +33,6 @@ class SocketClient {
     // TODO: this only allows one registered handler per type, extend to lists
     return this.socket.then( () => {
       this.responseHandlers[key] = handler
-      console.log('response handler registered', this.responseHandlers)
     })
   }
 

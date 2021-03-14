@@ -45,7 +45,7 @@ class SocketListener {
                   break;
 
                 case "SAVE_GRAPH":
-                  this.graphData.overwriteGraph(data.data).then(() => {
+                  this.graphData.saveSubgraph(data.data).then(() => {
                     formatAndSend("SAVE_GRAPH_RSP", "success")
                   });
                   break;

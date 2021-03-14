@@ -29,9 +29,8 @@ class GraphDataManager {
   }
 
 
-  async overwriteGraph(graphData: any):Promise<void> {
+  async saveSubgraph(graphData: any):Promise<void> {
     return new Promise( async (resolve) => {
-      console.log("gonna save the graph now!", graphData)
 
       let nodeQuery = "insert or replace into nodes VALUES "
       _.each( graphData.nodes, (val, key) => {
@@ -48,6 +47,7 @@ class GraphDataManager {
         edgeQuery = edgeQuery + `('${graphData.key}','${val.id}','${val.source}','${val.target}'),`
       })
       edgeQuery = edgeQuery.slice(0,-1) // remove last trailing ,
+
       await this.sql.query(edgeQuery)
 
       resolve()
@@ -59,13 +59,6 @@ class GraphDataManager {
     return new Promise( async (resolve) => {
       console.log("loading graph with key", key)
 
-      /*
-      let graphData = new GraphModel();
-      graphData.nodes.push(new JournalNode('node0', 'Build an awesome\n graph journal'));
-      graphData.nodes.push(new JournalNode('node1', 'Testing out origin \nnode from model'));
-      graphData.nodes.push(new JournalNode('node2', 'Heyoo!'));
-      */
-      
       // TODO: imeplement graph_key where clause stuff
       const nodes = await this.sql.query("select * from nodes")
       const edges = await this.sql.query("select * from edges")

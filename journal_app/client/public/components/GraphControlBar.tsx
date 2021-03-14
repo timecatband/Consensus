@@ -5,22 +5,19 @@ import GraphDataSvc from '../services/GraphData'
 function GraphControlBar(props: any): any {
 
   function onAddButtonClick() {
-    console.log("got add button click")
     console.log("props", props)
   }
 
   function onSaveClick() {
-    console.log("got a click to save graph")
     GraphDataSvc.saveGraph()
   }
 
   function onPingServerClick() {
-    console.log("got a click to ping the server")
     ServerAPI.ping("test message")
   }
 
   function editFilters() {
-    console.log("got a click to editFilters")
+    console.log("got a click to editFilters, not implemeneted")
   }
 
 

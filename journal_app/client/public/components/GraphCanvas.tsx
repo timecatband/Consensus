@@ -9,36 +9,6 @@ let focusedNode: any = null;
 let canvasWidth:number = 100 //initial value only, resizes on first render to container width
 let canvasHeight:number = 500
 
-function getDefaultNodeProperties() {
-  return {
-    shape: 'ellipse',
-    size: [150,80],
-    labelCfg: {
-      positions: 'center',
-      style: {
-        fill: '#000000A6',
-        fontSize: 14,
-        cursor: 'pointer'
-      }
-    },
-    style: {
-      stroke: '#777777',
-      fill: '#C5EEEE',
-      //radius: 3
-    }
-  };
-}
-
-function getDefaultEdgeProperties() {
-  return {
-    type: 'line',
-    style: {
-      stroke: "#000000",
-      lineWidth:1
-    }
-  };
-}
-
 
 /////////////////////////////////////////////////////////////////
 // The React Element -------------------------------------------
@@ -76,6 +46,7 @@ const GraphCanvas = (props) => {
       defaultNode: getDefaultNodeProperties(),
       defaultEdge: getDefaultEdgeProperties(),
       layout: {
+
         // https://g6.antv.vision/en/docs/api/graphLayout/dagre
         type:"concentric",
         preventOverlap: true,
@@ -89,26 +60,63 @@ const GraphCanvas = (props) => {
       },
       nodeStateStyles: {
         hover: {
-          stroke: 'black',
+          //fill: '#fff8e6',
+          fill: '#C6FAFA',
+          stroke: '#67B4B4',
           lineWidth: 1,
-          fill: '#fff8e6',
           cursor: 'pointer'
         },
         selected: {
-          //fill: '#A3DDDD',
-          fill: '#fff8e6',
+          fill: '#C6FAFA',
+          //fill: '#fff8e6',
+          //stroke: '#298A8B',
           stroke: '#298A8B',
           lineWidth: 1,
-          shadowColor: '#A3DDDD'
+          shadowColor: '#298A8B',
+          shadowBlur: 7
         }
       },
       edgeStateStyles: {
         hover: {
-          stroke: 'blue',
-          lineWidth: 3
-        }
+          lineWidth: 3,
+          stroke: '#67B4B4',
+          shadowColor: '#C6FAFA',
+          shadowBlur: 11,
+          cursor: 'pointer'
+        },
       }
     })
+
+
+    function getDefaultNodeProperties() {
+      return {
+        shape: 'ellipse',
+        size: [150,80],
+        labelCfg: {
+          positions: 'center',
+          style: {
+            fill: '#000000A6',
+            fontSize: 14,
+            cursor: 'pointer'
+          }
+        },
+        style: {
+          stroke: '#777777',
+          fill: '#C5EEEE',
+          //radius: 3
+        }
+      };
+    }
+
+    function getDefaultEdgeProperties() {
+      return {
+        type: 'line',
+        style: {
+          stroke: '#298A8B',
+          lineWidth:3
+        }
+      };
+    }
 
     /*
     graphCanvas.on('node:click', (evt:any) => {
@@ -126,16 +134,42 @@ const GraphCanvas = (props) => {
       graphCanvas.setItemState(item, 'hover', false);
     });
 
-    graphCanvas.on('click', (evt:any) => {
-      props.setShowPanel(false)
-    })
+    graphCanvas.on('edge:mouseenter', (evt) => {
+      const { item } = evt;
+      graphCanvas.setItemState(item, 'hover', true);
+    });
+
+    graphCanvas.on('edge:mouseleave', (evt) => {
+      const { item } = evt;
+      graphCanvas.setItemState(item, 'hover', false);
+    });
 
     graphCanvas.on('dblclick', (evt:any) => {
-      GraphDataSvc.addNewNode(evt.canvasX, evt.canvasY)
+      if (evt.target.cfg.type == undefined) {
+        GraphDataSvc.addNewNode(evt.canvasX, evt.canvasY)
+      }
+    })
+
+    graphCanvas.on('click', (evt:any) => {
+
+      // if an edge is clicked, set its connected nodes to selected
+      if (evt.target.cfg.type == 'path') {
+        const { source } = evt.item._cfg;
+        const { target } = evt.item._cfg;
+        graphCanvas.setItemState(source, 'selected', true);
+        graphCanvas.setItemState(target, 'selected', true);
+        const selectedNodes = graphCanvas.findAllByState('node', 'selected');
+        //let selectedCombos = graph.findAllByState('combo', this.selectedState);
+
+        graphCanvas.emit('nodeselectchange', {
+          selectedItems: {
+            nodes: selectedNodes,
+            //combos: selectedCombos
+        }});
+      }
     })
 
     graphCanvas.on('nodeselectchange', e => {
-      console.log("node select change", e.selectedItems)
       if (e.selectedItems.nodes.length != 0) {
         props.setShowPanel(true)
       } else {
@@ -144,6 +178,7 @@ const GraphCanvas = (props) => {
 
       GraphDataSvc.setSelected(e.selectedItems);
     })
+
 
     GraphDataSvc.DisplayedGraph = graphCanvas;
     GraphDataSvc.on('set-displayed-graph', () => {
