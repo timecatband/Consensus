@@ -21,13 +21,20 @@
     padding: 0 5px;
 
     .panelHeader {
-      font-size: 1.2em;
-      font-weight: bold;
       margin: 10px 0;
+      input {
+        font-size: 1.1em;
+        font-weight: bold;
+        width: 100%;
+      }
     }
 
     .panelActions {
       margin-top: 15px;
+    }
+
+    .itemText{
+      width:100%;
     }
 
     .codeBlock {

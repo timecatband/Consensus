@@ -81,6 +81,14 @@ class GraphData { // this thing should probably just extend EventEmitter
     this.setDisplayedGraph(newGraph)
   }
 
+  /*
+    any keys in the update object should replace the same keys on the given node
+  */
+  updateNode(nodeId:string, update: any) {
+    this.DisplayedGraph.update(nodeId, update)
+    //this.DisplayedGraph.refreshItem(nodeId)
+  }
+
   addNewNode(x, y) {
     let newNode = new JournalNode("new!", "some text", x, y)
     this.DisplayedGraph.addItem('node', newNode)
