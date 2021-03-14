@@ -1,19 +1,33 @@
-FROM node:14
+FROM node:14-alpine
+
+# where the database file lives
+RUN mkdir -p /usr/src/data
 
 WORKDIR /usr/src/journal_app
 
-# this copies a bit more than necessary into the container (hence the "rm -fr"s below)
-# the alternative is a bit ugly though
-COPY . .
+ADD ./shared/config ./shared/config
+ADD ./shared/external_data ./shared/external_data
+ADD ./shared/models ./shared/models
+COPY ./shared/package.json ./shared/
+COPY ./shared/package-lock.json ./shared/
+COPY ./shared/tsconfig.json ./shared/
+
+ADD ./server/src ./server/src
+COPY ./server/index.ts ./server/index.ts
+COPY ./server/package.json ./server/
+COPY ./server/package-lock.json ./server/
+COPY ./server/tsconfig.json ./server/
+
+COPY ./tsconfig.base.json ./
 
 WORKDIR /usr/src/journal_app/shared
-RUN rm -fr node_modules
 RUN npm install
 
 WORKDIR /usr/src/journal_app/server
-RUN rm -fr node_modules
 RUN npm install
 
 EXPOSE 3000
+
+ENV NODE_ENV production
 
 CMD [ "npm", "start" ]

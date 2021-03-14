@@ -1,4 +1,4 @@
-import config from '../config/config.dev.json'
+import config from '../config/config';
 const sqlite3 = require('sqlite3').verbose();
 
 /*
