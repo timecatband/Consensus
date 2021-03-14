@@ -1,5 +1,4 @@
 const app = require('express')();
-const config = require("@timecat/GraphJournalShared/config/config.dev.json")
 import SocketListener from './src/SocketListener'
 import GraphDataManager from './src/GraphDataManager'
 import { SqliteClient } from "@timecat/GraphJournalShared/external_data/SqliteClient"
