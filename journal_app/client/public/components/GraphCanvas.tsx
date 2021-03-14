@@ -60,7 +60,6 @@ const GraphCanvas = (props) => {
       },
       nodeStateStyles: {
         hover: {
-          //fill: '#fff8e6',
           fill: '#C6FAFA',
           stroke: '#67B4B4',
           lineWidth: 1,
@@ -68,12 +67,10 @@ const GraphCanvas = (props) => {
         },
         selected: {
           fill: '#C6FAFA',
-          //fill: '#fff8e6',
-          //stroke: '#298A8B',
           stroke: '#298A8B',
           lineWidth: 1,
-          shadowColor: '#298A8B',
-          shadowBlur: 7
+          shadowColor: '#fff87a',
+          shadowBlur: 20
         }
       },
       edgeStateStyles: {

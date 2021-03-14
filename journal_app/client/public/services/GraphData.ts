@@ -5,6 +5,7 @@ import JournalNode from '@timecat/GraphJournalShared/models/JournalNode'
 import JournalEdge from '@timecat/GraphJournalShared/models/JournalEdge'
 import EventEmitter from '@timecat/GraphJournalShared/models/EventEmitter'
 import G6 = require('@antv/g6');
+import Edge from '@antv/g6/lib/item/edge.d.ts';
 
 /*
   GraphData is the singleton service which contains any locally loaded graphs, which may only be portions of theoretically infinite graphs of nodes
@@ -86,10 +87,17 @@ class GraphData { // this thing should probably just extend EventEmitter
     this.emit("new-node-added", newNode)
   }
 
-  addNewEdge(leftNodeId:string, rightNodeId:string) {
-    let newEdge = new JournalEdge(leftNodeId, rightNodeId)
-    this.DisplayedGraph.addItem('edge', newEdge)
-    this.emit("new-edge-added", newEdge)
+  addNewEdge(source:string, target:string) {
+    // we don't want to add duplicate edges, they would clutter up the db, so check that before adding
+    let alreadyExistingEdge = this.DisplayedGraph.find('edge', (edge: Edge, key) => {
+      return edge.getSource().getID() == source && edge.getTarget().getID() == target
+      return false
+    })
+    if (alreadyExistingEdge === undefined) {
+      let newEdge = new JournalEdge(source, target)
+      this.DisplayedGraph.addItem('edge', newEdge)
+      this.emit("new-edge-added", newEdge)
+    }
   }
 
   // returns a serializable object, e.g. non-circular literal object. The serverAPI will handle actual stringification

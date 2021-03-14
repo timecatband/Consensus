@@ -7,7 +7,7 @@ function GraphSidePanel(props: any): any {
   const [selectedItems, setSelectedItems] = useState({test:"test"})
   const [numItems, setNumItems] = useState(0)
 
-  function onAddEdgeClick(source:string, target:string) {
+  function onAddEdgeClick(source:any, target:any) {
     GraphDataSvc.addNewEdge(source, target)
   }
 

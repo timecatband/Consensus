@@ -68,7 +68,8 @@ module.exports = {
   plugins: [
     new webpack.optimize.AggressiveMergingPlugin(),
     new HTMLPlugin({
-      template: './public/index.html'
+      template: './public/index.html',
+      favicon: './public/static/handshake_favicon.png'
     })
   ],
   devtool: 'cheap-module-eval-source-map',
