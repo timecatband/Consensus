@@ -86,7 +86,6 @@ class GraphData { // this thing should probably just extend EventEmitter
   */
   updateNode(nodeId:string, update: any) {
     this.DisplayedGraph.update(nodeId, update)
-    //this.DisplayedGraph.refreshItem(nodeId)
   }
 
   addNewNode(x, y) {
