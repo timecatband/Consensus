@@ -1,7 +1,4 @@
-FROM node:14-alpine
-
-# where the database file lives
-RUN mkdir -p /usr/src/data
+FROM node:14-alpine AS BUILD_IMAGE
 
 WORKDIR /usr/src/journal_app
 
@@ -21,10 +18,22 @@ COPY ./server/tsconfig.json ./server/
 COPY ./tsconfig.base.json ./
 
 WORKDIR /usr/src/journal_app/shared
-RUN npm install
+RUN npm ci
 
 WORKDIR /usr/src/journal_app/server
-RUN npm install
+RUN npm ci
+
+# remove dev dependencies
+RUN npm prune --production
+
+FROM node:14-alpine
+
+WORKDIR /usr/src/journal_app/server
+
+COPY --from=BUILD_IMAGE /usr/src/journal_app/ /usr/src/journal_app
+
+# where the database file lives
+RUN mkdir -p /usr/src/data
 
 EXPOSE 3000
 
