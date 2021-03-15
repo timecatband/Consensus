@@ -24,7 +24,7 @@ const updateModel = _.debounce( (nodeId:string, update: any) => {
   if (update.label != undefined) {
     update.label = wrapText(update.label)
   }
-  GraphDataSvc.updateNode(nodeId, update)
+  GraphDataSvc.updateAndSaveNode(nodeId, update)
 },500)
 
 function GraphSidePanel(props: any): any {

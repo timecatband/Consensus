@@ -36,6 +36,8 @@ class GraphData { // this thing should probably just extend EventEmitter
       this.ServerAPI.getGraph()
     });
 
+    this.ServerAPI.on('PEER_SAVED_GRAPH', this.handlePeerUpdate.bind(this))
+
   }
 
   //shortcut to the emitter
@@ -76,23 +78,52 @@ class GraphData { // this thing should probably just extend EventEmitter
     this.emit("set-displayed-graph", graph)
   }
 
+  // The initial graph load response
   handleServerGraphResponse(graphData: GraphModel) {
     const newGraph = GraphModel.deSerialize(graphData)
     this.graphs.push(newGraph)
     this.setDisplayedGraph(newGraph)
   }
 
+  // when the socket informs us that a peer has changed part of the graph
+  //TODO: we will want to only listen to peer changes for graph_key's that we are both looking at
+  handlePeerUpdate(data: any) {
+
+    data.nodes.forEach( (node) => {
+      let existingNode = this.DisplayedGraph.findById(node.id)
+      if (existingNode != undefined) {
+        this.DisplayedGraph.update(node.id, node)
+      } else {
+        this.DisplayedGraph.addItem('node', node)
+        this.emit("new-node-added", node)
+      }
+    })
+
+    data.edges.forEach( (edge) => {
+      let existingEdge = this.DisplayedGraph.findById(edge.id)
+      if (existingEdge != undefined) {
+        this.DisplayedGraph.update(edge.id, edge)
+      } else {
+        this.DisplayedGraph.addItem('edge', edge)
+        this.emit("new-edge-added", edge)
+      }
+    })
+
+  }
+
   /*
     any keys in the update object should replace the same keys on the given node
+    this method will also call to save
   */
-  updateNode(nodeId:string, update: any) {
+  updateAndSaveNode(nodeId:string, update: any) {
     this.DisplayedGraph.update(nodeId, update)
     this.saveNodes([this.DisplayedGraph.findById(nodeId)])
   }
 
   addNewNode(x, y) {
-    let newNode = new JournalNode("new!", "some text", x, y)
+    let newNode = new JournalNode("Be kind, free minds", "", x, y)
     this.DisplayedGraph.addItem('node', newNode)
+    this.saveNodes([this.DisplayedGraph.findById(newNode.id)])
     this.emit("new-node-added", newNode)
   }
 
