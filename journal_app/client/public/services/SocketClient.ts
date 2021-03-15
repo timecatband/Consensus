@@ -2,19 +2,19 @@
   Singleton service for the websocket connection
 */
 import config from '../config/config';
+import EventEmitter from '@timecat/GraphJournalShared/models/EventEmitter'
 
-class SocketClient {
+class SocketClient extends EventEmitter {
   socket: Promise<any>;
-  responseHandlers: object;
 
   constructor() {
-    this.responseHandlers = {};
+    super()
 
     function connect(thisObj) {
       return new Promise( resolve => {
         const socket = new WebSocket(`${config.graphServerProtocol}://${config.graphServerHost}:${config.graphServerPort}`);
         socket.onopen = () => {
-          console.log("Socket connection opened", thisObj.responseHandlers)
+          console.log("Socket connection opened")
           socket.onmessage = thisObj.messageHandler.bind(thisObj);
           resolve(socket)
         };
@@ -29,18 +29,11 @@ class SocketClient {
     this.socket = connect(this)
   }
 
-  registerResponseHandler(key: string, handler: Function) {
-    // TODO: this only allows one registered handler per type, extend to lists
-    return this.socket.then( () => {
-      this.responseHandlers[key] = handler
-    })
-  }
-
   messageHandler(message: any) {
     let parsed = JSON.parse(message.data);
     console.log("Received socket message:", parsed.type, parsed.data);
-    if ( parsed.type && this.responseHandlers && this.responseHandlers[parsed.type] ) {
-      this.responseHandlers[parsed.type](parsed.data)
+    if ( parsed.type ) {
+      this.emit(parsed.type, parsed.data)
     }
   }
 

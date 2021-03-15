@@ -22,7 +22,9 @@ function SqlClientInterface(props: any): any {
 
     if (once == false) {
       once = true;
-      ServerAPI.registerResponseHandler('SQL_QUERY_RSP', handleResponse);
+      ServerAPI.ready.then( () => {
+        ServerAPI.on('SQL_QUERY_RSP', handleResponse);
+      });
     }
 
   }, []); // Empty array ensures that effect is only run on mount

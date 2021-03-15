@@ -30,7 +30,14 @@
     }
 
     .panelActions {
-      margin-top: 15px;
+      margin-top: 20px;
+
+      .deleteBtn:hover {
+        background: $danger;
+      }
+      .confirmDelBtn {
+        margin-left: 5px;
+      }
     }
 
     .itemText{
