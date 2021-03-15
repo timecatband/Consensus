@@ -29,7 +29,6 @@ function GraphControlBar(props: any): any {
         <span className="muteText instructionLabel">Dbl-click to add. Click to select, Shift+click for multi</span>
       </div>
       <div className="rightBar">
-        <span className="muteText confirmSave">Saved!</span>
         <button onClick={onSaveClick}>Save graph</button>
         <button onClick={onPingServerClick}>Ping server</button>
         <button onClick={editFilters}>Filters</button>
