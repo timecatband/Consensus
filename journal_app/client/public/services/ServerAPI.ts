@@ -42,6 +42,14 @@ class ServerAPI {
     this.formatAndSend("UPSERT_NODE", data);
   }
 
+  deleteNodes( nodeIds: string[] ) {
+    this.formatAndSend("DELETE_ITEMS", {nodes: nodeIds});
+  }
+
+  deleteEdges( edgeIds: string[] ) {
+    this.formatAndSend("DELETE_ITEMS", {edges: edgeIds});
+  }
+
   querySql(query:string) {
     this.formatAndSend("QUERY_SQL", query);
   }

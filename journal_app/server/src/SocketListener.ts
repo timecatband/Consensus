@@ -80,6 +80,13 @@ class SocketListener {
             });
             break;
 
+          case "DELETE_ITEMS":
+            this.graphData.deleteItems(data.data).then(() => {
+              this.formatAndSend(socket, "DELETE_ITEMS_RSP", "success")
+              this.informOtherListeners(socket.clientId, "PEER_DELETED_ITEMS", data.data)
+            });
+            break;
+
           case "QUERY_SQL":
             this.sqlServer.query(data.data).then( (rows) => {
               socket.send( JSON.stringify({type:"SQL_QUERY_RSP", data:rows}, null, 4) );

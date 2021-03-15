@@ -59,6 +59,41 @@ class GraphDataManager {
   }
 
 
+  async deleteItems(graphData: any):Promise<void> {
+    return new Promise( async (resolve) => {
+
+      if (graphData.nodes?.length > 0) {
+        let whereList = ''
+        _.each( graphData.nodes, (val, key) => {
+          // TODO parameters need to be escaped to avoid sql injection
+          whereList = whereList + `'${val}',`
+        })
+        whereList = whereList.slice(0,-1) // remove last trailing comma ,
+
+        let nodeQuery = `delete from nodes where id in (${whereList})`
+        let nodeEdgeQuery = `delete from edges where source in (${whereList}) or target in (${whereList})`
+
+        await this.sql.query(nodeQuery)
+        await this.sql.query(nodeEdgeQuery)
+      }
+
+      if (graphData.edges?.length > 0) {
+        let edgeQuery = "delete from edges where id in ("
+        _.each( graphData.edges, (val, key) => {
+          // TODO parameters need to be escaped to avoid sql injection
+          edgeQuery = edgeQuery + `'${val}',`
+        })
+        edgeQuery = edgeQuery.slice(0,-1) // remove last trailing comma ,
+        edgeQuery = edgeQuery + ')'
+
+        await this.sql.query(edgeQuery)
+      }
+
+      resolve()
+    })
+  }
+
+
   async loadGraph(key: string):Promise<GraphModel> {
     return new Promise( async (resolve) => {
       console.log("loading graph with key", key)

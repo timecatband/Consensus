@@ -37,6 +37,7 @@ class GraphData { // this thing should probably just extend EventEmitter
     });
 
     this.ServerAPI.on('PEER_SAVED_GRAPH', this.handlePeerUpdate.bind(this))
+    this.ServerAPI.on('PEER_DELETED_ITEMS', this.handlePeerDelete.bind(this))
 
   }
 
@@ -111,6 +112,32 @@ class GraphData { // this thing should probably just extend EventEmitter
 
   }
 
+
+
+  // when the socket informs us that a peer has changed part of the graph
+  //TODO: we will want to only listen to peer changes for graph_key's that we are both looking at
+  handlePeerDelete(data: any) {
+    if (data.nodes?.length > 0) {
+      data.nodes.forEach( (i) => {
+        this.DisplayedGraph.removeItem(i);
+      })
+    }
+    if (data.edges?.length > 0) {
+      data.edges.forEach( (i) => {
+        this.DisplayedGraph.removeItem(i);
+      })
+    }
+  }
+
+
+  /*
+    Wrapper for the g6 method find, type can be 'node', 'edge', or 'combo'
+    https://g6.antv.vision/en/docs/api/graphFunc/find#graphfindtype-fn
+  */
+  findItem(type:string, fn: any) {
+    return this.DisplayedGraph.find('edge', fn);
+  }
+
   /*
     any keys in the update object should replace the same keys on the given node
     this method will also call to save
@@ -176,14 +203,6 @@ class GraphData { // this thing should probably just extend EventEmitter
     return {key, nodes, edges}
   }
 
-  /*
-    called when the user manually click the button to save the whole graph
-    TOOD: Saving the entire graph should be made obsolete by individual auto-saving after each event type, however
-      this method will still be useful because its a "save subgraph" method, it can save any collection of nodes and edges
-  */
-  saveGraph() {
-    ServerAPI.saveGraph(this.serializeG6graph(this.DisplayedGraphKey, this.DisplayedGraph))
-  }
 
   /*
     Takes an array of nodes to be saved
@@ -209,6 +228,34 @@ class GraphData { // this thing should probably just extend EventEmitter
     ServerAPI.saveGraph( graphObj )
   }
 
+
+  /*
+    called when the user manually click the button to save the whole graph
+    TOOD: Saving the entire graph should be made obsolete by individual auto-saving after each event type, however
+      this method will still be useful because its a "save subgraph" method, it can save any collection of nodes and edges
+  */
+  saveGraph() {
+    ServerAPI.saveGraph(this.serializeG6graph(this.DisplayedGraphKey, this.DisplayedGraph))
+  }
+
+
+  /*
+    Delete items from the view and the database, can delete nodes or edges, but only one type at a time
+    Should pass an array of item IDs, its OK to pass an array with a single id if you want to delete one.
+  */
+  deleteItemsByIds(type: string, itemIds: string[]) {
+    itemIds.forEach( (i) => {
+      this.DisplayedGraph.removeItem(i);
+    })
+
+    if (type == 'node') {
+      ServerAPI.deleteNodes(itemIds)
+    } else if (type == 'edge') {
+      ServerAPI.deleteEdges(itemIds)
+    }
+  }
+
+// end of class
 }
 
 const GraphDataSvc = new GraphData(ServerAPI);
