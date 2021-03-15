@@ -22,7 +22,7 @@ class GraphData { // this thing should probably just extend EventEmitter
   graphs: GraphModel[]; // a collection of sub-graphs that have been loaded or created
   DisplayedGraph: G6.Graph; // the graph which is being displayed on the canvas
   DisplayedGraphKey: string // the key of the model that went into the DisplayedGraph
-  selectedItems: object;
+  selectedItems: any;
 
   constructor(ServerAPI: any) {
     this.graphs = []
@@ -86,6 +86,7 @@ class GraphData { // this thing should probably just extend EventEmitter
   */
   updateNode(nodeId:string, update: any) {
     this.DisplayedGraph.update(nodeId, update)
+    this.saveNodes([this.DisplayedGraph.findById(nodeId)])
   }
 
   addNewNode(x, y) {
@@ -104,38 +105,77 @@ class GraphData { // this thing should probably just extend EventEmitter
       let newEdge = new JournalEdge(source, target)
       this.DisplayedGraph.addItem('edge', newEdge)
       this.emit("new-edge-added", newEdge)
+      this.saveEdges([this.DisplayedGraph.findById(newEdge.id)])
+    }
+  }
+
+  // returns a serializable object, e.g. non-circular literal object. The serverAPI will handle actual stringification
+  serializeNode(node:any) {
+    let n = node._cfg?.model || {}
+    return {
+      id: n.id,
+      label: n.label,
+      text: n.text,
+      x: n.x,
+      y: n.y
+    }
+  }
+
+  // returns a serializable object, e.g. non-circular literal object. The serverAPI will handle actual stringification
+  serializeEdge(edge:any) {
+    let e = edge._cfg?.model || {}
+    return {
+      id: e.id,
+      source: e.source,
+      target: e.target
     }
   }
 
   // returns a serializable object, e.g. non-circular literal object. The serverAPI will handle actual stringification
   serializeG6graph(key, g6graph) {
     let nodes = _.values(_.mapValues(g6graph.cfg.nodes, (node) => {
-      let n = node._cfg?.model || {}
-      return {
-        id: n.id,
-        label: n.label,
-        text: n.text,
-        x: n.x,
-        y: n.y
-      }
+      return this.serializeNode(node)
     }));
 
     let edges = _.values(_.mapValues(g6graph.cfg.edges, (edge) => {
-      let e = edge._cfg?.model || {}
-      return {
-        id: e.id,
-        source: e.source,
-        target: e.target
-      }
+      return this.serializeEdge(edge)
     }))
 
     return {key, nodes, edges}
   }
 
+  /*
+    called when the user manually click the button to save the whole graph
+    TOOD: Saving the entire graph should be made obsolete by individual auto-saving after each event type, however
+      this method will still be useful because its a "save subgraph" method, it can save any collection of nodes and edges
+  */
   saveGraph() {
     ServerAPI.saveGraph(this.serializeG6graph(this.DisplayedGraphKey, this.DisplayedGraph))
   }
 
+  /*
+    Takes an array of nodes to be saved
+  */
+  saveNodes(nodes: any[]) {
+    let graphObj = {
+      key: this.DisplayedGraphKey,
+      nodes: _.map(nodes,this.serializeNode),
+      edges: []
+    }
+    ServerAPI.saveGraph( graphObj )
+  }
+
+  /*
+    Takes an array of nodes to be saved
+  */
+  saveEdges(edges: any[]) {
+    let graphObj = {
+      key: this.DisplayedGraphKey,
+      nodes: [],
+      edges: _.map(edges,this.serializeEdge)
+    }
+    ServerAPI.saveGraph( graphObj )
+  }
 
 }
 

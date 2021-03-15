@@ -32,23 +32,27 @@ class GraphDataManager {
   async saveSubgraph(graphData: any):Promise<void> {
     return new Promise( async (resolve) => {
 
-      let nodeQuery = "insert or replace into nodes VALUES "
-      _.each( graphData.nodes, (val, key) => {
-        // TODO parameters need to be escaped to avoid sql injection
-        nodeQuery = nodeQuery + `('${graphData.key}','${val.id}','${val.label}','${val.text}',${val.x},${val.y}),`
-      })
-      nodeQuery = nodeQuery.slice(0,-1) // remove last trailing ,
+      if (graphData.nodes.length > 0) {
+        let nodeQuery = "insert or replace into nodes VALUES "
+        _.each( graphData.nodes, (val, key) => {
+          // TODO parameters need to be escaped to avoid sql injection
+          nodeQuery = nodeQuery + `('${graphData.key}','${val.id}','${val.label}','${val.text}',${val.x},${val.y}),`
+        })
+        nodeQuery = nodeQuery.slice(0,-1) // remove last trailing ,
 
-      await this.sql.query(nodeQuery)
+        await this.sql.query(nodeQuery)
+      }
 
-      let edgeQuery = "insert or replace into edges VALUES "
-      _.each( graphData.edges, (val, key) => {
-        // TODO parameters need to be escaped to avoid sql injection
-        edgeQuery = edgeQuery + `('${graphData.key}','${val.id}','${val.source}','${val.target}'),`
-      })
-      edgeQuery = edgeQuery.slice(0,-1) // remove last trailing ,
+      if (graphData.edges.length > 0) {
+        let edgeQuery = "insert or replace into edges VALUES "
+        _.each( graphData.edges, (val, key) => {
+          // TODO parameters need to be escaped to avoid sql injection
+          edgeQuery = edgeQuery + `('${graphData.key}','${val.id}','${val.source}','${val.target}'),`
+        })
+        edgeQuery = edgeQuery.slice(0,-1) // remove last trailing ,
 
-      await this.sql.query(edgeQuery)
+        await this.sql.query(edgeQuery)
+      }
 
       resolve()
     })

@@ -156,9 +156,16 @@ const GraphCanvas = (props) => {
       graphCanvas.setItemState(item, 'hover', false);
     });
 
+    graphCanvas.on('node:dragend', (evt:any) => {
+      GraphDataSvc.saveNodes([evt.item])
+      if (GraphDataSvc.selectedItems?.nodes.length > 0) {
+        GraphDataSvc.saveNodes(GraphDataSvc.selectedItems.nodes)
+      }
+    })
+
     graphCanvas.on('dblclick', (evt:any) => {
       if (evt.target.cfg.type == undefined) {
-        GraphDataSvc.addNewNode(evt.canvasX, evt.canvasY)
+        GraphDataSvc.addNewNode(evt.x, evt.y)
       }
     })
 
