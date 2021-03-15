@@ -31,6 +31,15 @@ class SocketListener {
     console.log("Socket connection closed, id:", socketId, "code:", code, "reason:", reason)
   }
 
+  informOtherListeners(socketId:string, type:string, data:any) {
+    this.server.clients.forEach( (client) => {
+      // don't send to the originating socket
+      if (client.clientId != socketId) {
+        this.formatAndSend(client, type, data)
+      }
+    });
+  }
+
   handleNewConnection(socket: any) {
     socket.clientId = this.connectionCounter++;
     console.log("Socket client connected, id#:", socket.clientId)
@@ -67,6 +76,7 @@ class SocketListener {
           case "SAVE_GRAPH":
             this.graphData.saveSubgraph(data.data).then(() => {
               this.formatAndSend(socket, "SAVE_GRAPH_RSP", "success")
+              this.informOtherListeners(socket.clientId, "PEER_SAVED_GRAPH", data.data)
             });
             break;
 

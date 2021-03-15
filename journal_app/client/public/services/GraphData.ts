@@ -31,7 +31,8 @@ class GraphData { // this thing should probably just extend EventEmitter
     this.emitter = new EventEmitter();
 
     // call to the server for our initial graph, and register a listener for the socket response
-    this.ServerAPI.registerResponseHandler('GET_GRAPH_RSP', this.handleServerGraphResponse.bind(this)).then( () => {
+    this.ServerAPI.on('GET_GRAPH_RSP', this.handleServerGraphResponse.bind(this))
+    this.ServerAPI.ready.then( () => {
       this.ServerAPI.getGraph()
     });
 
