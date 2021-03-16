@@ -36,6 +36,7 @@ function GraphSidePanel(props: any): any {
 
   // single node state
   const [itemText, setText] = useState("")
+  const [itemLink, setLink] = useState("")
   const [itemLabel, setLabel] = useState("")
   const [confirmDelete, setConfirmDelete] = useState(false)
 
@@ -56,6 +57,7 @@ function GraphSidePanel(props: any): any {
 
   function updateItem(update:any) {
     if (update.text != undefined) { setText(update.text) }
+    if (update.link != undefined) { setLink(update.link) }
     if (update.label != undefined) { setLabelRemoveWrapping(update.label) }
     updateModel(selectedItems['0'].id, update)
   };
@@ -87,6 +89,7 @@ function GraphSidePanel(props: any): any {
         setSelectedItems(selected);
         setNumItems(num)
         setText(selected['0'].text)
+        setLink(selected['0'].link)
         setLabelRemoveWrapping(selected['0'].label)
       }
     })
@@ -131,7 +134,7 @@ function GraphSidePanel(props: any): any {
   } else if ( numItems == 1 ) {
     return (
       <div className={`graph-side-panel ${props.showPanel ? '' : 'hidden'}`}>
-        <SingleNodePanel itemLabel={itemLabel} itemText={itemText} updateItem={updateItem} delBtn={delBtn} selectedItems={selectedItems} />
+        <SingleNodePanel itemLabel={itemLabel} itemText={itemText} itemLink={itemLink} updateItem={updateItem} delBtn={delBtn} selectedItems={selectedItems} />
       </div>
     )
   } else if ( numItems == 2) {

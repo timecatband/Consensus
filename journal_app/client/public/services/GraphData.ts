@@ -155,7 +155,7 @@ class GraphData { // this thing should probably just extend EventEmitter
   }
 
   addNewNode(x, y) {
-    let newNode = new JournalNode("Be kind, free minds", "", x, y)
+    let newNode = new JournalNode("Be kind, free minds", "", "", x, y)
     this.DisplayedGraph.addItem('node', newNode)
     this.saveNodes([this.DisplayedGraph.findById(newNode.id)])
     this.emit("new-node-added", newNode)
@@ -165,7 +165,6 @@ class GraphData { // this thing should probably just extend EventEmitter
     // we don't want to add duplicate edges, they would clutter up the db, so check that before adding
     let alreadyExistingEdge = this.DisplayedGraph.find('edge', (edge: Edge, key) => {
       return edge.getSource().getID() == source && edge.getTarget().getID() == target
-      return false
     })
     if (alreadyExistingEdge === undefined) {
       let newEdge = new JournalEdge(source, target)
@@ -181,6 +180,7 @@ class GraphData { // this thing should probably just extend EventEmitter
     return {
       id: n.id,
       label: n.label,
+      link: n.link,
       text: n.text,
       x: n.x,
       y: n.y
