@@ -23,12 +23,14 @@ class GraphData { // this thing should probably just extend EventEmitter
   DisplayedGraph: G6.Graph; // the graph which is being displayed on the canvas
   DisplayedGraphKey: string // the key of the model that went into the DisplayedGraph
   selectedItems: any;
+  filterPanelOpen: boolean;
 
   constructor(ServerAPI: any) {
     this.graphs = []
     this.ServerAPI = ServerAPI;
     this.initialized = false;
     this.emitter = new EventEmitter();
+    this.filterPanelOpen = false;
 
     // call to the server for our initial graph, and register a listener for the socket response
     this.ServerAPI.on('GET_GRAPH_RSP', this.handleServerGraphResponse.bind(this))
@@ -50,6 +52,11 @@ class GraphData { // this thing should probably just extend EventEmitter
   on(event:string, fn:Function){
     this.emitter.on(event,fn)
   };
+
+  toggleFilterPanel() {
+    this.filterPanelOpen = !this.filterPanelOpen;
+    this.emit("filter-panel-toggle", this.filterPanelOpen)
+  }
 
   // TODO: this extracts a serializable object, doesnt really serialize. Not sure exactly what pattern is needed around here yet.
   serializeSelected(items: any) {

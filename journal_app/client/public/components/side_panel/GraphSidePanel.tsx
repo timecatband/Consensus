@@ -2,6 +2,7 @@ import _ from 'lodash'
 import React, { useEffect, useState } from 'react'
 import GraphDataSvc from '../../services/GraphData'
 import SingleNodePanel from './SingleNodePanel'
+import FilterPanel from './FilterPanel'
 
 function wrapText(text: string) {
   let words = text.replace('\n','').split(' ');
@@ -40,6 +41,10 @@ function GraphSidePanel(props: any): any {
 
   // two-node state
   const [existingEdge, setExistingEdge] = useState({id: undefined})
+
+  // filter panel state
+  const [showFilters, setShowFilters] = useState(false);
+
 
   function onAddEdgeClick(source:any, target:any) {
     GraphDataSvc.addNewEdge(source, target)
@@ -85,6 +90,11 @@ function GraphSidePanel(props: any): any {
         setLabelRemoveWrapping(selected['0'].label)
       }
     })
+
+    GraphDataSvc.on('filter-panel-toggle', (filterState) => {
+      setShowFilters(filterState);
+    })
+
   },[])
 
   // delete button for single nodes
@@ -112,7 +122,13 @@ function GraphSidePanel(props: any): any {
     )
   }
 
-  if ( numItems == 1 ) {
+  if (showFilters) {
+    return (
+      <div className={`graph-side-panel ${showFilters ? '' : 'hidden'}`}>
+        <FilterPanel />
+      </div>
+    )
+  } else if ( numItems == 1 ) {
     return (
       <div className={`graph-side-panel ${props.showPanel ? '' : 'hidden'}`}>
         <SingleNodePanel itemLabel={itemLabel} itemText={itemText} updateItem={updateItem} delBtn={delBtn} selectedItems={selectedItems} />

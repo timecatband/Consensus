@@ -50,6 +50,15 @@
       font-style: normal;
       margin-top: 20px;
       white-space: pre-wrap;
+
+      // allow selecting in code block
+      -webkit-touch-callout: text;
+      -webkit-user-select: text;
+      -khtml-user-select: text;
+      -moz-user-select: text;
+      -ms-user-select: text;
+      -o-user-select: text;
+      user-select: text;
     }
 
     $transitionTime: 0.15s;

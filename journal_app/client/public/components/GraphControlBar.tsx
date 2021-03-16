@@ -4,28 +4,19 @@ import GraphDataSvc from '../services/GraphData'
 
 function GraphControlBar(props: any): any {
 
-  function onAddButtonClick() {
-    console.log("props", props)
-  }
-
-  function onSaveClick() {
-    GraphDataSvc.saveGraph()
-  }
-
   function onPingServerClick() {
     ServerAPI.ping("test message")
   }
 
   function editFilters() {
-    console.log("got a click to editFilters, not implemeneted")
+    GraphDataSvc.toggleFilterPanel()
   }
-
 
   return  (
     <div className="graph-control-bar">
       <div className="leftBar">
         <input id="newName" type='text'></input>
-        <button onClick={onAddButtonClick}>Search</button>
+        <button onClick={onPingServerClick}>Search</button>
         <select id="selector">
           <option value="default">Default</option>
           <option value="addNode">Add Node</option>
