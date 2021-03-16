@@ -1,6 +1,7 @@
 import _ from 'lodash'
 import React, { useEffect, useState } from 'react'
-import GraphDataSvc from '../services/GraphData'
+import GraphDataSvc from '../../services/GraphData'
+import SingleNodePanel from './SingleNodePanel'
 
 function wrapText(text: string) {
   let words = text.replace('\n','').split(' ');
@@ -117,28 +118,7 @@ function GraphSidePanel(props: any): any {
   if ( numItems == 1 ) {
     return (
       <div className={`graph-side-panel ${props.showPanel ? '' : 'hidden'}`}>
-        <div className='panelHeader'>
-          <input type="text"
-            onChange={event => updateItem({label:event.target.value})}
-            value={itemLabel}>
-          </input>
-        </div>
-        <textarea className="itemText"
-            onChange={event => updateItem({text:event.target.value})}
-            value={itemText}
-            rows={10}>
-        </textarea>
-        <input className="itemLink"
-            onChange={event => updateItem({link:event.target.value})}
-            value={itemLink}>
-          </input>
-        <div className="panelActions">
-          {delBtn}
-        </div>
-        <div className="codeBlock">
-          <div>Metadata:</div>
-          <code>{JSON.stringify(selectedItems, null, 3)}</code>
-        </div>
+        <SingleNodePanel itemLabel={itemLabel} itemText={itemText} updateItem={updateItem} delBtn={delBtn} selectedItems={selectedItems} />
       </div>
     )
   } else if ( numItems == 2) {
@@ -152,6 +132,10 @@ function GraphSidePanel(props: any): any {
         <div className="panelActions">
           {edgeCDBtn}
         </div>
+        <div className="codeBlock">
+          <div>Metadata:</div>
+          <code>{JSON.stringify(existingEdge, null, 3)}</code>
+        </div>
       </div>
     )
   } else {
@@ -159,6 +143,10 @@ function GraphSidePanel(props: any): any {
       <div className={`graph-side-panel ${props.showPanel ? '' : 'hidden'}`}>
         <div className='panelHeader'>
           {numItems} nodes selected
+        </div>
+        <div className="codeBlock comparison">
+          <div>Metadata:</div>
+          <code>{JSON.stringify(selectedItems, null, 3)}</code>
         </div>
       </div>
     )
