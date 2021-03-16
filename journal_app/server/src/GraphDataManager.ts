@@ -18,13 +18,13 @@ class GraphDataManager {
     const nodeRows = await this.sql.query(" select * from sqlite_master where name = 'nodes' and type = 'table' ")
     if (nodeRows.length == 0) {
       console.log("initializing table nodes")
-      this.sql.query(" create table nodes ( graph_key text, id text, label text, text text, x real, y real, PRIMARY KEY(graph_key, id) ) ")
+      this.sql.query(" create table nodes ( graph_key text, id text, label text, text text, x real, y real, meta text PRIMARY KEY(graph_key, id) ) ")
     }
 
     const edgeRows = await this.sql.query(" select * from sqlite_master where name = 'edges' and type = 'table' ")
     if (edgeRows.length == 0) {
       console.log("initializing table edges")
-      this.sql.query(" create table edges ( graph_key text, id text, source text, target text, PRIMARY KEY(graph_key, id) ) ")
+      this.sql.query(" create table edges ( graph_key text, id text, source text, target text, strength number, meta text PRIMARY KEY(graph_key, id) ) ")
     }
   }
 
@@ -36,7 +36,7 @@ class GraphDataManager {
         let nodeQuery = "insert or replace into nodes VALUES "
         _.each( graphData.nodes, (val, key) => {
           // TODO parameters need to be escaped to avoid sql injection
-          nodeQuery = nodeQuery + `('${graphData.key}','${val.id}','${val.label}','${val.text}',${val.x},${val.y}),`
+          nodeQuery = nodeQuery + `('${graphData.key}','${val.id}','${val.label}','${val.text}',${val.x},${val.y},'${JSON.stringify(val.meta)}'),`
         })
         nodeQuery = nodeQuery.slice(0,-1) // remove last trailing ,
 
@@ -47,7 +47,7 @@ class GraphDataManager {
         let edgeQuery = "insert or replace into edges VALUES "
         _.each( graphData.edges, (val, key) => {
           // TODO parameters need to be escaped to avoid sql injection
-          edgeQuery = edgeQuery + `('${graphData.key}','${val.id}','${val.source}','${val.target}'),`
+          edgeQuery = edgeQuery + `('${graphData.key}','${val.id}','${val.source}','${val.target}','${val.strength}','${val.meta}'),`
         })
         edgeQuery = edgeQuery.slice(0,-1) // remove last trailing ,
 

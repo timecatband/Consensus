@@ -170,14 +170,23 @@ const GraphCanvas = (props) => {
     })
 
     graphCanvas.on('click', (evt:any) => {
-
-      // if an edge is clicked, set its connected nodes to selected
+      // if an edge is clicked, set its connected nodes to selected, and deselect other things
       if (evt.target.cfg.type == 'path') {
+        let selectedNodes;
+
+        // if the shift key is held, then keep all current selections, otherwise clear them
+        if ( evt.originalEvent.shiftKey != true ) {
+          let selectedNodes = graphCanvas.findAllByState('node', 'selected');
+          selectedNodes.forEach( n => {
+            graphCanvas.setItemState(n, 'selected', false);
+          });
+        }
+
         const { source } = evt.item._cfg;
         const { target } = evt.item._cfg;
         graphCanvas.setItemState(source, 'selected', true);
         graphCanvas.setItemState(target, 'selected', true);
-        const selectedNodes = graphCanvas.findAllByState('node', 'selected');
+        selectedNodes = graphCanvas.findAllByState('node', 'selected');
         //let selectedCombos = graph.findAllByState('combo', this.selectedState);
 
         graphCanvas.emit('nodeselectchange', {

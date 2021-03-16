@@ -26,6 +26,11 @@ function GraphControlBar(props: any): any {
       <div className="leftBar">
         <input id="newName" type='text'></input>
         <button onClick={onAddButtonClick}>Search</button>
+        <select id="selector">
+          <option value="default">Default</option>
+          <option value="addNode">Add Node</option>
+          <option value="addEdge">Add Edge</option>
+        </select>
         <span className="muteText instructionLabel">Dbl-click to add. Click to select, Shift+click for multi</span>
       </div>
       <div className="rightBar">

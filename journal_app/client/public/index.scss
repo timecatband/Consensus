@@ -1,7 +1,7 @@
 @import './styles.variables.scss';
 @import './components/SqlClientInterface.styles.scss';
 @import './components/Graph.styles.scss';
-@import './components/GraphSidePanel.styles.scss';
+@import './components/side_panel/GraphSidePanel.styles.scss';
 
 // These are global styles, be careful with them
 body {
@@ -20,6 +20,10 @@ body {
   }
   button:hover {
     background: $light-teal;
+  }
+
+  select {
+    outline: none;
   }
 
   // fuck outlines they are gross

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import GraphControlBar from './GraphControlBar';
 import GraphCanvas from './GraphCanvas';
-import GraphSidePanel from './GraphSidePanel';
+import GraphSidePanel from './side_panel/GraphSidePanel';
 
 
 function GraphContainer(props: any): any {

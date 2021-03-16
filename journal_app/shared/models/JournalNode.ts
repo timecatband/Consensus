@@ -7,12 +7,14 @@ class JournalNode implements I.NodeConfig {
   label: string;
   x: number;
   y: number;
+  meta: any;
 
-  constructor(label: string, text?: string, x?:number, y?:number, id?: string) {
+  constructor(label: string, text?: string, x?:number, y?:number, id?: string, meta?: any) {
     this.label = label;
     this.text = text
     this.x = x;
     this.y = y;
+    this.meta = meta;
 
     if ( id == undefined ) {
       this.id = uuid.v4()
@@ -22,7 +24,7 @@ class JournalNode implements I.NodeConfig {
   }
 
   public static deSerialize(obj: any) {
-    return new JournalNode(obj.label, obj.text, obj.x, obj.y, obj.id)
+    return new JournalNode(obj.label, obj.text, obj.x, obj.y, obj.id, obj.meta)
   }
 
 }
