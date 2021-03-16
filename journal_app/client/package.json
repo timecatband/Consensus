@@ -1,5 +1,5 @@
 {
-  "name": "@timecat/GraphJournalClient",
+  "name": "@timecat/graph-journal-client",
   "version": "0.0.1",
   "description": "Step 1. Build a graph",
   "main": "index.js",
@@ -8,7 +8,7 @@
     "dev": "NODE_ENV=development webpack-dev-server --config webpack.config.js",
     "build": "webpack --config webpack.config.js --mode production",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "install": "npm link @timecat/GraphJournalShared"
+    "install": "npm link @timecat/graph-journal-shared"
   },
   "author": "spacedog",
   "dependencies": {

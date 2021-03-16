@@ -1,5 +1,5 @@
 {
-  "name": "@timecat/GraphJournalShared",
+  "name": "@timecat/graph-journal-shared",
   "version": "1.0.0",
   "description": "shared lib for graph journal app",
   "main": "index.js",

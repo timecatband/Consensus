@@ -7,7 +7,7 @@ clean:
 
 install:
 	npm install --quiet
-	npm link @timecat/GraphJournalShared
+	npm link @timecat/graph-journal-shared
 
 
 test:

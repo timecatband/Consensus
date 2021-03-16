@@ -1,8 +1,6 @@
 const _ = require('lodash')
-import GraphModel from "@timecat/GraphJournalShared/models/GraphModel"
-import JournalNode from '@timecat/GraphJournalShared/models/JournalNode'
-import JournalEdge from '@timecat/GraphJournalShared/models/JournalEdge'
-import { SqliteClient } from "@timecat/GraphJournalShared/external_data/SqliteClient"
+import GraphModel from "@timecat/graph-journal-shared/src/models/GraphModel"
+import { SqliteClient } from "@timecat/graph-journal-shared/src/external_data/SqliteClient"
 
 // TODO: this should probably share some common GraphManager base class with the client side
 class GraphDataManager {

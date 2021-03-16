@@ -2,7 +2,7 @@ import React, { useEffect, useState, useContext } from 'react'
 import G6 = require('@antv/g6');
 import * as I from '@antv/g6/lib/types';
 import GraphDataSvc from '../services/GraphData'
-import GraphModel from '@timecat/GraphJournalShared/models/GraphModel'
+import GraphModel from '@timecat/graph-journal-shared/src/models/GraphModel'
 
 let graphCanvas: G6.Graph;
 let focusedNode: any = null;

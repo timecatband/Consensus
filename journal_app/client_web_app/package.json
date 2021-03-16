@@ -1,5 +1,5 @@
 {
-  "name": "client_build",
+  "name": "@timecat/graph-journal-client-web-app",
   "version": "1.0.0",
   "description": "Tiny service that serves up the web client for Consensus.",
   "main": "index.js",

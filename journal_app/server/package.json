@@ -1,5 +1,5 @@
 {
-  "name": "@timecat/GraphJournalServer",
+  "name": "@timecat/graph-journal-server",
   "version": "1.0.0",
   "description": "web server for graph journal app",
   "main": "index.js",
@@ -7,7 +7,7 @@
     "start": "ts-node index.ts",
     "dev": "nodemon",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "install": "npm link @timecat/GraphJournalShared"
+    "install": "npm link @timecat/graph-journal-shared"
   },
   "repository": {
     "type": "git",
@@ -24,7 +24,7 @@
   },
   "homepage": "https://github.com/timecatband/Consensus#readme",
   "dependencies": {
-    "@timecat/GraphJournalShared": "file:../shared",
+    "@timecat/graph-journal-shared": "file:../shared",
     "express": "^4.17.1",
     "lodash": "^4.17.21",
     "socket.io": "^3.1.2",
