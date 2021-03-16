@@ -28,13 +28,10 @@ class JournalNode implements I.NodeConfig {
   }
 
   public static deSerializeNodes(objs: any[]) {
-    console.log('deSerializeNodes');
-    console.log(objs);
     var nodes = [];
-    for (const obj in objs) {
+    for (const obj of objs) {
       nodes.push(this.deSerialize(obj))
     }
-    console.log(nodes);
     return nodes;
   }
 
