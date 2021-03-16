@@ -22,7 +22,7 @@ class GraphDataManager {
     const edgeRows = await this.sql.query(" select * from sqlite_master where name = 'edges' and type = 'table' ")
     if (edgeRows.length == 0) {
       console.log("initializing table edges")
-      this.sql.query(" create table edges ( graph_key text, id text, source text, target text, strength number, meta text PRIMARY KEY(graph_key, id) ) ")
+      this.sql.query(" create table edges ( graph_key text, id text, source text, target text, strength number, meta text, PRIMARY KEY(graph_key, id) ) ")
     }
   }
 

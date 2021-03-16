@@ -12,6 +12,10 @@ function SingleNodePanel(props: any): any {
           value={props.itemLabel}>
         </input>
       </div>
+      <input className="itemLink"
+        onChange={event => props.updateItem({link:event.target.value})}
+        value={props.itemLink}>
+      </input>
       <textarea className="itemText"
           onChange={event => props.updateItem({text:event.target.value})}
           value={props.itemText}

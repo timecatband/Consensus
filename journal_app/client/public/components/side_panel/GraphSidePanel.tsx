@@ -118,7 +118,7 @@ function GraphSidePanel(props: any): any {
   if ( numItems == 1 ) {
     return (
       <div className={`graph-side-panel ${props.showPanel ? '' : 'hidden'}`}>
-        <SingleNodePanel itemLabel={itemLabel} itemText={itemText} updateItem={updateItem} delBtn={delBtn} selectedItems={selectedItems} />
+        <SingleNodePanel itemLabel={itemLabel} itemText={itemText} itemLink={itemLink} updateItem={updateItem} delBtn={delBtn} selectedItems={selectedItems} />
       </div>
     )
   } else if ( numItems == 2) {

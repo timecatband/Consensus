@@ -173,6 +173,7 @@ class GraphData { // this thing should probably just extend EventEmitter
     return {
       id: n.id,
       label: n.label,
+      link: n.link,
       text: n.text,
       x: n.x,
       y: n.y
