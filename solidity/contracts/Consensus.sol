@@ -30,8 +30,8 @@ contract ConsensusGraph {
     bytes32 indexed edgeId
   );
 
-  function upsertNode(string memroy stringId, string memory json) public {
-      id = keecak256(abi.encodePacked(stringId));
+  function upsertNode(string memory stringId, string memory json) public {
+      bytes32 id = keccak256(abi.encodePacked(stringId));
       if (nodes[id].owner != address(0)) {
         if (nodes[id].owner != msg.sender) {
           revert("Only owner can update node");
@@ -44,7 +44,7 @@ contract ConsensusGraph {
   }
 
   function upsertEdge(string memory stringId, string memory json) public {
-      id = keecak256(abi.encodePacked(stringId));
+      bytes32 id = keccak256(abi.encodePacked(stringId));
       if (edges[id].owner != address(0)) {
         if (edges[id].owner != msg.sender) {
           revert("Only owner can update edge");
