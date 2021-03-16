@@ -99,10 +99,10 @@ class GraphDataManager {
       // TODO: imeplement graph_key where clause stuff
       const nodes = await this.sql.query("select * from nodes")
       const edges = await this.sql.query("select * from edges")
-
+      console.log(edges);
       const graphKey = nodes[0].graph_key
       const graph = GraphModel.deSerialize({nodes: nodes, edges: edges, key: graphKey})
-
+      console.log(graph);
       resolve(graph)
     });
   }

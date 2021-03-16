@@ -24,8 +24,8 @@ class GraphModel implements I.GraphData {
 
   public static deSerialize(grObj: any) {
     return new GraphModel(
-      _.map(grObj.nodes,JournalNode.deSerialize),
-      _.map(grObj.edges,JournalEdge.deSerialize),
+      grObj.nodes,
+      grObj.edges,
       grObj.meta, 
       grObj.key
     )
