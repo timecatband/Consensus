@@ -12,7 +12,7 @@ class JournalNode implements I.NodeConfig {
 
   constructor(label: string, text?: string, link?: string, x?:number, y?:number, id?: string, meta?: any) {
     this.label = label;
-    this.link = link === undefined ? "" : link;
+    this.link = link;
     this.text = text;
     this.x = x;
     this.y = y;
@@ -27,14 +27,6 @@ class JournalNode implements I.NodeConfig {
 
   public static deSerialize(obj: any) {
     return new JournalNode(obj.label, obj.text, obj.link, obj.x, obj.y, obj.id, obj.meta)
-  }
-
-  public static deSerializeNodes(objs: any[]) {
-    var nodes = [];
-    for (const obj of objs) {
-      nodes.push(this.deSerialize(obj))
-    }
-    return nodes;
   }
 
 }

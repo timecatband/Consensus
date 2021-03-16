@@ -1,6 +1,5 @@
 const uuid = require('uuid');
 import * as I from '@antv/g6/lib/types';
-import JournalNode from './JournalNode.ts'
 
 class JournalEdge implements I.EdgeConfig {
   [key: string]: any; // This is a required part of the interface but I dunno what it means - KW
