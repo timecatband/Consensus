@@ -28,6 +28,13 @@
         width: 100%;
       }
     }
+    
+    .panelText {
+      font-size: 0.7em;
+      font-style: normal;
+      margin-top: 2px;
+      margin-bottom: 2px;
+    }
 
     .panelActions {
       margin-top: 20px;
@@ -41,6 +48,10 @@
     }
 
     .itemText{
+      width:100%;
+    }
+
+    .itemLink{
       width:100%;
     }
 

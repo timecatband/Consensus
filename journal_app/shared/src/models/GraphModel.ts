@@ -1,4 +1,5 @@
-const uuid = require('uuid');
+import _ from 'lodash';
+import uuid from 'uuid';
 import * as I from '@antv/g6/lib/types';
 import JournalNode from './JournalNode';
 import JournalEdge from './JournalEdge';
@@ -22,7 +23,12 @@ class GraphModel implements I.GraphData {
   }
 
   public static deSerialize(grObj: any) {
-    return new GraphModel(grObj.nodes, grObj.edges, grObj.meta, grObj.key)
+    return new GraphModel(
+      _.map(grObj.nodes,JournalNode.deSerialize),
+      _.map(grObj.edges,JournalEdge.deSerialize),
+      grObj.meta, 
+      grObj.key
+    )
   }
 
 }
