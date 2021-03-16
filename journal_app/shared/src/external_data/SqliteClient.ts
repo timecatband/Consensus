@@ -23,8 +23,6 @@ class SqliteClient {
   query(query: string):Promise<any> {
     return this.db.then( (sql) => {
       return new Promise( (resolve, reject) => {
-
-        let result = [];
         try {
           sql.all(query, [], (err: any, rows: any) => {
             if (err) {

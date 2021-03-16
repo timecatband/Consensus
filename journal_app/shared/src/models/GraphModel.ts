@@ -22,7 +22,16 @@ class GraphModel implements I.GraphData {
   }
 
   public static deSerialize(grObj: any) {
-    return new GraphModel(grObj.nodes, grObj.edges, grObj.meta, grObj.key)
+    console.log('grObj');
+    console.log(grObj.nodes);
+    console.log(JournalNode.deSerializeNodes(grObj.nodes));
+    return new GraphModel(
+      JournalNode.deSerializeNodes(grObj.nodes), 
+      grObj.edges, 
+      grObj.meta, 
+      grObj.key
+    )
+    // return new GraphModel(grObj.nodes, grObj.edges, grObj.meta, grObj.key)
   }
 
 }
