@@ -1,31 +1,21 @@
-pragma solidity ^0.5.7;
-
 contract ConsensusGraph {
   struct Node {
-    string label;
-    string text;
-    string owner;
-    uint32 id;
+    string json;
+    address owner;
+    string id;
   }
-  
   struct Edge {
-    uint32 id;
-    uint32 leftNodeId;
-    uint32 rightNodeId;
+    string json;
+    address owner;
+    string id;
   }
 
-  struct Citizen {
-      address owner;
-      string name;
-  }
+  mapping(bytes32 => Node) public nodes;
+  bytes32[] public nodeIds;
 
-  // mapping of propertyId to Property object
-  mapping(bytes32 => Citizen) public citizens;
-  mapping(address => string) public names;
-  mapping(uint32 => Node) public nodes;
-  mapping(uint32 => Edge) public edges;
-  uint32 public numberOfNodes;
-  uint32 public numberOfEdges;
+  mapping(bytes32 => Edge) public edges;
+  bytes32[] public edgeIds;
+
 
   // This event is emitted when a citizen is registered
   event NewCitizen (
@@ -40,43 +30,29 @@ contract ConsensusGraph {
     bytes32 indexed edgeId
   );
 
-
-  function registerName(string memory name) public {
-    // create a property object
-    bytes32 id = keccak256(abi.encodePacked(name));
-    if (citizens[id].owner != address(0)) {
-        revert("Name already registered");
-    }
-    Citizen memory citizen = Citizen(name, msg.sender, "New user");
-    citizens[id] = citizen;
-    names[msg.sender] = name;
-    emit NewCitizen(id);
+  function upsertNode(string memroy stringId, string memory json) public {
+      id = keecak256(abi.encodePacked(stringId));
+      if (nodes[id].owner != address(0)) {
+        if (nodes[id].owner != msg.sender) {
+          revert("Only owner can update node");
+        }
+      } else {
+        nodeIds.push(id);
+      }
+      nodes[id] = Node(json, msg.sender, stringId);
+      emit NewNode(id);
   }
 
-  function addNode(Node memory node) public {
-      bytes32 id = keccak256(abi.encodePacked(names[msg.sender]));
-      Citizen storage citizen = citizens[id];
-      if (citizen.owner == address(0)) {
-        revert("No such citizen");
+  function upsertEdge(string memory stringId, string memory json) public {
+      id = keecak256(abi.encodePacked(stringId));
+      if (edges[id].owner != address(0)) {
+        if (edges[id].owner != msg.sender) {
+          revert("Only owner can update edge");
+        }
+      } else {
+        edgeIds.push(id);
       }
-      if (citizen.owner != node.owner) {
-        revert("Only owner can add node");
-      }
-      node.id = numberOfNodes
-      nodes[numberOfNodes] = node;
-      numberOfNodes++;
-  }
-   function addEdge(Edge memory node) public {
-      bytes32 id = keccak256(abi.encodePacked(names[msg.sender]));
-      Citizen storage citizen = citizens[id];
-      if (citizen.owner == address(0)) {
-        revert("No such citizen");
-      }
-      if (citizen.owner != edge.owner) {
-        revert("Only owner can add node");
-      }
-      edge.id = numberOfEdges;
-      edges[numberOfEdges] = edge;
-      numberOfEdges++;
+      edges[id] = Edge(json, msg.sender, stringId);
+      emit NewEdge(id);
   }
 }
