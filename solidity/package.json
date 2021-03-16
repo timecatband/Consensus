@@ -1,0 +1,21 @@
+{
+  "name": "PublicSquare",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test:ethereum": "ganache-cli -h localhost -m 'layer post chase message demise fresh resource beyond bulb rose garden kite'",
+    "compile": "truffle compile",
+    "test": "truffle test",
+    "migrate": "truffle migrate"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "truffle": "^5.0.29"
+  },
+  "dependencies": {
+    "ganache-cli": "^6.5.1",
+    "nvm": "^0.0.4"
+  }
+}
