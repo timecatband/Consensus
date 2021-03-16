@@ -1,5 +1,5 @@
 import SocketClient from './SocketClient'
-import {upsertNode, upsertEdge} from './ConsensusGraphContract.mjs'
+import {setProvider, upsertNode, upsertEdge} from './ConsensusGraphContract'
 
 /*
   Singleton service ServerAPI provides methods for reading/writing via our own journal server instance
@@ -11,9 +11,9 @@ class ServerAPIWeb3 {
     this.ready = setProvider();
   }
 
-  on(key: string, handler: Function): Promise<void> {
+  //on(key: string, handler: Function): Promise<void> {
  //   return this.socketClient.on(key, handler)
-  }
+  //}
 
   ping(data: any) {
     this.ready.then(() => {
@@ -49,6 +49,6 @@ class ServerAPIWeb3 {
 
 }
 
-var ServerApiSvc = new ServerAPI(SocketClient)
+var ServerApiWeb3 = new ServerAPIWeb3(SocketClient)
 
-export default ServerApiSvc;
+export default ServerApiWeb3;
