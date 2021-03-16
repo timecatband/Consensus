@@ -1,9 +1,9 @@
 import _ from 'lodash'
 import ServerAPI from './ServerAPI'
-import GraphModel from '@timecat/GraphJournalShared/models/GraphModel'
-import JournalNode from '@timecat/GraphJournalShared/models/JournalNode'
-import JournalEdge from '@timecat/GraphJournalShared/models/JournalEdge'
-import EventEmitter from '@timecat/GraphJournalShared/models/EventEmitter'
+import GraphModel from '@timecat/graph-journal-shared/src/models/GraphModel'
+import JournalNode from '@timecat/graph-journal-shared/src/models/JournalNode'
+import JournalEdge from '@timecat/graph-journal-shared/src/models/JournalEdge'
+import EventEmitter from '@timecat/graph-journal-shared/src/models/EventEmitter'
 import G6 = require('@antv/g6');
 import Edge from '@antv/g6/lib/item/edge.d.ts';
 

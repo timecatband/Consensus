@@ -1,4 +1,3 @@
-// import Socket from '../Socket'
 import SocketClient from './SocketClient'
 
 /*

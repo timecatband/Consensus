@@ -2,7 +2,7 @@
   Singleton service for the websocket connection
 */
 import config from '../config/config';
-import EventEmitter from '@timecat/GraphJournalShared/models/EventEmitter'
+import EventEmitter from '@timecat/graph-journal-shared/src/models/EventEmitter'
 
 class SocketClient extends EventEmitter {
   socket: Promise<any>;
