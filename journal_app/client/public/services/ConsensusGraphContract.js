@@ -1,4 +1,5 @@
 
+let Web3 = require('Web3');
 let metamaskWeb3 = new Web3('http://localhost:8545')
 let account = null
 let consensusGraphContract
@@ -48,15 +49,17 @@ export async function getNodes() {
   for (let i = 0; i < nodeIds.length; i++) {
     nodes.push(await contract.methods.nodes(nodeIds[i]).call());
   }
+  return nodes;
 }
 
 export async function getEdges() {
   let contract = getConsensusGraphContract()
-  nodeIds = await contract.methods.nodeIds().call();
-  nodes = []
-  for (let i = 0; i < nodeIds.length; i++) {
-    nodes.push(await contract.methods.nodes(nodeIds[i]).call());
+  nodeIds = await contract.methods.edgeIds().call();
+  edges = []
+  for (let i = 0; i < edgeIds.length; i++) {
+    edges.push(await contract.methods.edges(edgeIds[i]).call());
   }
+  return edges;
 }
 
 export async function upsertNode(id, json) {
