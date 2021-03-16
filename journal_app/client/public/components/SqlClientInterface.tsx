@@ -9,7 +9,6 @@ function SqlClientInterface(props: any): any {
   const [resultStr, setResult] = useState('');
 
   function onQueryClick() {
-    console.log("queryCLick", queryStr)
     ServerAPI.querySql(queryStr)
   }
 
