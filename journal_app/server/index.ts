@@ -1,15 +1,7 @@
 const app = require('express')();
 import SocketListener from './src/SocketListener'
 import GraphDataManager from './src/GraphDataManager'
-import { SqliteClient } from "@timecat/GraphJournalShared/external_data/SqliteClient"
-
-
-
-/*
-app.get('/', (req, res) => {
-  res.sendFile(__dirname + '/index.html');
-});
-*/
+import { SqliteClient } from "@timecat/graph-journal-shared/src/external_data/SqliteClient"
 
 let SqlSingleton = new SqliteClient();
 let DataMgrSingleton = new GraphDataManager(SqlSingleton)

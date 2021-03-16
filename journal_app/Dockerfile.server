@@ -2,9 +2,7 @@ FROM node:14-alpine AS BUILD_IMAGE
 
 WORKDIR /usr/src/journal_app
 
-ADD ./shared/config ./shared/config
-ADD ./shared/external_data ./shared/external_data
-ADD ./shared/models ./shared/models
+ADD ./shared/src ./shared/src
 COPY ./shared/package.json ./shared/
 COPY ./shared/package-lock.json ./shared/
 COPY ./shared/tsconfig.json ./shared/
