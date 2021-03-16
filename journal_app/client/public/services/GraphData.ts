@@ -89,6 +89,7 @@ class GraphData { // this thing should probably just extend EventEmitter
   // The initial graph load response
   handleServerGraphResponse(graphData: GraphModel) {
     const newGraph = GraphModel.deSerialize(graphData)
+    console.log("test", GraphModel, newGraph)
     this.graphs.push(newGraph)
     this.setDisplayedGraph(newGraph)
   }

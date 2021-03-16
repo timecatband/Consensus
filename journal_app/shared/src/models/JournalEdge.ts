@@ -36,7 +36,7 @@ class JournalEdge implements I.EdgeConfig {
   }
 
   public static deSerialize(obj: any) {
-    return new JournalEdge(obj.leftNode, obj.rightNode, obj.strength, obj.meta, obj.id)
+    return new JournalEdge(obj.source, obj.target, obj.strength, obj.meta, obj.id)
   }
 
 }
