@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: GPL-3.0
+pragma solidity >=0.7.0 <0.9.0;
+
 contract ConsensusGraph {
   struct Node {
     // JSON representation sent from client. Opaque here.
@@ -27,10 +30,10 @@ contract ConsensusGraph {
   mapping(bytes32 => Edge) public edges;
   bytes32[] public edgeIds;
 
-  function getNodeIds() public returns(bytes32[] memory) {
+  function getNodeIds() public view returns(bytes32[] memory) {
     return nodeIds;
   }
-  function getEdgeIds() public returns(bytes32[] memory) {
+  function getEdgeIds() public view returns(bytes32[] memory) {
     return edgeIds;
   }
 

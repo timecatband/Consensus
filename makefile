@@ -1,4 +1,4 @@
-.PHONY: clean install test deploy_client
+.PHONY: clean install test blockchain
 
 
 DIRS = public_square journal_app
@@ -9,12 +9,13 @@ clean:
 	-for d in $(DIRS); do $(MAKE) -C $$d clean || exit 1; done
 
 
-install:
+install: blockchain
 	-for d in $(DIRS); do $(MAKE) -C $$d install || exit 1; done
 
 
 test:
 	-for d in $(DIRS); do $(MAKE) -C $$d test || exit 1; done
+
 
 blockchain:
 	make -C ./public_square migrate
