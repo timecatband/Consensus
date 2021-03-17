@@ -74,8 +74,9 @@ function GraphSidePanel(props: any): any {
   useEffect(() => {
     GraphDataSvc.on('selected-items', (selected) => {
       let num = _.keys(selected)?.length
-      if ( num > 0 ) {
+      setNumItems(num)
 
+      if ( num > 0 ) {
         if ( num == 2 ) {
           let edge = GraphDataSvc.findItem('edge',(e) => {
             let model = e.get('model')
@@ -85,11 +86,9 @@ function GraphSidePanel(props: any): any {
           })?.get('model')
           setExistingEdge(edge)
         }
-
         setSelectedItems(selected);
-        setNumItems(num)
-        setText(selected['0'].text)
-        setLink(selected['0'].link)
+        setText(selected['0'].text || '')
+        setLink(selected['0'].link || '')
         setLabelRemoveWrapping(selected['0'].label)
       }
     })
@@ -125,21 +124,14 @@ function GraphSidePanel(props: any): any {
     )
   }
 
+  let component;
   if (showFilters) {
-    return (
-      <div className={`graph-side-panel ${showFilters ? '' : 'hidden'}`}>
-        <FilterPanel />
-      </div>
-    )
+    component = <FilterPanel />
   } else if ( numItems == 1 ) {
-    return (
-      <div className={`graph-side-panel ${props.showPanel ? '' : 'hidden'}`}>
-        <SingleNodePanel itemLabel={itemLabel} itemText={itemText} itemLink={itemLink} updateItem={updateItem} delBtn={delBtn} selectedItems={selectedItems} />
-      </div>
-    )
+    component = <SingleNodePanel itemLabel={itemLabel} itemText={itemText} itemLink={itemLink} updateItem={updateItem} delBtn={delBtn} selectedItems={selectedItems} />
   } else if ( numItems == 2) {
-    return (
-      <div className={`graph-side-panel ${props.showPanel ? '' : 'hidden'}`}>
+    component = (
+      <div>
         <div className='panelHeader'>
           {numItems} nodes selected
         </div>
@@ -154,9 +146,9 @@ function GraphSidePanel(props: any): any {
         </div>
       </div>
     )
-  } else {
-    return (
-      <div className={`graph-side-panel ${props.showPanel ? '' : 'hidden'}`}>
+  } else if ( numItems > 2) {
+    component = (
+      <div>
         <div className='panelHeader'>
           {numItems} nodes selected
         </div>
@@ -167,6 +159,12 @@ function GraphSidePanel(props: any): any {
       </div>
     )
   }
+
+  return (
+    <div className={`graph-side-panel ${ (showFilters || numItems > 0) ? '' : 'hidden'}`}>
+      {component}
+    </div>
+  )
 }
 
 export default GraphSidePanel
