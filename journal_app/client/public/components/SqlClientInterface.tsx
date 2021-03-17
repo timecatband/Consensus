@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import ServerAPI from '../services/ServerAPI'
+import ServerAPI from '../services/external_data/ServerAPI'
 
 let once = false;
 

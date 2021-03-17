@@ -1,11 +1,10 @@
 import React, { useEffect, useState } from 'react'
-import ServerAPI from '../services/ServerAPI'
 import GraphDataSvc from '../services/GraphData'
 
 function GraphControlBar(props: any): any {
 
   function onPingServerClick() {
-    ServerAPI.ping("test message")
+    GraphDataSvc.ping()
   }
 
   function editFilters() {

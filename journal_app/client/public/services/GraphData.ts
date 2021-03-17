@@ -1,5 +1,6 @@
 import _ from 'lodash'
-import ServerAPI from './ServerAPI'
+//import ServerAPI from './external_data/ServerAPI'
+import ServerAPI from './external_data/ServerAPIWeb3'
 import GraphModel from '@timecat/graph-journal-shared/src/models/GraphModel'
 import JournalNode from '@timecat/graph-journal-shared/src/models/JournalNode'
 import JournalEdge from '@timecat/graph-journal-shared/src/models/JournalEdge'
@@ -41,6 +42,10 @@ class GraphData { // this thing should probably just extend EventEmitter
     this.externalAPI.on('PEER_SAVED_GRAPH', this.handlePeerUpdate.bind(this))
     this.externalAPI.on('PEER_DELETED_ITEMS', this.handlePeerDelete.bind(this))
 
+  }
+
+  ping() {
+    this.externalAPI.ping()
   }
 
   //shortcut to the emitter
