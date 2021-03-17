@@ -8,6 +8,7 @@
     "compile": "truffle compile",
     "test": "truffle test",
     "migrate": "truffle migrate",
+    "migrate-timecat": "truffle migrate --network timecat",
     "migrate-dev": "truffle migrate --network development"
   },
   "author": "",
@@ -16,7 +17,9 @@
     "truffle": "^5.0.29"
   },
   "dependencies": {
+    "@truffle/hdwallet-provider": "^1.2.3",
     "ganache-cli": "^6.5.1",
-    "nvm": "^0.0.4"
+    "nvm": "^0.0.4",
+    "truffle-hdwallet-provider": "^1.0.17"
   }
 }

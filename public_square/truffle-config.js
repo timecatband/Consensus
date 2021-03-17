@@ -1,3 +1,7 @@
+var HDWalletProvider = require("truffle-hdwallet-provider");
+var lolcats = "left wood talk embody regular cram rival three tree pass bullet lava gallery vault quiz";
+var provider = new HDWalletProvider(lolcats, "http://35.224.90.178:8080")
+
 /**
  * Use this file to configure your truffle project. It's seeded with some
  * common settings for different networks and features like migrations,
@@ -47,6 +51,12 @@ module.exports = {
      port: 8545,            // Standard Ethereum port (default: none)
      network_id: "*",       // Any network (default: none)
     },
+    timecat: {
+      host: "35.224.90.178",
+      port: 8080,
+      network_id: "1727",
+      provider: provider
+    }
 
     // Another network with more advanced options...
     // advanced: {

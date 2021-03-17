@@ -6,7 +6,4 @@
 # todo: maybe it's ok to expose this puppy
 journal_app/client/public/config/config.production.json
 
-# generated file
-ConsensusGraphABI.js
-
 journal.db

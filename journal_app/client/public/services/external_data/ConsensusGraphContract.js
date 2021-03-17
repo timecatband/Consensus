@@ -34,6 +34,7 @@ export async function setProvider() {
   account = await metamaskWeb3.eth.getAccounts()
   let id = await metamaskWeb3.eth.net.getId()
   metamaskWeb3.eth.handleRevert = true;
+  
   consensusGraphContractAddress = ConsensusGraphABI.networks[id]["address"]
 }
 
