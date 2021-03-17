@@ -18,19 +18,19 @@ class BlockchainAPI extends EventEmitter {
 
   ping(data: any) {
     this.ready.then(() => {
-        // Woo!
-        console.log("woo! ping! ready! web3!")
+      // Woo!
+      console.log("woo! ping! ready! web3!")
     })
   }
 
   saveGraph(graphData: any) {
     for (let i = 0; i < graphData.nodes.length; i++) {
-        const node = graphData.nodes[i];
-        upsertNode(node.id, JSON.stringify(node));
+      const node = graphData.nodes[i];
+      upsertNode(node.id, JSON.stringify(node));
     }
     for (let i = 0; i < graphData.edges.length; i++) {
-        const edge = graphData.edges[i];
-        upsertEdge(edge.id, JSON.stringify(edge));
+      const edge = graphData.edges[i];
+      upsertEdge(edge.id, JSON.stringify(edge));
     }
   }
 

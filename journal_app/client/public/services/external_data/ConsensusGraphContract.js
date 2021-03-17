@@ -19,16 +19,16 @@ export const accountAddress = () => {
 }
 
 export async function setProvider() {
-  if (window.ethereum){
-   metamaskWeb3 = new Web3(ethereum);
-    try{
-   // Request account access if needed
+  if (window.ethereum) {
+    metamaskWeb3 = new Web3(ethereum);
+    try {
+        // Request account access if needed
         await ethereum.enable();
-  }
-   catch (error){
-   // User denied account access...
-   }
-  } else if (window.web3){
+    }
+    catch (error) {
+      // User denied account access...
+    }
+  } else if (window.web3) {
     metamaskWeb3 = new Web3(web3.currentProvider);
   }
   account = await metamaskWeb3.eth.getAccounts()
@@ -71,7 +71,7 @@ export async function getEdges() {
 
   let edges = []
   for (let i = 0; i < edgeIds.length; i++) {
-      edges.push(getEdge(edgeIds[i]));
+    edges.push(getEdge(edgeIds[i]));
   }
   return edges;
 }
@@ -79,15 +79,15 @@ export async function getEdges() {
 export async function upsertNode(id, json) {
   console.log("calling upsert in contract", id, json)
   await getConsensusGraphContract().methods.upsertNode(id, json).send({
-      from: account[0]
+    from: account[0]
   })
   console.log("finished upsert in cotract")
 }
 
 export async function upsertEdge(id, json) {
-    await getConsensusGraphContract().methods.upsertEdge(id, json).send({
-        from: account[0]
-    })
+  await getConsensusGraphContract().methods.upsertEdge(id, json).send({
+    from: account[0]
+  })
 }
 
 export async function onNewNode(callback) {
