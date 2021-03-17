@@ -15,7 +15,7 @@ import Edge from '@antv/g6/lib/item/edge.d.ts';
 */
 
 class GraphData { // this thing should probably just extend EventEmitter
-  ServerAPI: any;
+  externalAPI: any;
   initialized: boolean; // a bool to make sure we only try to set the ready promise once... theres probably a better way to do this
   emitter: EventEmitter; // allows react components (and anything) to subscribe to changes in the graph model
 
@@ -25,21 +25,21 @@ class GraphData { // this thing should probably just extend EventEmitter
   selectedItems: any;
   filterPanelOpen: boolean;
 
-  constructor(ServerAPI: any) {
+  constructor(externalAPI: any) {
     this.graphs = []
-    this.ServerAPI = ServerAPI;
+    this.externalAPI = externalAPI;
     this.initialized = false;
     this.emitter = new EventEmitter();
     this.filterPanelOpen = false;
 
     // call to the server for our initial graph, and register a listener for the socket response
-    this.ServerAPI.on('GET_GRAPH_RSP', this.handleServerGraphResponse.bind(this))
-    this.ServerAPI.ready.then( () => {
-      this.ServerAPI.getGraph()
+    this.externalAPI.on('GET_GRAPH_RSP', this.handleServerGraphResponse.bind(this))
+    this.externalAPI.ready.then( () => {
+      this.externalAPI.getGraph()
     });
 
-    this.ServerAPI.on('PEER_SAVED_GRAPH', this.handlePeerUpdate.bind(this))
-    this.ServerAPI.on('PEER_DELETED_ITEMS', this.handlePeerDelete.bind(this))
+    this.externalAPI.on('PEER_SAVED_GRAPH', this.handlePeerUpdate.bind(this))
+    this.externalAPI.on('PEER_DELETED_ITEMS', this.handlePeerDelete.bind(this))
 
   }
 
@@ -174,7 +174,7 @@ class GraphData { // this thing should probably just extend EventEmitter
     }
   }
 
-  // returns a serializable object, e.g. non-circular literal object. The serverAPI will handle actual stringification
+  // returns a serializable object, e.g. non-circular literal object. The externalAPI will handle actual stringification
   serializeNode(node:any) {
     let n = node._cfg?.model || {}
     return {
@@ -187,7 +187,7 @@ class GraphData { // this thing should probably just extend EventEmitter
     }
   }
 
-  // returns a serializable object, e.g. non-circular literal object. The serverAPI will handle actual stringification
+  // returns a serializable object, e.g. non-circular literal object. The externalAPI will handle actual stringification
   serializeEdge(edge:any) {
     let e = edge._cfg?.model || {}
     return {
@@ -197,7 +197,7 @@ class GraphData { // this thing should probably just extend EventEmitter
     }
   }
 
-  // returns a serializable object, e.g. non-circular literal object. The serverAPI will handle actual stringification
+  // returns a serializable object, e.g. non-circular literal object. The externalAPI will handle actual stringification
   serializeG6graph(key, g6graph) {
     let nodes = _.values(_.mapValues(g6graph.cfg.nodes, (node) => {
       return this.serializeNode(node)
@@ -220,7 +220,7 @@ class GraphData { // this thing should probably just extend EventEmitter
       nodes: _.map(nodes,this.serializeNode),
       edges: []
     }
-    ServerAPI.saveGraph( graphObj )
+    this.externalAPI.saveGraph( graphObj )
   }
 
   /*
@@ -232,7 +232,7 @@ class GraphData { // this thing should probably just extend EventEmitter
       nodes: [],
       edges: _.map(edges,this.serializeEdge)
     }
-    ServerAPI.saveGraph( graphObj )
+    this.externalAPI.saveGraph( graphObj )
   }
 
 
@@ -242,7 +242,7 @@ class GraphData { // this thing should probably just extend EventEmitter
       this method will still be useful because its a "save subgraph" method, it can save any collection of nodes and edges
   */
   saveGraph() {
-    ServerAPI.saveGraph(this.serializeG6graph(this.DisplayedGraphKey, this.DisplayedGraph))
+    this.externalAPI.saveGraph(this.serializeG6graph(this.DisplayedGraphKey, this.DisplayedGraph))
   }
 
 
@@ -256,9 +256,9 @@ class GraphData { // this thing should probably just extend EventEmitter
     })
 
     if (type == 'node') {
-      ServerAPI.deleteNodes(itemIds)
+      this.externalAPI.deleteNodes(itemIds)
     } else if (type == 'edge') {
-      ServerAPI.deleteEdges(itemIds)
+      this.externalAPI.deleteEdges(itemIds)
     }
   }
 

@@ -23,10 +23,12 @@ const GraphCanvas = (props) => {
 
   // this use effect will only call once on load to set up the graph and window listeners
   useEffect(() => {
+    //const toolbar = new G6.ToolBar();
     graphCanvas = new G6.Graph({
       container: 'graph-container',
       width: canvasWidth,
       height: canvasHeight,
+      //plugins: [toolbar],
       modes: {
         default: [
           { type: 'drag-canvas',
