@@ -1,6 +1,6 @@
 abi:
 	npm run compile
-	rm ConsensusGraphABI.js
+	rm -f ConsensusGraphABI.js
 	echo "const ConsensusGraphABI = " >> ConsensusGraphABI.js
 	cat build/contracts/ConsensusGraph.json >> ConsensusGraphABI.js
 	echo "\n export default ConsensusGraphABI" >> ConsensusGraphABI.js
