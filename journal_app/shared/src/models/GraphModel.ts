@@ -22,10 +22,18 @@ class GraphModel implements I.GraphData {
     return JSON.stringify({nodes: this.nodes, edges: this.edges})
   }
 
+  jsonForBlockchain() {
+    return {
+      graph_key: this.key,
+      nodes: _.map(this.nodes, (n) => {return n.jsonForBlockchain()}),
+      edges: _.map(this.edges, (e) => {return e.jsonForBlockchain()})
+    }
+  }
+
   public static deSerialize(grObj: any) {
     return new GraphModel(
-      _.map(grObj.nodes,JournalNode.deSerialize),
-      _.map(grObj.edges,JournalEdge.deSerialize),
+      _.map(grObj.nodes, JournalNode.deSerialize),
+      _.map(grObj.edges, JournalEdge.deSerialize),
       grObj.meta,
       grObj.key
     )

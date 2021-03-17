@@ -43,9 +43,18 @@ function getConsensusGraphContract() {
   return consensusGraphContract;
 }
 
+// attach the sender address to the payload for the blockchain
+// TODO: node ownership should be handled by rules around invested stake insted of this? -KW-2021-03
+function checkOwnerAndSerialize(json) {
+  if (json.owner === undefined ) {
+    json.owner = account[0];
+  }
+  return JSON.stringify(json);
+}
+
 export async function getNode(id) {
   let contract = getConsensusGraphContract();
-  await contract.methods.nodes(id).call();
+  return await contract.methods.nodes(id).call();
 }
 
 export async function getNodes() {
@@ -53,7 +62,6 @@ export async function getNodes() {
   let nodeIds = await contract.methods.getNodeIds().call();
 
   let nodes = []
-  console.log("got nodes?", nodeIds)
   for (let i = 0; i < nodeIds.length; i++) {
     nodes.push(getNode(nodeIds[i]));
   }
@@ -77,17 +85,17 @@ export async function getEdges() {
 }
 
 export async function upsertNode(id, json) {
-  console.log("calling upsert in contract", id, json)
+  json = checkOwnerAndSerialize(json)
   await getConsensusGraphContract().methods.upsertNode(id, json).send({
       from: account[0]
   })
-  console.log("finished upsert in cotract")
 }
 
 export async function upsertEdge(id, json) {
-    await getConsensusGraphContract().methods.upsertEdge(id, json).send({
-        from: account[0]
-    })
+  json = checkOwnerAndSerialize(json)
+  await getConsensusGraphContract().methods.upsertEdge(id, json).send({
+      from: account[0]
+  })
 }
 
 export async function onNewNode(callback) {

@@ -1,4 +1,7 @@
+import _ from 'lodash'
 import EventEmitter from '@timecat/graph-journal-shared/src/models/EventEmitter'
+import JournalNode from '@timecat/graph-journal-shared/src/models/JournalNode'
+import JournalEdge from '@timecat/graph-journal-shared/src/models/JournalEdge'
 import {setProvider, upsertNode, upsertEdge, getNodes, getEdges} from './ConsensusGraphContract'
 
 /*
@@ -26,18 +29,25 @@ class BlockchainAPI extends EventEmitter {
   saveGraph(graphData: any) {
     for (let i = 0; i < graphData.nodes.length; i++) {
         const node = graphData.nodes[i];
-        upsertNode(node.id, JSON.stringify(node));
+        upsertNode(node.id, node);
     }
     for (let i = 0; i < graphData.edges.length; i++) {
         const edge = graphData.edges[i];
-        upsertEdge(edge.id, JSON.stringify(edge));
+        upsertEdge(edge.id, edge);
     }
   }
 
   async getGraph() {
-    let nodes = await getNodes()
-    let edges = await getEdges()
-    this.emit("GET_GRAPH_RSP", {key: 'firstBlockchainGraph', nodes: nodes, edges: edges})
+    let nodes = await Promise.all(await getNodes())
+    let edges = await Promise.all(await getEdges())
+
+    console.log("nodes in bcapiu", nodes)
+    this.emit("GET_GRAPH_RSP", {
+      key: 'firstBlockchainGraph',
+      nodes: _.map(nodes, (n) => JournalNode.fromBlockchain(n.json)),
+      edges: _.map(edges, (e) => JournalNode.fromBlockchain(e.json))
+    });
+
   }
 
   /*

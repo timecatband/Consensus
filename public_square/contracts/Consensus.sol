@@ -2,8 +2,11 @@ contract ConsensusGraph {
   struct Node {
     // JSON representation sent from client. Opaque here.
     string json;
+
     // Original owner. Only owner can update node itself.
+    // TODO: node ownership should be handled by rules around invested stake insted of this? -KW-2021-03
     address owner;
+
     // String UUID sent from client, and used as client ID.
     // server side ID is keccak hash of this.
     string id;
@@ -29,7 +32,7 @@ contract ConsensusGraph {
   }
   function getEdgeIds() public returns(bytes32[] memory) {
     return edgeIds;
-  } 
+  }
 
   // Since getNode takes a "client ID", NewNode should also
   // speak client IDs
