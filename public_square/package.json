@@ -7,7 +7,8 @@
     "test:ethereum": "ganache-cli -h localhost -m 'layer post chase message demise fresh resource beyond bulb rose garden kite'",
     "compile": "truffle compile",
     "test": "truffle test",
-    "migrate": "truffle migrate"
+    "migrate": "truffle migrate",
+    "migrate-dev": "truffle migrate --network development"
   },
   "author": "",
   "license": "ISC",
