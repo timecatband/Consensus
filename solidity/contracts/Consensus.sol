@@ -1,33 +1,37 @@
 contract ConsensusGraph {
   struct Node {
+    // JSON representation sent from client. Opaque here.
     string json;
+    // Original owner. Only owner can update node itself.
     address owner;
+    // String UUID sent from client, and used as client ID.
+    // server side ID is keccak hash of this.
     string id;
   }
   struct Edge {
+    // Mirrors node struct
     string json;
     address owner;
     string id;
   }
 
+  // Mapping from keccak256(ids) to Node
   mapping(bytes32 => Node) public nodes;
+  // List of all IDs, so client can query all nodes.
   bytes32[] public nodeIds;
 
+  // Mirrors nodes
   mapping(bytes32 => Edge) public edges;
   bytes32[] public edgeIds;
 
-
-  // This event is emitted when a citizen is registered
-  event NewCitizen (
-    bytes32 indexed citizenId
-  );
-
+  // Since getNode takes a "client ID", NewNode should also
+  // speak client IDs
   event NewNode (
-    bytes32 indexed nodeId
+    string indexed nodeId
   );
 
   event NewEdge (
-    bytes32 indexed edgeId
+    string indexed edgeId
   );
 
   function upsertNode(string memory stringId, string memory json) public {
@@ -40,7 +44,7 @@ contract ConsensusGraph {
         nodeIds.push(id);
       }
       nodes[id] = Node(json, msg.sender, stringId);
-      emit NewNode(id);
+      emit NewNode(stringId);
   }
 
   function upsertEdge(string memory stringId, string memory json) public {
@@ -53,6 +57,6 @@ contract ConsensusGraph {
         edgeIds.push(id);
       }
       edges[id] = Edge(json, msg.sender, stringId);
-      emit NewEdge(id);
+      emit NewEdge(stringId);
   }
 }
