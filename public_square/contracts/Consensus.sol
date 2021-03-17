@@ -24,6 +24,13 @@ contract ConsensusGraph {
   mapping(bytes32 => Edge) public edges;
   bytes32[] public edgeIds;
 
+  function getNodeIds() public returns(bytes32[] memory) {
+    return nodeIds;
+  }
+  function getEdgeIds() public returns(bytes32[] memory) {
+    return edgeIds;
+  } 
+
   // Since getNode takes a "client ID", NewNode should also
   // speak client IDs
   event NewNode (

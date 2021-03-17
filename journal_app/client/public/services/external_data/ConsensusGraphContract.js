@@ -50,9 +50,9 @@ export async function getNode(id) {
 
 export async function getNodes() {
   let contract = getConsensusGraphContract();
-  nodeIds = await contract.methods.nodeIds().call();
+  let nodeIds = await contract.methods.getNodeIds().call();
 
-  nodes = []
+  let nodes = []
   for (let i = 0; i < nodeIds.length; i++) {
     nodes.push(getNode(nodeIds[i]));
   }
@@ -66,9 +66,9 @@ export async function getEdge(id) {
 
 export async function getEdges() {
   let contract = getConsensusGraphContract()
-  edgeIds = await contract.methods.edgeIds().call();
+  let edgeIds = await contract.methods.getEdgeIds().call();
 
-  edges = []
+  let edges = []
   for (let i = 0; i < edgeIds.length; i++) {
       edges.push(getEdge(edgeIds[i]));
   }
