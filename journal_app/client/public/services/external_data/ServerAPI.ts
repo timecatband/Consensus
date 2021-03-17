@@ -55,6 +55,12 @@ class ServerAPI {
 
 }
 
-var ServerApiSvc = new ServerAPI(SocketClient)
+/*
+  TODO: commenting these out for now, but if we want to be able to switch back and forth btw server and blockchain, then we should
+  switch based on config
+*/
+//const SocketClientSvc = new SocketClient();
+const SocketClientSvc = {}
+var ServerApiSvc = new ServerAPI(SocketClientSvc)
 
 export default ServerApiSvc;

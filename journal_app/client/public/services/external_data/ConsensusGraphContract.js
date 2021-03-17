@@ -1,6 +1,7 @@
 
 let Web3 = require('Web3');
 let metamaskWeb3 = new Web3('http://localhost:8545')
+import ConsensusGraphABI from './ConsensusGraphABI'
 let account = null
 let consensusGraphContract
 let consensusGraphContractAddress
@@ -38,17 +39,17 @@ export async function setProvider() {
 
 
 function getConsensusGraphContract() {
-  consensusGraphContract = consensusGraphContract || new metamaskWeb3.eth.Contract(ConsensusGraphABI.abi, consensusGraphContractAddress)
+  consensusGraphContract = consensusGraphContract || new metamaskWeb3.eth.Contract(ConsensusGraphABI.abi, consensusGraphContractAddress);
   return consensusGraphContract;
 }
 
 export async function getNode(id) {
-  let contract = getConsensusGraphContract()
-  await contract.methods.nodes(nodeIds[i]).call());
+  let contract = getConsensusGraphContract();
+  await contract.methods.nodes(nodeIds[i]).call();
 }
 
 export async function getNodes() {
-  let contract = getConsensusGraphContract()
+  let contract = getConsensusGraphContract();
   nodeIds = await contract.methods.nodeIds().call();
 
   nodes = []
@@ -87,7 +88,7 @@ export async function upsertEdge(id, json) {
 }
 
 export async function onNewNode(callback) {
-  getConsensusGraphContract().events.NewNode({}, 
+  getConsensusGraphContract().events.NewNode({},
     async(id) => {
       node = await getNode(id);
       callback(node)
@@ -95,7 +96,7 @@ export async function onNewNode(callback) {
 }
 
 export async function onNewEdge(callback) {
-  getConsensusGraphContract().events.NewNode({}, 
+  getConsensusGraphContract().events.NewNode({},
     async(id) => {
       edge = await getEdge(id);
       callback(edge)

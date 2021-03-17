@@ -1,5 +1,5 @@
-var PublicSquare = artifacts.require("PublicSquare");
+var ConsensusGraph = artifacts.require("ConsensusGraph");
 
 module.exports = function(deployer) {
-  deployer.deploy(PublicSquare);
+  deployer.deploy(ConsensusGraph);
 };

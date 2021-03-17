@@ -1,5 +1,7 @@
 abi:
 	npm run compile
+	rm ConsensusGraphABI.js
 	echo "ConsensusGraphABI = " >> ConsensusGraphABI.js
 	cat build/contracts/ConsensusGraph.json >> ConsensusGraphABI.js
-	cp ConsensusGraphABI.js ../journal_app/client/public/services 
+	echo "\n export default ConsensusGraphABI" >> ConsensusGraphABI.js
+	cp ConsensusGraphABI.js ../journal_app/client/public/services/external_data/
