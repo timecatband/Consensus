@@ -93,10 +93,11 @@ export async function onNewNode(callback) {
       callback(node)
     });
 }
+
 export async function onNewEdge(callback) {
   getConsensusGraphContract().events.NewNode({}, 
     async(id) => {
-      node = await getEdge(id);
+      edge = await getEdge(id);
       callback(edge)
     });
 }
