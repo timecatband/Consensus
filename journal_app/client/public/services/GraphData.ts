@@ -36,7 +36,8 @@ class GraphData { // this thing should probably just extend EventEmitter
     // call to the server for our initial graph, and register a listener for the socket response
     this.externalAPI.on('GET_GRAPH_RSP', this.handleServerGraphResponse.bind(this))
     this.externalAPI.ready.then( () => {
-      this.externalAPI.getGraph()
+      this.externalAPI.getGraph();
+      this.externalAPI.getPublicSquare();
     });
 
     this.externalAPI.on('PEER_SAVED_GRAPH', this.handlePeerUpdate.bind(this))

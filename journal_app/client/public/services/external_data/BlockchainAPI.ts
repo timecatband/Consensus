@@ -2,7 +2,9 @@ import _ from 'lodash'
 import EventEmitter from '@timecat/graph-journal-shared/src/models/EventEmitter'
 import JournalNode from '@timecat/graph-journal-shared/src/models/JournalNode'
 import JournalEdge from '@timecat/graph-journal-shared/src/models/JournalEdge'
+import PublicSquare from '@timecat/graph-journal-shared/src/models/PublicSquare'
 import {setProvider, upsertNode, upsertEdge, getNodes, getEdges} from './ConsensusGraphContract'
+import {getPublicSquare} from './PublicSquareContract'
 
 /*
   Singleton service ServerAPI provides methods for reading/writing via Web3 blockchain shenanigans
@@ -46,7 +48,15 @@ class BlockchainAPI extends EventEmitter {
       nodes: _.map(nodes, (n) => JournalNode.fromBlockchain(n.json)),
       edges: _.map(edges, (e) => JournalEdge.fromBlockchain(e.json))
     });
+  }
 
+  async getPublicSquare() {
+    let publicSquare = await getPublicSquare();
+    console.log(publicSquare);
+    this.emit("GET_PUBLIC_SQUARE_RSP", {
+      key: 'publicSquare',
+      publicSquare: new PublicSquare(publicSquare.rootNodes)
+    });
   }
 
   /*
