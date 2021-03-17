@@ -1,7 +1,7 @@
 .PHONY: clean install test deploy_client
 
 
-DIRS = journal_app
+DIRS = public_square journal_app
 
 
 clean:
