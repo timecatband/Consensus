@@ -21,8 +21,8 @@ class BlockchainAPI extends EventEmitter {
 
   ping(data: any) {
     this.ready.then(() => {
-        // Woo!
-        console.log("woo! ping! ready! web3!")
+      // Woo!
+      console.log("woo! ping! ready! web3!")
     })
   }
 
