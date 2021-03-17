@@ -1,6 +1,6 @@
 import _ from 'lodash'
 //import ServerAPI from './external_data/ServerAPI'
-import ServerAPI from './external_data/ServerAPIWeb3'
+import ServerAPI from './external_data/BlockchainAPI'
 import GraphModel from '@timecat/graph-journal-shared/src/models/GraphModel'
 import JournalNode from '@timecat/graph-journal-shared/src/models/JournalNode'
 import JournalEdge from '@timecat/graph-journal-shared/src/models/JournalEdge'
@@ -94,6 +94,7 @@ class GraphData { // this thing should probably just extend EventEmitter
   // The initial graph load response
   handleServerGraphResponse(graphData: GraphModel) {
     const newGraph = GraphModel.deSerialize(graphData)
+    console.log("got graph from external", newGraph)
     this.graphs.push(newGraph)
     this.setDisplayedGraph(newGraph)
   }

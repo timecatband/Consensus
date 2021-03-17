@@ -5,21 +5,25 @@ import SingleNodePanel from './SingleNodePanel'
 import FilterPanel from './FilterPanel'
 
 function wrapText(text: string) {
-  let words = text.replace('\n','').split(' ');
-  let wrapped = '';
-  let line = ''
+  if (text != undefined) {
 
-  for(let n = 0; n < words.length; n++) {
-    line = line + words[n].replace(' ','');
-    if (line.length > 20) {
-      wrapped = wrapped + line + '\n'
-      line = ''
+    let words = text.replace('\n','').split(' ');
+    let wrapped = '';
+    let line = ''
+
+    for(let n = 0; n < words.length; n++) {
+      line = line + words[n].replace(' ','');
+      if (line.length > 20) {
+        wrapped = wrapped + line + '\n'
+        line = ''
+      }
+      else {line = line + ' '}
     }
-    else {line = line + ' '}
-  }
 
-  wrapped = wrapped + line
-  return wrapped.trim();
+    wrapped = wrapped + line
+    return wrapped.trim();
+  }
+  else {return ''}
 }
 
 const updateModel = _.debounce( (nodeId:string, update: any) => {
@@ -52,7 +56,9 @@ function GraphSidePanel(props: any): any {
   }
 
   function setLabelRemoveWrapping(label: string) {
-    setLabel(label.replace(/\n/g,' '))
+    if (label != undefined) {
+      setLabel(label.replace(/\n/g,' '))
+    }
   }
 
   function updateItem(update:any) {

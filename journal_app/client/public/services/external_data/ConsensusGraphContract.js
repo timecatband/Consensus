@@ -53,6 +53,7 @@ export async function getNodes() {
   let nodeIds = await contract.methods.getNodeIds().call();
 
   let nodes = []
+  console.log("got nodes?", nodeIds)
   for (let i = 0; i < nodeIds.length; i++) {
     nodes.push(getNode(nodeIds[i]));
   }
@@ -76,9 +77,11 @@ export async function getEdges() {
 }
 
 export async function upsertNode(id, json) {
+  console.log("calling upsert in contract", id, json)
   await getConsensusGraphContract().methods.upsertNode(id, json).send({
     from: account[0]
   })
+  console.log("finished upsert in cotract")
 }
 
 export async function upsertEdge(id, json) {

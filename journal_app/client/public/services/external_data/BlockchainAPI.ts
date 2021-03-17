@@ -1,13 +1,14 @@
-import SocketClient from './SocketClient'
+import EventEmitter from '@timecat/graph-journal-shared/src/models/EventEmitter'
 import {setProvider, upsertNode, upsertEdge, getNodes, getEdges} from './ConsensusGraphContract'
 
 /*
   Singleton service ServerAPI provides methods for reading/writing via Web3 blockchain shenanigans
 */
-class ServerAPIWeb3 {
+class BlockchainAPI extends EventEmitter {
   ready: any;
 
-  constructor( socketClient: any ) {
+  constructor() {
+    super()
     this.ready = setProvider();
   }
 
@@ -33,15 +34,10 @@ class ServerAPIWeb3 {
     }
   }
 
-  getGraph() {
-    console.log("Blockchain api getting graph")
-    let nodes = getNodes()
-    let edges = getEdges()
-    console.log("gotgraph blcokcahin style", nodes, edges)
-  }
-
-  on(type: string, fn: Function) {
-    
+  async getGraph() {
+    let nodes = await getNodes()
+    let edges = await getEdges()
+    this.emit("GET_GRAPH_RSP", {key: 'firstBlockchainGraph', nodes: nodes, edges: edges})
   }
 
   /*
@@ -60,6 +56,6 @@ class ServerAPIWeb3 {
 
 }
 
-var ServerApiWeb3 = new ServerAPIWeb3(SocketClient)
+var BlockchainAPISvc = new BlockchainAPI()
 
-export default ServerApiWeb3;
+export default BlockchainAPISvc;
