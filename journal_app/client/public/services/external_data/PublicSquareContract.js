@@ -51,63 +51,14 @@ function getPublicSquareContract() {
 // }
 
 export async function getPublicSquare() {
-  let contract = getpublicSquareContract();
+  let contract = getPublicSquareContract();
   return await contract.methods.nodes(id).call();
 }
 
-export async function getNodes() {
-  let contract = getpublicSquareContract();
-  let nodeIds = await contract.methods.getNodeIds().call();
-
-  let nodes = []
-  for (let i = 0; i < nodeIds.length; i++) {
-    nodes.push(getNode(nodeIds[i]));
-  }
-  return nodes;
-}
-
-export async function getEdge(id) {
-  let contract = getpublicSquareContract()
-  return await contract.methods.edges(id).call();
-}
-
-export async function getEdges() {
-  let contract = getpublicSquareContract()
-  let edgeIds = await contract.methods.getEdgeIds().call();
-
-  let edges = []
-  for (let i = 0; i < edgeIds.length; i++) {
-    edges.push(getEdge(edgeIds[i]));
-  }
-  return edges;
-}
-
-export async function upsertNode(id, json) {
-  json = checkOwnerAndSerialize(json)
-  await getpublicSquareContract().methods.upsertNode(id, json).send({
-    from: account[0]
-  })
-}
-
-export async function upsertEdge(id, json) {
-  json = checkOwnerAndSerialize(json)
-  await getpublicSquareContract().methods.upsertEdge(id, json).send({
-      from: account[0]
-  })
-}
-
-export async function onNewNode(callback) {
-  getpublicSquareContract().events.NewNode({},
-    async(id) => {
-      node = await getNode(id);
-      callback(node)
-    });
-}
-
-export async function onNewEdge(callback) {
-  getpublicSquareContract().events.NewNode({},
-    async(id) => {
-      edge = await getEdge(id);
-      callback(edge)
-    });
-}
+// export async function onNewEdge(callback) {
+//   getpublicSquareContract().events.NewNode({},
+//     async(id) => {
+//       edge = await getEdge(id);
+//       callback(edge)
+//     });
+// }

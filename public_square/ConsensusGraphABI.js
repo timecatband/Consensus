@@ -5064,12 +5064,12 @@ const ConsensusGraphABI =
     "1615968071521": {
       "events": {},
       "links": {},
-      "address": "0x59fa81CA06156A3C9f10A15597dEB4792643f44D",
-      "transactionHash": "0x1931d5441fd594ee97b7131bddd5cb93952ec93d205bc8d10b47a553683a0865"
+      "address": "0xFd0Ed23E63d9ab1170D7711Fd5156fe4bEfD80b4",
+      "transactionHash": "0x2139a846cec5074a7e8b07f0706cac01bd994617cbf422965f5e14fa4742b80d"
     }
   },
   "schemaVersion": "3.3.4",
-  "updatedAt": "2021-03-17T09:14:42.437Z",
+  "updatedAt": "2021-03-17T09:22:22.406Z",
   "networkType": "ethereum",
   "devdoc": {
     "methods": {}
