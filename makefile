@@ -9,7 +9,7 @@ clean:
 	-for d in $(DIRS); do $(MAKE) -C $$d clean || exit 1; done
 
 
-install: blockchain
+install:
 	-for d in $(DIRS); do $(MAKE) -C $$d install || exit 1; done
 
 
