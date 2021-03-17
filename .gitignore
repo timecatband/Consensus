@@ -8,5 +8,6 @@ journal_app/client/public/config/config.production.json
 
 # generated file
 ConsensusGraphABI.js
+ConsensusGraphABI.js
 
 journal.db
