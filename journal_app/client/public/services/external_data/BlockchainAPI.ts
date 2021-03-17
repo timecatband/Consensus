@@ -41,11 +41,10 @@ class BlockchainAPI extends EventEmitter {
     let nodes = await Promise.all(await getNodes())
     let edges = await Promise.all(await getEdges())
 
-    console.log("nodes in bcapiu", nodes)
     this.emit("GET_GRAPH_RSP", {
       key: 'firstBlockchainGraph',
       nodes: _.map(nodes, (n) => JournalNode.fromBlockchain(n.json)),
-      edges: _.map(edges, (e) => JournalNode.fromBlockchain(e.json))
+      edges: _.map(edges, (e) => JournalEdge.fromBlockchain(e.json))
     });
 
   }
