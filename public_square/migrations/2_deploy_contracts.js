@@ -1,4 +1,4 @@
-var ConsensusGraph = artifacts.require("ConsensusGraph");
+// var ConsensusGraph = artifacts.require("ConsensusGraph");
 var PublicSquare = artifacts.require("PublicSquare");
 
 module.exports = function(deployer) {
