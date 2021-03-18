@@ -34,7 +34,7 @@ export async function setProvider() {
   account = await metamaskWeb3.eth.getAccounts()
   let id = await metamaskWeb3.eth.net.getId()
   metamaskWeb3.eth.handleRevert = true;
-  
+
   consensusGraphContractAddress = ConsensusGraphABI.networks[id]["address"]
 }
 
@@ -99,6 +99,13 @@ export async function upsertEdge(id, json) {
       from: account[0]
   })
 }
+
+export async function elonMusk() {
+  await getConsensusGraphContract().methods.airdropMe().send({
+    from: account[0]
+  })
+}
+
 
 export async function onNewNode(callback) {
   getConsensusGraphContract().events.NewNode({},

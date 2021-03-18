@@ -49,13 +49,10 @@ contract ConsensusGraph {
     string indexed edgeId
   );
   
-  ConsensusToken public tokenContract;
-
-  constructor() public {
-      tokenContract = new ConsensusToken("Main Graph", 1000);
-  }
+  ConsensusToken public tokenContract = new ConsensusToken("Main Graph", 1000, address(this));
 
   function airdropMe() public {
+      tokenContract.approve(address(this), 9999999);
       tokenContract.transferFrom(address(this), msg.sender, 100);
   }
 

@@ -36,11 +36,11 @@ contract ConsensusToken is IERC20 {
     using SafeMath for uint256;
 
 
-   constructor(string memory _name, uint256 total) public {
+   constructor(string memory _name, uint256 total, address owner) public {
         totalSupply_ = total;
-        bytes memory byteName = bytes(name);
+        bytes memory byteName = bytes(_name);
         name = string(abi.encodePacked("Consensus for ", _name));
-        balances[msg.sender] = totalSupply_;
+        balances[owner] = totalSupply_;
         symbol = string(abi.encodePacked("CSUS",byteName[0]));
     }
 
