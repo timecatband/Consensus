@@ -34,7 +34,7 @@ export async function setProvider() {
   account = await metamaskWeb3.eth.getAccounts()
   let id = await metamaskWeb3.eth.net.getId()
   metamaskWeb3.eth.handleRevert = true;
-  
+
   consensusGraphContractAddress = ConsensusGraphABI.networks[id]["address"]
 }
 
@@ -44,14 +44,26 @@ function getConsensusGraphContract() {
   return consensusGraphContract;
 }
 
-// attach the sender address to the payload for the blockchain
-// TODO: node ownership should be handled by rules around invested stake insted of this? -KW-2021-03
-function checkOwnerAndSerialize(json) {
+/*
+  helper method for writing objects
+  1. attach the sender address to the payload for the blockchain
+  2. format the json as the contract expects
+  3. serialize
+  TODO: node ownership should be handled by rules around invested stake insted of this? -KW-2021-03
+*/
+function checkOwnerAndFormat(json) {
   // if there is no owner on the model, this must be a newly  created node, so attach the current users address to it
   if (json.owner === undefined ) {
     json.owner = account[0];
   }
-  return JSON.stringify(json);
+
+  let payload = {
+    id: json.id,
+    owner: json.owner, // this may be the sender if its a new node, otherwise the original owner
+    json: json
+  }
+
+  return JSON.stringify(payload);
 }
 
 export async function getNode(id) {
@@ -87,14 +99,14 @@ export async function getEdges() {
 }
 
 export async function upsertNode(id, json) {
-  json = checkOwnerAndSerialize(json)
+  json = checkOwnerAndFormat(json)
   await getConsensusGraphContract().methods.upsertNode(id, json).send({
     from: account[0]
   })
 }
 
 export async function upsertEdge(id, json) {
-  json = checkOwnerAndSerialize(json)
+  json = checkOwnerAndFormat(json)
   await getConsensusGraphContract().methods.upsertEdge(id, json).send({
       from: account[0]
   })
