@@ -29,11 +29,4 @@ contract PublicSquare {
       emit NewConsensusGraph(id);
   }
 
-  // function getConsensusGraph(bytes32 graphId) public view returns(ConsensusGraph) {
-  //   if (consensusGraphs[graphId].creator() == address(0)) {
-  //     revert("Graph does not exist");
-  //   }
-  //   return consensusGraphs[graphId];
-  // }
-
 }
