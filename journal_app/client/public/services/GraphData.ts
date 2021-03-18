@@ -244,7 +244,7 @@ class GraphData { // this thing should probably just extend EventEmitter
       nodes: _.map(nodes,(n) => n.serialize()),
       edges: _.map(edges,(e) => e.serialize())
     }
-    
+
     console.log("Debounced write firing to server")
     this.externalAPI.saveGraph(this.contract, graphObj)
   }, 3000)

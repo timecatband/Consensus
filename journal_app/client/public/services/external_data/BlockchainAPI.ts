@@ -43,10 +43,30 @@ class BlockchainAPI extends EventEmitter {
     let nodes = await Promise.all(await getNodes(graphContract))
     let edges = await Promise.all(await getEdges(graphContract))
 
+    // make sure we didn't get junk data back
+    nodes = _.map(nodes, (n) => JournalNode.fromBlockchain(n.json))
+    let filteredNodes = _.filter(nodes, (n) => { return n.label != undefined })
+
+    if ( filteredNodes.length != nodes.length ) {
+      console.warn("Warning: apparently bad nodes loaded from blockchain")
+    }
+
+    // prevent junk data, and prevent edges that refer to non-existant nodes as that will fuck g6
+    let nodeIds = _.values(_.mapValues(filteredNodes, (n) => {return n.id}));
+    console.log("nodeids", nodeIds)
+    edges = _.map(edges, (e) => JournalEdge.fromBlockchain(e.json))
+    let filteredEdges = _.filter(edges, (e) => {
+      return e.source != undefined && nodeIds.includes(e.source) && nodeIds.includes(e.target)
+    })
+
+    if ( filteredEdges.length != edges.length ) {
+      console.warn("Warning: apparently bad edges loaded from blockchain")
+    }
+
     this.emit("GET_GRAPH_RSP", {
       key: 'firstBlockchainGraph',
-      nodes: _.map(nodes, (n) => JournalNode.fromBlockchain(n.json)),
-      edges: _.map(edges, (e) => JournalEdge.fromBlockchain(e.json)),
+      nodes: filteredNodes,
+      edges: filteredEdges,
       contract: graphContract
     });
   }
