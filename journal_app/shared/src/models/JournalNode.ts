@@ -49,6 +49,7 @@ class JournalNode implements I.NodeConfig {
   }
 
   public static fromBlockchain(json: any) {
+    console.log(json);
     return JournalNode.deSerialize(JSON.parse(json))
   }
 

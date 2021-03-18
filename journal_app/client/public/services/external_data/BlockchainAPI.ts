@@ -4,7 +4,7 @@ import JournalNode from '@timecat/graph-journal-shared/src/models/JournalNode'
 import JournalEdge from '@timecat/graph-journal-shared/src/models/JournalEdge'
 import PublicSquare from '@timecat/graph-journal-shared/src/models/PublicSquare'
 import {setProvider, upsertNode, upsertEdge, getNodes, getEdges} from './ConsensusGraphContract'
-import {setProviderPublicSquare, getConsensusGraphIds, createGraph} from './PublicSquareContract'
+import {setProviderPublicSquare, getAllConsensusGraphContracts, createGraph} from './PublicSquareContract'
 
 /*
   Singleton service ServerAPI provides methods for reading/writing via Web3 blockchain shenanigans
@@ -29,31 +29,37 @@ class BlockchainAPI extends EventEmitter {
     })
   }
 
-  saveGraph(graphData: any) {
+  saveGraph(graphContract: any, graphData: any) {
     for (let i = 0; i < graphData.nodes.length; i++) {
         const node = graphData.nodes[i];
-        upsertNode(node.id, node);
+        upsertNode(graphContract, node.id, node);
     }
     for (let i = 0; i < graphData.edges.length; i++) {
         const edge = graphData.edges[i];
-        upsertEdge(edge.id, edge);
+        upsertEdge(graphContract, edge.id, edge);
     }
   }
 
-  async getGraph() {
-    // let nodes = await Promise.all(await getNodes())
-    // let edges = await Promise.all(await getEdges())
+  async getGraph(graphContract) {
+    let nodes = await Promise.all(await getNodes(graphContract))
+    let edges = await Promise.all(await getEdges(graphContract))
 
-    // this.emit("GET_GRAPH_RSP", {
-    //   key: 'firstBlockchainGraph',
-    //   nodes: _.map(nodes, (n) => JournalNode.fromBlockchain(n.json)),
-    //   edges: _.map(edges, (e) => JournalEdge.fromBlockchain(e.json))
-    // });
+    this.emit("GET_GRAPH_RSP", {
+      key: 'firstBlockchainGraph',
+      nodes: _.map(nodes, (n) => JournalNode.fromBlockchain(n.json)),
+      edges: _.map(edges, (e) => JournalEdge.fromBlockchain(e.json)),
+      contract: graphContract
+    });
   }
 
   async getPublicSquare() {
-    let consensusGraphIds = await getConsensusGraphIds();
-    console.log('consensusGraphIds', consensusGraphIds);
+    let consensusGraphContracts = await getAllConsensusGraphContracts();
+    console.log('consensusGraphContracts', consensusGraphContracts);
+    if (consensusGraphContracts.length > 0) {
+      // just use the first one for now
+      console.log('consensusGraphContracts[0]', consensusGraphContracts[0])
+      await this.getGraph(consensusGraphContracts[0])
+    }
     // this.emit("GET_PUBLIC_SQUARE_RSP", {
     //   key: 'publicSquare',
     //   consensusGraphIds: new PublicSquare(consensusGraphIds)
