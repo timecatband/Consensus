@@ -57,13 +57,7 @@ function checkOwnerAndFormat(json) {
     json.owner = account[0];
   }
 
-  let payload = {
-    id: json.id,
-    owner: json.owner, // this may be the sender if its a new node, otherwise the original owner
-    json: json
-  }
-
-  return JSON.stringify(payload);
+  return JSON.stringify(json);
 }
 
 export async function getNode(id) {

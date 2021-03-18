@@ -41,10 +41,24 @@ class BlockchainAPI extends EventEmitter {
     let nodes = await Promise.all(await getNodes())
     let edges = await Promise.all(await getEdges())
 
+    console.log("hey edges", edges)
+
+    // make sure we didn't get junk data back
+    nodes = _.map(nodes, (n) => JournalNode.fromBlockchain(n.json))
+    nodes = _.filter(nodes, (n) => { return n.label != undefined && n.label != ""})
+
+    // prevent junk data, and prevent edges that refer to non-existant nodes as that will fuck g6
+    let nodeIds = _.values(_.mapValues(nodes, (n) => {return n.id}));
+    console.log("nodeids", nodeIds)
+    edges = _.map(edges, (e) => JournalEdge.fromBlockchain(e.json))
+    edges = _.filter(edges, (e) => {
+      return e.source != undefined && nodeIds.includes(e.source) && nodeIds.includes(e.target)
+    })
+
     this.emit("GET_GRAPH_RSP", {
       key: 'firstBlockchainGraph',
-      nodes: _.map(nodes, (n) => JournalNode.fromBlockchain(n.json)),
-      edges: _.map(edges, (e) => JournalEdge.fromBlockchain(e.json))
+      nodes: nodes,
+      edges: edges
     });
 
   }
