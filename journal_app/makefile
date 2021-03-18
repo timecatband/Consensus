@@ -1,7 +1,7 @@
 .PHONY: clean install test docker-build-server docker-run-server
 
 
-DIRS = shared client server client_web_app
+DIRS = shared client server
 
 
 clean:
