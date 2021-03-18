@@ -1725,12 +1725,12 @@ const PublicSquareABI =
     "1616045779183": {
       "events": {},
       "links": {},
-      "address": "0x49C9af529139bF7855FdA0d5a0f6404c444aE55e",
-      "transactionHash": "0x907865acbf93d3c4d47f87e06580c65990a91cc9b4877eabfd630df11ea83746"
+      "address": "0x59fa81CA06156A3C9f10A15597dEB4792643f44D",
+      "transactionHash": "0x3056437fab599a7bbdf554900b25451e323d66b9fc936f23dbf3ab15d07f6aec"
     }
   },
   "schemaVersion": "3.3.4",
-  "updatedAt": "2021-03-18T07:00:09.932Z",
+  "updatedAt": "2021-03-18T07:57:09.535Z",
   "networkType": "ethereum",
   "devdoc": {
     "methods": {}

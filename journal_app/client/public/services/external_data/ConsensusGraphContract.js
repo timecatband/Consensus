@@ -5,8 +5,6 @@ export async function getNode(contract, id) {
 }
 
 export async function getNodes(contract) {
-  console.log(contract);
-  console.log(contract.methods);
   let nodeIds = await contract.methods.getNodeIds().call();
 
   let nodes = []

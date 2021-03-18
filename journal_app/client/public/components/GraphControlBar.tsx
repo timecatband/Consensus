@@ -11,10 +11,9 @@ function GraphControlBar(props: any): any {
   async function createConsensusGraph() {
     const inputElement = document.getElementById('newGraphName') as HTMLInputElement;
     const graphName = inputElement.value
-    console.log(graphName);
     if (graphName.length > 0) {
       await createGraph(graphName);
-      console.log('created the new graph!')
+      console.log('created the new graph!', graphName)
     }
   }
 

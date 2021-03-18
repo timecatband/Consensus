@@ -14,7 +14,6 @@ class BlockchainAPI extends EventEmitter {
 
   constructor() {
     super()
-    // this.ready = setProvider() && setProviderPublicSquare();
     this.ready = setProviderPublicSquare();
   }
 
@@ -30,7 +29,6 @@ class BlockchainAPI extends EventEmitter {
   }
 
   saveGraph(graphContract: any, graphData: any) {
-    console.log('graphData,', graphData)
     for (let i = 0; i < graphData.nodes.length; i++) {
         const node = graphData.nodes[i];
         upsertNode(graphContract, node.id, node);
@@ -44,8 +42,7 @@ class BlockchainAPI extends EventEmitter {
   async getGraph(graphContract) {
     let nodes = await Promise.all(await getNodes(graphContract))
     let edges = await Promise.all(await getEdges(graphContract))
-    console.log('nodes', nodes);
-    console.log('edges', edges);
+
     this.emit("GET_GRAPH_RSP", {
       key: 'firstBlockchainGraph',
       nodes: _.map(nodes, (n) => JournalNode.fromBlockchain(n.json)),
@@ -56,10 +53,8 @@ class BlockchainAPI extends EventEmitter {
 
   async getPublicSquare() {
     let consensusGraphContracts = await getAllConsensusGraphContracts();
-    console.log('consensusGraphContracts', consensusGraphContracts);
     if (consensusGraphContracts.length > 0) {
-      // just use the first one for now
-      console.log('consensusGraphContracts[0]', consensusGraphContracts[0])
+      // just use the first one we find, for now
       await this.getGraph(consensusGraphContracts[0])
     }
     // this.emit("GET_PUBLIC_SQUARE_RSP", {

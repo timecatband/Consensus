@@ -37,7 +37,6 @@ class GraphData { // this thing should probably just extend EventEmitter
     // call to the server for our initial graph, and register a listener for the socket response
     this.externalAPI.on('GET_GRAPH_RSP', this.handleServerGraphResponse.bind(this))
     this.externalAPI.ready.then( () => {
-      // this.externalAPI.getGraph();
       this.externalAPI.getPublicSquare();
     });
 
@@ -99,7 +98,6 @@ class GraphData { // this thing should probably just extend EventEmitter
     console.log("got graph from external", newGraph)
     this.graphs.push(newGraph)
     this.setDisplayedGraph(newGraph)
-    console.log(graphData);
     this.contract = graphData.contract;
   }
 
@@ -230,7 +228,6 @@ class GraphData { // this thing should probably just extend EventEmitter
       nodes: _.map(nodes,this.serializeNode),
       edges: []
     }
-    console.log('this.contract', this.contract)
     this.externalAPI.saveGraph(this.contract, graphObj)
   }
 
