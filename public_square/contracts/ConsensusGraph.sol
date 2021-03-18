@@ -4,6 +4,17 @@ pragma solidity ^0.5.16 <0.9.0;
 import "./ConsensusToken.sol";
 
 contract ConsensusGraph {
+  
+  bytes32 public id;
+  string public name;
+  address public creator;
+
+  constructor(bytes32 _id, string memory _name, address _creator) public {
+    id = _id;
+    name = _name;
+    creator = _creator;
+  }
+
   struct Node {
     // JSON representation sent from client. Opaque here.
     string json;

@@ -6,6 +6,7 @@ import JournalEdge from './JournalEdge';
 
 class GraphModel implements I.GraphData {
 
+  contract: any;
   key: string;
   nodes: JournalNode[];
   edges: JournalEdge[];

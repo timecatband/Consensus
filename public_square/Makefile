@@ -1,4 +1,4 @@
-abi:
+consensus_abi:
 	npm run compile
 	rm -f ConsensusGraphABI.js
 	echo "const ConsensusGraphABI = " >> ConsensusGraphABI.js
@@ -6,9 +6,19 @@ abi:
 	echo "\n export default ConsensusGraphABI" >> ConsensusGraphABI.js
 	cp ConsensusGraphABI.js ../journal_app/client/public/services/external_data/
 
+public_square_abi:
+	npm run compile
+	rm -f PublicSquareABI.js
+	echo "const PublicSquareABI = " >> PublicSquareABI.js
+	cat build/contracts/PublicSquare.json >> PublicSquareABI.js
+	echo "\n export default PublicSquareABI" >> PublicSquareABI.js
+	cp PublicSquareABI.js ../journal_app/client/public/services/external_data/
+
+
 install:
 	npm install
 
 migrate:
 	npm run migrate
-	make abi
+	make consensus_abi
+	make public_square_abi

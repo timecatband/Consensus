@@ -1,3 +1,4 @@
+import { accountAddress } from './PublicSquareContract'
 
 let Web3 = require('Web3');
 let metamaskWeb3 = new Web3('http://localhost:8545')
@@ -60,73 +61,67 @@ function checkOwnerAndFormat(json) {
   return JSON.stringify(json);
 }
 
-export async function getNode(id) {
+export async function getNode(contract, id) {
   let contract = getConsensusGraphContract();
   return await contract.methods.nodes(id).call();
 }
 
-export async function getNodes() {
-  let contract = getConsensusGraphContract();
+export async function getNodes(contract) {
   let nodeIds = await contract.methods.getNodeIds().call();
 
   let nodes = []
   for (let i = 0; i < nodeIds.length; i++) {
-    nodes.push(getNode(nodeIds[i]));
+    nodes.push(getNode(contract, nodeIds[i]));
   }
   return nodes;
 }
 
-export async function getEdge(id) {
-  let contract = getConsensusGraphContract()
+export async function getEdge(contract, id) {
   return await contract.methods.edges(id).call();
 }
 
-export async function getEdges() {
-  let contract = getConsensusGraphContract()
+export async function getEdges(contract) {
   let edgeIds = await contract.methods.getEdgeIds().call();
 
   let edges = []
   for (let i = 0; i < edgeIds.length; i++) {
-    edges.push(getEdge(edgeIds[i]));
+    edges.push(await getEdge(contract, edgeIds[i]));
   }
   return edges;
 }
 
-export async function upsertNode(id, json) {
-  json = checkOwnerAndFormat(json)
-  await getConsensusGraphContract().methods.upsertNode(id, json).send({
-    from: account[0]
+export async function upsertNode(contract, id, json) {
+  await contract.methods.upsertNode(id, JSON.stringify(json)).send({
+    from: accountAddress()[0]
   })
 }
 
-export async function upsertEdge(id, json) {
-  json = checkOwnerAndFormat(json)
-  await getConsensusGraphContract().methods.upsertEdge(id, json).send({
-      from: account[0]
+export async function upsertEdge(contract, id, json) {
+  await contract.methods.upsertEdge(id, JSON.stringify(json)).send({
+      from: accountAddress()[0]
   })
 }
 
-export async function elonMusk() {
-  console.log(await getConsensusGraphContract().methods.tokenContract().call())
+export async function elonMusk(contract) {
+  console.log(await contract.methods.tokenContract().call())
 
-  await getConsensusGraphContract().methods.airdropMe().send({
-    from: account[0]
+  await contract.methods.airdropMe().send({
+    from: accountAddress()[0]
   })
 }
 
-
-export async function onNewNode(callback) {
-  getConsensusGraphContract().events.NewNode({},
+export async function onNewNode(contract, callback) {
+  contract.events.NewNode({},
     async(id) => {
-      node = await getNode(id);
+      node = await getNode(contract, id);
       callback(node)
     });
 }
 
-export async function onNewEdge(callback) {
-  getConsensusGraphContract().events.NewNode({},
+export async function onNewEdge(contract, callback) {
+  contract.events.NewNode({},
     async(id) => {
-      edge = await getEdge(id);
+      edge = await getEdge(contract, id);
       callback(edge)
     });
 }
