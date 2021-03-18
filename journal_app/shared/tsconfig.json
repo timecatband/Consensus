@@ -2,6 +2,7 @@
   "extends": "../tsconfig.base.json",
   "compilerOptions": {
     "preserveConstEnums": true,
+    "target": "es2015",
   },
   "include": ["**/*"],
   "exclude": ["node_modules", "**/*.spec.ts"]
