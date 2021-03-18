@@ -14,7 +14,8 @@ class BlockchainAPI extends EventEmitter {
 
   constructor() {
     super()
-    this.ready = setProvider() && setProviderPublicSquare();
+    // this.ready = setProvider() && setProviderPublicSquare();
+    this.ready = setProviderPublicSquare();
   }
 
   //on(key: string, handler: Function): Promise<void> {
@@ -40,14 +41,14 @@ class BlockchainAPI extends EventEmitter {
   }
 
   async getGraph() {
-    let nodes = await Promise.all(await getNodes())
-    let edges = await Promise.all(await getEdges())
+    // let nodes = await Promise.all(await getNodes())
+    // let edges = await Promise.all(await getEdges())
 
-    this.emit("GET_GRAPH_RSP", {
-      key: 'firstBlockchainGraph',
-      nodes: _.map(nodes, (n) => JournalNode.fromBlockchain(n.json)),
-      edges: _.map(edges, (e) => JournalEdge.fromBlockchain(e.json))
-    });
+    // this.emit("GET_GRAPH_RSP", {
+    //   key: 'firstBlockchainGraph',
+    //   nodes: _.map(nodes, (n) => JournalNode.fromBlockchain(n.json)),
+    //   edges: _.map(edges, (e) => JournalEdge.fromBlockchain(e.json))
+    // });
   }
 
   async getPublicSquare() {
@@ -60,7 +61,7 @@ class BlockchainAPI extends EventEmitter {
   }
 
   async createGraph(publicSquareName: string) {
-    createGraph(publicSquareName);
+    await createGraph(publicSquareName);
   }
 
   /*

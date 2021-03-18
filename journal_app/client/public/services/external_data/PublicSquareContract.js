@@ -32,6 +32,8 @@ export async function setProviderPublicSquare() {
   account = await metamaskWeb3.eth.getAccounts()
   let id = await metamaskWeb3.eth.net.getId()
   metamaskWeb3.eth.handleRevert = true;
+  // console.log('id', id);
+  // console.log(PublicSquareABI.networks);
   publicSquareContractAddress = PublicSquareABI.networks[id]["address"]
 }
 
@@ -43,10 +45,13 @@ function getPublicSquareContract() {
 
 export async function getConsensusGraphIds() {
   let contract = getPublicSquareContract();
+  console.log(contract);
   return await contract.methods.getConsensusGraphIds().call();
 }
 
 export async function createGraph(graphName) {
-  await getPublicSquareContract().methods.createConsensusGraph(graphName).call()
+  await getPublicSquareContract().methods.createConsensusGraph(graphName).send({
+    from: account[0]
+  })
 }
 
