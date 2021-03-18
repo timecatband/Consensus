@@ -22,3 +22,6 @@ migrate:
 	npm run migrate
 	make consensus_abi
 	make public_square_abi
+
+ganache:
+	npm run test:ethereum
