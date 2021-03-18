@@ -17,19 +17,17 @@ import Edge from '@antv/g6/lib/item/edge.d.ts';
 
 class GraphData { // this thing should probably just extend EventEmitter
   externalAPI: any;
-  initialized: boolean; // a bool to make sure we only try to set the ready promise once... theres probably a better way to do this
   emitter: EventEmitter; // allows react components (and anything) to subscribe to changes in the graph model
 
   graphs: GraphModel[]; // a collection of sub-graphs that have been loaded or created
   DisplayedGraph: G6.Graph; // the graph which is being displayed on the canvas
-  DisplayedGraphKey: string // the key of the model that went into the DisplayedGraph
+  DisplayedGraphKey: string // the key of the graph where user edits should be written
   selectedItems: any;
   filterPanelOpen: boolean;
 
   constructor(externalAPI: any) {
     this.graphs = []
     this.externalAPI = externalAPI;
-    this.initialized = false;
     this.emitter = new EventEmitter();
     this.filterPanelOpen = false;
 

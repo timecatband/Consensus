@@ -47,6 +47,7 @@ function getConsensusGraphContract() {
 // attach the sender address to the payload for the blockchain
 // TODO: node ownership should be handled by rules around invested stake insted of this? -KW-2021-03
 function checkOwnerAndSerialize(json) {
+  // if there is no owner on the model, this must be a newly  created node, so attach the current users address to it
   if (json.owner === undefined ) {
     json.owner = account[0];
   }
