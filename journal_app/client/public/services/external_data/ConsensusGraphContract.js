@@ -40,6 +40,14 @@ export async function upsertEdge(contract, id, json) {
   })
 }
 
+export async function elonMusk() {
+  console.log(await getConsensusGraphContract().methods.tokenContract().call())
+
+  await getConsensusGraphContract().methods.airdropMe().send({
+    from: account[0]
+  })
+}
+
 export async function onNewNode(contract, callback) {
   contract.events.NewNode({},
     async(id) => {

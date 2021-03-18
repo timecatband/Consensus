@@ -17,20 +17,23 @@ import Edge from '@antv/g6/lib/item/edge.d.ts';
 
 class GraphData { // this thing should probably just extend EventEmitter
   externalAPI: any;
-  initialized: boolean; // a bool to make sure we only try to set the ready promise once... theres probably a better way to do this
   emitter: EventEmitter; // allows react components (and anything) to subscribe to changes in the graph model
 
   graphs: GraphModel[]; // a collection of sub-graphs that have been loaded or created
   DisplayedGraph: G6.Graph; // the graph which is being displayed on the canvas
-  DisplayedGraphKey: string // the key of the model that went into the DisplayedGraph
+  DisplayedGraphKey: string // the key of the graph where user edits should be written
   selectedItems: any;
   filterPanelOpen: boolean;
   contract: any; // the graph contract
 
+  // write cache to prevent frequent small writes to db
+  dirtyNodes: Record<string, JournalNode>;
+  dirtyEdges: Record<string, JournalEdge>;
+
+
   constructor(externalAPI: any) {
     this.graphs = []
     this.externalAPI = externalAPI;
-    this.initialized = false;
     this.emitter = new EventEmitter();
     this.filterPanelOpen = false;
 
@@ -44,6 +47,8 @@ class GraphData { // this thing should probably just extend EventEmitter
     this.externalAPI.on('PEER_SAVED_GRAPH', this.handlePeerUpdate.bind(this))
     this.externalAPI.on('PEER_DELETED_ITEMS', this.handlePeerDelete.bind(this))
 
+    this.dirtyNodes = {}
+    this.dirtyEdges = {}
   }
 
   ping() {
@@ -187,37 +192,15 @@ class GraphData { // this thing should probably just extend EventEmitter
     }
   }
 
-  // returns a serializable object, e.g. non-circular literal object. The externalAPI will handle actual stringification
-  serializeNode(node:any) {
-    let n = node._cfg?.model || {}
-    return {
-      id: n.id,
-      label: n.label,
-      link: n.link,
-      text: n.text,
-      x: n.x,
-      y: n.y
-    }
-  }
-
-  // returns a serializable object, e.g. non-circular literal object. The externalAPI will handle actual stringification
-  serializeEdge(edge:any) {
-    let e = edge._cfg?.model || {}
-    return {
-      id: e.id,
-      source: e.source,
-      target: e.target
-    }
-  }
 
   // returns a serializable object, e.g. non-circular literal object. The externalAPI will handle actual stringification
   serializeG6graph(key, g6graph) {
     let nodes = _.values(_.mapValues(g6graph.cfg.nodes, (node) => {
-      return this.serializeNode(node)
+      return node.serialize()
     }));
 
     let edges = _.values(_.mapValues(g6graph.cfg.edges, (edge) => {
-      return this.serializeEdge(edge)
+      return edge.serialize()
     }))
 
     return {key, nodes, edges}
@@ -225,28 +208,46 @@ class GraphData { // this thing should probably just extend EventEmitter
 
 
   /*
-    Takes an array of nodes to be saved
+    Takes an array of nodes to be saved, marks them as dirty and queue's a debounced save
   */
   saveNodes(nodes: any[]) {
-    let graphObj = {
-      key: this.DisplayedGraphKey,
-      nodes: _.map(nodes,this.serializeNode),
-      edges: []
-    }
-    this.externalAPI.saveGraph(this.contract, graphObj)
+    _.each(nodes, (node) => {
+      let n = node.getModel()
+      this.dirtyNodes[n.id] = n
+    })
+    this.saveDebounced()
   }
 
   /*
-    Takes an array of nodes to be saved
+    Takes an array of edges to be saved, marks them as dirty and queue's a debounced save
   */
   saveEdges(edges: any[]) {
-    let graphObj = {
-      key: this.DisplayedGraphKey,
-      nodes: [],
-      edges: _.map(edges,this.serializeEdge)
-    }
-    this.externalAPI.saveGraph(this.contract, graphObj)
+    _.each(edges, (edge) => {
+      let e = edge.getModel()
+      this.dirtyEdges[e.id] = e
+    })
+    this.saveDebounced()
   }
+
+
+  /*
+    gathers up any objects with pending changes, sends them for persistence, and clears the pending lists
+  */
+  saveDebounced = _.debounce(() => {
+    console.log("Debounced write firing", this.dirtyNodes, this.dirtyEdges)
+
+    let nodes = _.values(this.dirtyNodes);
+    let edges = _.values(this.dirtyEdges);
+
+    const graphObj = {
+      key: this.DisplayedGraphKey,
+      nodes: _.map(nodes,(n) => n.serialize()),
+      edges: _.map(edges,(e) => e.serialize())
+    }
+    
+    console.log("Debounced write firing to server")
+    this.externalAPI.saveGraph(this.contract, graphObj)
+  }, 10000)
 
 
   /*
@@ -257,6 +258,8 @@ class GraphData { // this thing should probably just extend EventEmitter
   saveGraph() {
     this.externalAPI.saveGraph(this.contract, this.serializeG6graph(this.DisplayedGraphKey, this.DisplayedGraph))
   }
+
+
 
 
   /*

@@ -23,7 +23,6 @@ class JournalEdge implements I.EdgeConfig {
     } else {
       this.id = id
     }
-
   }
 
   // convert to non-circular json object

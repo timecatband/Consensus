@@ -19,3 +19,6 @@ test:
 
 blockchain:
 	make -C ./public_square migrate
+
+abi:
+	make -C ./public_square abi

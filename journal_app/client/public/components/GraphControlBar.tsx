@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import GraphDataSvc from '../services/GraphData'
 import BlockchainAPISvc from '../services/external_data/BlockchainAPI'
+import { elonMusk } from '../services/external_data/ConsensusGraphContract'
 
 function GraphControlBar(props: any): any {
 
@@ -35,8 +36,11 @@ function GraphControlBar(props: any): any {
         <span className="muteText instructionLabel">Dbl-click to add. Click to select, Shift+click for multi</span>
       </div>
       <div>
-      <input id="newGraphName" type='text' />
-      <button onClick={createConsensusGraph}>Create Graph</button>
+        <input id="newGraphName" type='text' />
+        <button onClick={createConsensusGraph}>Create Graph</button>
+      </div>
+      <div>
+        <button onClick={elonMusk}>AIRDROP!</button>
       </div>
       <div className="rightBar">
         <button onClick={onPingServerClick}>Ping server</button>
