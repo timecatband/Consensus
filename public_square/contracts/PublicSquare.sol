@@ -1,12 +1,9 @@
 // SPDX-License-Identifier: GPL-3.0
 pragma solidity >=0.5.16 <0.9.0;
 
-contract PublicSquare {
-  struct ConsensusGraph {
-    string name;
-    address creator;
-  }
+import "./ConsensusGraph.sol";
 
+contract PublicSquare {
   // Mapping from keccak256(name) to ConsensusGraph
   mapping(bytes32 => ConsensusGraph) public consensusGraphs;
   
@@ -23,12 +20,12 @@ contract PublicSquare {
 
   function createConsensusGraph(string memory name) public {
       bytes32 id = keccak256(abi.encodePacked(name));
-      if (consensusGraphs[id].creator != address(0)) {
+      if (consensusGraphs[id].creator() != address(0)) {
         revert("Graph already exists");
       }
 
       consensusGraphIds.push(id);
-      consensusGraphs[id] = ConsensusGraph(name, msg.sender);
+      consensusGraphs[id] = new ConsensusGraph(id, name, msg.sender);
       emit NewConsensusGraph(id);
   }
 
