@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import GraphDataSvc from '../services/GraphData'
+import { elonMusk } from '../services/external_data/ConsensusGraphContract'
 
 function GraphControlBar(props: any): any {
 
@@ -22,6 +23,9 @@ function GraphControlBar(props: any): any {
           <option value="addEdge">Add Edge</option>
         </select>
         <span className="muteText instructionLabel">Dbl-click to add. Click to select, Shift+click for multi</span>
+      </div>
+      <div>
+        <button onClick={elonMusk}>AIRDROP!</button>
       </div>
       <div className="rightBar">
         <button onClick={onPingServerClick}>Ping server</button>

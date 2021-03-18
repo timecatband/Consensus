@@ -1,6 +1,8 @@
 // SPDX-License-Identifier: GPL-3.0
 pragma solidity >=0.5.16 <0.9.0;
 
+import "./ConsensusToken.sol";
+
 contract ConsensusGraph {
   struct Node {
     // JSON representation sent from client. Opaque here.
@@ -46,6 +48,13 @@ contract ConsensusGraph {
   event NewEdge (
     string indexed edgeId
   );
+  
+  ConsensusToken public tokenContract = new ConsensusToken("Main Graph", 1000, address(this));
+
+  function airdropMe() public {
+      tokenContract.approve(address(this), 9999999);
+      tokenContract.transferFrom(address(this), msg.sender, 100);
+  }
 
   function upsertNode(string memory stringId, string memory json) public {
       bytes32 id = keccak256(abi.encodePacked(stringId));
