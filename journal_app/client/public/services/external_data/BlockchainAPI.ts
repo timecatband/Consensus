@@ -43,8 +43,6 @@ class BlockchainAPI extends EventEmitter {
     let nodes = await Promise.all(await getNodes(graphContract))
     let edges = await Promise.all(await getEdges(graphContract))
 
-    console.log("hey edges", edges)
-
     // make sure we didn't get junk data back
     nodes = _.map(nodes, (n) => JournalNode.fromBlockchain(n.json))
     let filteredNodes = _.filter(nodes, (n) => { return n.label != undefined })
