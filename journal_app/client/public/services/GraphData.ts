@@ -247,7 +247,7 @@ class GraphData { // this thing should probably just extend EventEmitter
     
     console.log("Debounced write firing to server")
     this.externalAPI.saveGraph(this.contract, graphObj)
-  }, 10000)
+  }, 3000)
 
 
   /*

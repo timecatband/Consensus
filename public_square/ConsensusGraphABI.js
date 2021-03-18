@@ -6907,10 +6907,16 @@ const ConsensusGraphABI =
       "links": {},
       "address": "0x93E1455e42aB47A298a578eFC3967907ba48c2aB",
       "transactionHash": "0x147063f8a740c7311946cdc393a236212ec5bef8dfc5b8b5c230e2ee686140d8"
+    },
+    "1616045779183": {
+      "events": {},
+      "links": {},
+      "address": "0x2a8Ba5F5d71d9E739Bf36e7c1D8f601A9CAad37c",
+      "transactionHash": "0xcf25ccad4549f56cf92eef0725a5020a581de726694e6bf7fb9820cb6f4bf95e"
     }
   },
   "schemaVersion": "3.3.4",
-  "updatedAt": "2021-03-18T08:47:09.479Z",
+  "updatedAt": "2021-03-18T09:12:12.044Z",
   "devdoc": {
     "methods": {}
   },

@@ -35,6 +35,8 @@ class JournalNode implements I.NodeConfig {
       link: this.link,
       text: this.text,
       owner: this.owner,
+      x: this.x,
+      y: this.y,
       meta: JSON.stringify(this.meta || {})
     }
   }
