@@ -20,20 +20,20 @@ contract PublicSquare {
 
   function createConsensusGraph(string memory name) public {
       bytes32 id = keccak256(abi.encodePacked(name));
-      if (consensusGraphs[id].creator() != address(0)) {
-        revert("Graph already exists");
-      }
+      // if (consensusGraphs[id].creator() != address(0)) {
+      //   revert("Graph already exists");
+      // }
 
       consensusGraphIds.push(id);
       consensusGraphs[id] = new ConsensusGraph(id, name, msg.sender);
       emit NewConsensusGraph(id);
   }
 
-  function getConsensusGraph(bytes32 graphId) public view returns(ConsensusGraph) {
-    if (consensusGraphs[graphId].creator() == address(0)) {
-      revert("Graph does not exist");
-    }
-    return consensusGraphs[graphId];
-  }
+  // function getConsensusGraph(bytes32 graphId) public view returns(ConsensusGraph) {
+  //   if (consensusGraphs[graphId].creator() == address(0)) {
+  //     revert("Graph does not exist");
+  //   }
+  //   return consensusGraphs[graphId];
+  // }
 
 }
