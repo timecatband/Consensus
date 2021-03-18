@@ -1,29 +1,3 @@
-
-// let Web3 = require('Web3');
-// let metamaskWeb3 = new Web3('http://localhost:8545')
-// import ConsensusGraphABI from './ConsensusGraphABI'
-// let account = null
-// let consensusGraphContract
-// let consensusGraphContractAddress
-
-// Low level wrapper for interacting with the contracts.
-// Types are "contract types". ServerAPIWeb3 serializes to<->from
-// client types.
-
-// function getConsensusGraphContract() {
-//   consensusGraphContract = consensusGraphContract || new metamaskWeb3.eth.Contract(ConsensusGraphABI.abi, consensusGraphContractAddress);
-//   return consensusGraphContract;
-// }
-
-// attach the sender address to the payload for the blockchain
-// TODO: node ownership should be handled by rules around invested stake insted of this? -KW-2021-03
-// function checkOwnerAndSerialize(json) {
-//   if (json.owner === undefined ) {
-//     json.owner = account[0];
-//   }
-//   return JSON.stringify(json);
-// }
-
 import { accountAddress } from './PublicSquareContract'
 
 export async function getNode(contract, id) {
@@ -51,22 +25,19 @@ export async function getEdges(contract) {
 
   let edges = []
   for (let i = 0; i < edgeIds.length; i++) {
-    edges.push(getEdge(contract, edgeIds[i]));
+    edges.push(await getEdge(contract, edgeIds[i]));
   }
   return edges;
 }
 
 export async function upsertNode(contract, id, json) {
-  // json = checkOwnerAndSerialize(json)
-  console.log('upsertNode contract', contract)
-  await contract.methods.upsertNode(id, json).send({
+  await contract.methods.upsertNode(id, JSON.stringify(json)).send({
     from: accountAddress()[0]
   })
 }
 
 export async function upsertEdge(contract, id, json) {
-  // json = checkOwnerAndSerialize(json)
-  await contract.methods.upsertEdge(id, json).send({
+  await contract.methods.upsertEdge(id, JSON.stringify(json)).send({
       from: accountAddress()[0]
   })
 }
@@ -74,7 +45,7 @@ export async function upsertEdge(contract, id, json) {
 export async function onNewNode(contract, callback) {
   contract.events.NewNode({},
     async(id) => {
-      node = await getNode(id);
+      node = await getNode(contract, id);
       callback(node)
     });
 }
@@ -82,7 +53,7 @@ export async function onNewNode(contract, callback) {
 export async function onNewEdge(contract, callback) {
   contract.events.NewNode({},
     async(id) => {
-      edge = await getEdge(id);
+      edge = await getEdge(contract, id);
       callback(edge)
     });
 }

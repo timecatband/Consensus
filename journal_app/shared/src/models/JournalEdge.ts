@@ -48,7 +48,7 @@ class JournalEdge implements I.EdgeConfig {
   }
 
   public static fromBlockchain(json: any) {
-    return JournalEdge.deSerialize(JSON.parse(json))
+    return JournalEdge.deSerialize(JSON.parse(json || '{}'))
   }
 
   public static deSerialize(obj: any) {

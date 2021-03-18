@@ -30,6 +30,7 @@ class BlockchainAPI extends EventEmitter {
   }
 
   saveGraph(graphContract: any, graphData: any) {
+    console.log('graphData,', graphData)
     for (let i = 0; i < graphData.nodes.length; i++) {
         const node = graphData.nodes[i];
         upsertNode(graphContract, node.id, node);
@@ -43,7 +44,8 @@ class BlockchainAPI extends EventEmitter {
   async getGraph(graphContract) {
     let nodes = await Promise.all(await getNodes(graphContract))
     let edges = await Promise.all(await getEdges(graphContract))
-
+    console.log('nodes', nodes);
+    console.log('edges', edges);
     this.emit("GET_GRAPH_RSP", {
       key: 'firstBlockchainGraph',
       nodes: _.map(nodes, (n) => JournalNode.fromBlockchain(n.json)),
