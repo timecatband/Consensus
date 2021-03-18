@@ -2,7 +2,6 @@
 let Web3 = require('Web3');
 let metamaskWeb3 = new Web3('http://localhost:8545')
 import PublicSquareABI from './PublicSquareABI'
-// const contractJson = fs.readFileSync('./PublicSquareABI.json');
 import ConsensusGraphABI from './ConsensusGraphABI'
 let account = null
 let publicSquareContract
