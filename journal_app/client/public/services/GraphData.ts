@@ -24,6 +24,7 @@ class GraphData { // this thing should probably just extend EventEmitter
   DisplayedGraphKey: string // the key of the graph where user edits should be written
   selectedItems: any;
   filterPanelOpen: boolean;
+  contract: any; // the graph contract
 
   // write cache to prevent frequent small writes to db
   dirtyNodes: Record<string, JournalNode>;
@@ -38,8 +39,9 @@ class GraphData { // this thing should probably just extend EventEmitter
 
     // call to the server for our initial graph, and register a listener for the socket response
     this.externalAPI.on('GET_GRAPH_RSP', this.handleServerGraphResponse.bind(this))
+    this.externalAPI.on('NO_GRAPHS', this.handleServerNoGraphResponse.bind(this))
     this.externalAPI.ready.then( () => {
-      this.externalAPI.getGraph()
+      this.externalAPI.getPublicSquare();
     });
 
     this.externalAPI.on('PEER_SAVED_GRAPH', this.handlePeerUpdate.bind(this))
@@ -102,6 +104,11 @@ class GraphData { // this thing should probably just extend EventEmitter
     console.log("got graph from external", newGraph)
     this.graphs.push(newGraph)
     this.setDisplayedGraph(newGraph)
+    this.contract = graphData.contract;
+  }
+
+  handleServerNoGraphResponse() {
+    console.log("there are no graphs. please create one!")
   }
 
   // when the socket informs us that a peer has changed part of the graph
@@ -237,10 +244,10 @@ class GraphData { // this thing should probably just extend EventEmitter
       nodes: _.map(nodes,(n) => n.serialize()),
       edges: _.map(edges,(e) => e.serialize())
     }
-
+    
     console.log("Debounced write firing to server")
-    this.externalAPI.saveGraph(graphObj)
-  }, 10000)
+    this.externalAPI.saveGraph(this.contract, graphObj)
+  }, 3000)
 
 
   /*
@@ -249,7 +256,7 @@ class GraphData { // this thing should probably just extend EventEmitter
       this method will still be useful because its a "save subgraph" method, it can save any collection of nodes and edges
   */
   saveGraph() {
-    this.externalAPI.saveGraph(this.serializeG6graph(this.DisplayedGraphKey, this.DisplayedGraph))
+    this.externalAPI.saveGraph(this.contract, this.serializeG6graph(this.DisplayedGraphKey, this.DisplayedGraph))
   }
 
 

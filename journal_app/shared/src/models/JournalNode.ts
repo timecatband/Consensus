@@ -35,6 +35,8 @@ class JournalNode implements I.NodeConfig {
       link: this.link,
       text: this.text,
       owner: this.owner,
+      x: this.x,
+      y: this.y,
       meta: JSON.stringify(this.meta || {})
     }
   }
@@ -49,7 +51,7 @@ class JournalNode implements I.NodeConfig {
   }
 
   public static fromBlockchain(json: any) {
-    return JournalNode.deSerialize(JSON.parse(json))
+    return JournalNode.deSerialize(JSON.parse(json || '{}'))
   }
 
   public static deSerialize(obj: any) {
