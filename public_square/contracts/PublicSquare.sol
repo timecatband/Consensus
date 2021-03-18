@@ -7,7 +7,7 @@ contract PublicSquare {
     address creator;
   }
 
-  // Mapping from keccak256(ids) to ConsensusGraph
+  // Mapping from keccak256(name) to ConsensusGraph
   mapping(bytes32 => ConsensusGraph) public consensusGraphs;
   
   // List of all ids, so client can query all graphs
@@ -18,7 +18,7 @@ contract PublicSquare {
   }
 
   event NewConsensusGraph (
-    string indexed name
+    bytes32 indexed graphId
   );
 
   function createConsensusGraph(string memory name) public {
@@ -29,7 +29,7 @@ contract PublicSquare {
 
       consensusGraphIds.push(id);
       consensusGraphs[id] = ConsensusGraph(name, msg.sender);
-      emit NewConsensusGraph(name);
+      emit NewConsensusGraph(id);
   }
 
 }
