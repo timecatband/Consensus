@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0
-pragma solidity >=0.5.16 <0.9.0;
+pragma solidity ^0.5.16 <0.9.0;
 
 import "./ConsensusToken.sol";
 
@@ -48,7 +48,7 @@ contract ConsensusGraph {
   event NewEdge (
     string indexed edgeId
   );
-  
+
   ConsensusToken public tokenContract = new ConsensusToken("Main Graph", 1000, address(this));
 
   function airdropMe() public {
