@@ -23,6 +23,10 @@ function GraphControlBar(props: any): any {
     GraphDataSvc.toggleFilterPanel()
   }
 
+  function gimmeElonMusk() {
+    elonMusk(GraphDataSvc.contract);
+  }
+
   return  (
     <div className="graph-control-bar">
       <div className="leftBar">
@@ -40,7 +44,7 @@ function GraphControlBar(props: any): any {
         <button onClick={createConsensusGraph}>Create Graph</button>
       </div>
       <div>
-        <button onClick={elonMusk}>AIRDROP!</button>
+        <button onClick={gimmeElonMusk}>AIRDROP!</button>
       </div>
       <div className="rightBar">
         <button onClick={onPingServerClick}>Ping server</button>
