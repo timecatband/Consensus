@@ -2,30 +2,34 @@
 pragma solidity >=0.5.16 <0.9.0;
 
 contract PublicSquare {
-  struct Node {
-    string id;
-    address owner;
+  struct ConsensusGraph {
+    string name;
+    address creator;
   }
 
-  mapping(bytes32 => Node) public nodes;
+  // Mapping from keccak256(ids) to ConsensusGraph
+  mapping(bytes32 => ConsensusGraph) public consensusGraphs;
+  
+  // List of all ids, so client can query all graphs
+  bytes32[] public consensusGraphIds;
 
-  bytes32[] public nodeIds;
+  function getConsensusGraphIds() public view returns(bytes32[] memory) {
+    return consensusGraphIds;
+  }
 
-  event NewNode (
-    string indexed nodeId
+  event NewConsensusGraph (
+    string indexed name
   );
 
-  function upsertNode(string memory stringId) public {
-      bytes32 id = keccak256(abi.encodePacked(stringId));
-      if (nodes[id].owner != address(0)) {
-        if (nodes[id].owner != msg.sender) {
-          revert("Only owner can update node");
-        }
-      } else {
-        nodeIds.push(id);
+  function createConsensusGraph(string memory name) public {
+      bytes32 id = keccak256(abi.encodePacked(name));
+      if (consensusGraphs[id].creator != address(0)) {
+        revert("Graph already exists");
       }
-      nodes[id] = Node(stringId, msg.sender);
-      emit NewNode(stringId);
+
+      consensusGraphIds.push(id);
+      consensusGraphs[id] = ConsensusGraph(name, msg.sender);
+      emit NewConsensusGraph(name);
   }
 
 }

@@ -16,12 +16,12 @@ export const accountAddress = () => {
   return account
 }
 
-export async function setProvider() {
+export async function setProviderPublicSquare() {
   if (window.ethereum) {
     metamaskWeb3 = new Web3(ethereum);
     try {
-        // Request account access if needed
-        await ethereum.enable();
+      // Request account access if needed
+      await ethereum.enable();
     }
     catch (error) {
       // User denied account access...
@@ -41,24 +41,12 @@ function getPublicSquareContract() {
   return publicSquareContract;
 }
 
-// // attach the sender address to the payload for the blockchain
-// // TODO: node ownership should be handled by rules around invested stake insted of this? -KW-2021-03
-// function checkOwnerAndSerialize(json) {
-//   if (json.owner === undefined ) {
-//     json.owner = account[0];
-//   }
-//   return JSON.stringify(json);
-// }
-
-export async function getPublicSquare() {
+export async function getConsensusGraphIds() {
   let contract = getPublicSquareContract();
-  return await contract.methods.nodes(id).call();
+  return await contract.methods.getConsensusGraphIds().call();
 }
 
-// export async function onNewEdge(callback) {
-//   getpublicSquareContract().events.NewNode({},
-//     async(id) => {
-//       edge = await getEdge(id);
-//       callback(edge)
-//     });
-// }
+export async function createGraph(graphName) {
+  await getPublicSquareContract().methods.createConsensusGraph(graphName).call()
+}
+

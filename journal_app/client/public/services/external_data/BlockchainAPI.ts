@@ -4,7 +4,7 @@ import JournalNode from '@timecat/graph-journal-shared/src/models/JournalNode'
 import JournalEdge from '@timecat/graph-journal-shared/src/models/JournalEdge'
 import PublicSquare from '@timecat/graph-journal-shared/src/models/PublicSquare'
 import {setProvider, upsertNode, upsertEdge, getNodes, getEdges} from './ConsensusGraphContract'
-import {getPublicSquare} from './PublicSquareContract'
+import {setProviderPublicSquare, getConsensusGraphIds, createGraph} from './PublicSquareContract'
 
 /*
   Singleton service ServerAPI provides methods for reading/writing via Web3 blockchain shenanigans
@@ -14,7 +14,7 @@ class BlockchainAPI extends EventEmitter {
 
   constructor() {
     super()
-    this.ready = setProvider();
+    this.ready = setProvider() && setProviderPublicSquare();
   }
 
   //on(key: string, handler: Function): Promise<void> {
@@ -51,12 +51,16 @@ class BlockchainAPI extends EventEmitter {
   }
 
   async getPublicSquare() {
-    let publicSquare = await getPublicSquare();
-    console.log(publicSquare);
-    this.emit("GET_PUBLIC_SQUARE_RSP", {
-      key: 'publicSquare',
-      publicSquare: new PublicSquare(publicSquare.rootNodes)
-    });
+    let consensusGraphIds = await getConsensusGraphIds();
+    console.log('consensusGraphIds', consensusGraphIds);
+    // this.emit("GET_PUBLIC_SQUARE_RSP", {
+    //   key: 'publicSquare',
+    //   consensusGraphIds: new PublicSquare(consensusGraphIds)
+    // });
+  }
+
+  async createGraph(publicSquareName: string) {
+    createGraph(publicSquareName);
   }
 
   /*

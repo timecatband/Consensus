@@ -2,10 +2,10 @@ const uuid = require('uuid');
 import JournalNode from './JournalNode';
 
 class PublicSquare {
-  rootNodes: JournalNode[];
+  rootNodesIds: string[];
 
-  constructor(rootNodes: JournalNode[]) {
-    this.rootNodes = rootNodes;
+  constructor(rootNodesIds: string[]) {
+    this.rootNodesIds = rootNodesIds;
   }
 
 }
