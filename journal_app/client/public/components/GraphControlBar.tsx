@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import GraphDataSvc from '../services/GraphData'
-import { createGraph } from '../services/external_data/PublicSquareContract'
+import BlockchainAPISvc from '../services/external_data/BlockchainAPI'
 
 function GraphControlBar(props: any): any {
 
@@ -9,10 +9,11 @@ function GraphControlBar(props: any): any {
   }
 
   async function createConsensusGraph() {
+    // todo: make this better, probably don't pull in BlockchainAPISvc here
     const inputElement = document.getElementById('newGraphName') as HTMLInputElement;
     const graphName = inputElement.value
     if (graphName.length > 0) {
-      await createGraph(graphName);
+      await BlockchainAPISvc.createGraph(graphName);
       console.log('created the new graph!', graphName)
     }
   }

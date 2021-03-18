@@ -56,6 +56,8 @@ class BlockchainAPI extends EventEmitter {
     if (consensusGraphContracts.length > 0) {
       // just use the first one we find, for now
       await this.getGraph(consensusGraphContracts[0])
+    } else {
+      this.emit("NO_GRAPHS", {})
     }
     // this.emit("GET_PUBLIC_SQUARE_RSP", {
     //   key: 'publicSquare',
@@ -65,6 +67,8 @@ class BlockchainAPI extends EventEmitter {
 
   async createGraph(publicSquareName: string) {
     await createGraph(publicSquareName);
+    // refresh public square
+    await this.getPublicSquare();
   }
 
   /*

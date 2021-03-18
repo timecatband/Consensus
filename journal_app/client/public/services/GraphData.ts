@@ -36,6 +36,7 @@ class GraphData { // this thing should probably just extend EventEmitter
 
     // call to the server for our initial graph, and register a listener for the socket response
     this.externalAPI.on('GET_GRAPH_RSP', this.handleServerGraphResponse.bind(this))
+    this.externalAPI.on('NO_GRAPHS', this.handleServerNoGraphResponse.bind(this))
     this.externalAPI.ready.then( () => {
       this.externalAPI.getPublicSquare();
     });
@@ -99,6 +100,10 @@ class GraphData { // this thing should probably just extend EventEmitter
     this.graphs.push(newGraph)
     this.setDisplayedGraph(newGraph)
     this.contract = graphData.contract;
+  }
+
+  handleServerNoGraphResponse() {
+    console.log("there are no graphs. please create one!")
   }
 
   // when the socket informs us that a peer has changed part of the graph

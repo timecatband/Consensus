@@ -7,6 +7,8 @@ contract PublicSquare {
   // Mapping from keccak256(name) to ConsensusGraph
   mapping(bytes32 => ConsensusGraph) public consensusGraphs;
   
+  mapping(bytes32 => bool) private graphKeyExists;
+
   // List of all ids, so client can query all graphs
   bytes32[] public consensusGraphIds;
 
@@ -20,12 +22,11 @@ contract PublicSquare {
 
   function createConsensusGraph(string memory name) public {
       bytes32 id = keccak256(abi.encodePacked(name));
-      // if (consensusGraphs[id].creator() != address(0)) {
-      //   revert("Graph already exists");
-      // }
 
+      require(!graphKeyExists[id], "This graph already exists");
       consensusGraphIds.push(id);
       consensusGraphs[id] = new ConsensusGraph(id, name, msg.sender);
+      graphKeyExists[id] = true;
       emit NewConsensusGraph(id);
   }
 

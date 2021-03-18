@@ -1324,7 +1324,7 @@ const ConsensusGraphABI =
                             "name": "abi",
                             "nodeType": "Identifier",
                             "overloadedDeclarations": [],
-                            "referencedDeclaration": 286,
+                            "referencedDeclaration": 289,
                             "src": "1520:3:0",
                             "typeDescriptions": {
                               "typeIdentifier": "t_magic_abi",
@@ -1371,7 +1371,7 @@ const ConsensusGraphABI =
                       "name": "keccak256",
                       "nodeType": "Identifier",
                       "overloadedDeclarations": [],
-                      "referencedDeclaration": 293,
+                      "referencedDeclaration": 296,
                       "src": "1510:9:0",
                       "typeDescriptions": {
                         "typeIdentifier": "t_function_keccak256_pure$_t_bytes_memory_ptr_$returns$_t_bytes32_$",
@@ -1690,7 +1690,7 @@ const ConsensusGraphABI =
                               "name": "msg",
                               "nodeType": "Identifier",
                               "overloadedDeclarations": [],
-                              "referencedDeclaration": 299,
+                              "referencedDeclaration": 302,
                               "src": "1623:3:0",
                               "typeDescriptions": {
                                 "typeIdentifier": "t_magic_message",
@@ -1760,10 +1760,10 @@ const ConsensusGraphABI =
                                   "name": "revert",
                                   "nodeType": "Identifier",
                                   "overloadedDeclarations": [
-                                    304,
-                                    305
+                                    307,
+                                    308
                                   ],
-                                  "referencedDeclaration": 305,
+                                  "referencedDeclaration": 308,
                                   "src": "1647:6:0",
                                   "typeDescriptions": {
                                     "typeIdentifier": "t_function_revert_pure$_t_string_memory_ptr_$returns$__$",
@@ -1868,7 +1868,7 @@ const ConsensusGraphABI =
                             "name": "msg",
                             "nodeType": "Identifier",
                             "overloadedDeclarations": [],
-                            "referencedDeclaration": 299,
+                            "referencedDeclaration": 302,
                             "src": "1773:3:0",
                             "typeDescriptions": {
                               "typeIdentifier": "t_magic_message",
@@ -2159,7 +2159,7 @@ const ConsensusGraphABI =
                             "name": "abi",
                             "nodeType": "Identifier",
                             "overloadedDeclarations": [],
-                            "referencedDeclaration": 286,
+                            "referencedDeclaration": 289,
                             "src": "1935:3:0",
                             "typeDescriptions": {
                               "typeIdentifier": "t_magic_abi",
@@ -2206,7 +2206,7 @@ const ConsensusGraphABI =
                       "name": "keccak256",
                       "nodeType": "Identifier",
                       "overloadedDeclarations": [],
-                      "referencedDeclaration": 293,
+                      "referencedDeclaration": 296,
                       "src": "1925:9:0",
                       "typeDescriptions": {
                         "typeIdentifier": "t_function_keccak256_pure$_t_bytes_memory_ptr_$returns$_t_bytes32_$",
@@ -2525,7 +2525,7 @@ const ConsensusGraphABI =
                               "name": "msg",
                               "nodeType": "Identifier",
                               "overloadedDeclarations": [],
-                              "referencedDeclaration": 299,
+                              "referencedDeclaration": 302,
                               "src": "2038:3:0",
                               "typeDescriptions": {
                                 "typeIdentifier": "t_magic_message",
@@ -2595,10 +2595,10 @@ const ConsensusGraphABI =
                                   "name": "revert",
                                   "nodeType": "Identifier",
                                   "overloadedDeclarations": [
-                                    304,
-                                    305
+                                    307,
+                                    308
                                   ],
-                                  "referencedDeclaration": 305,
+                                  "referencedDeclaration": 308,
                                   "src": "2062:6:0",
                                   "typeDescriptions": {
                                     "typeIdentifier": "t_function_revert_pure$_t_string_memory_ptr_$returns$__$",
@@ -2703,7 +2703,7 @@ const ConsensusGraphABI =
                             "name": "msg",
                             "nodeType": "Identifier",
                             "overloadedDeclarations": [],
-                            "referencedDeclaration": 299,
+                            "referencedDeclaration": 302,
                             "src": "2188:3:0",
                             "typeDescriptions": {
                               "typeIdentifier": "t_magic_message",
@@ -4135,7 +4135,7 @@ const ConsensusGraphABI =
                               "overloadedDeclarations": [
                                 null
                               ],
-                              "referencedDeclaration": 293,
+                              "referencedDeclaration": 296,
                               "type": "function (bytes memory) pure returns (bytes32)",
                               "value": "keccak256"
                             },
@@ -4181,7 +4181,7 @@ const ConsensusGraphABI =
                                       "overloadedDeclarations": [
                                         null
                                       ],
-                                      "referencedDeclaration": 286,
+                                      "referencedDeclaration": 289,
                                       "type": "abi",
                                       "value": "abi"
                                     },
@@ -4461,7 +4461,7 @@ const ConsensusGraphABI =
                                           "overloadedDeclarations": [
                                             null
                                           ],
-                                          "referencedDeclaration": 299,
+                                          "referencedDeclaration": 302,
                                           "type": "msg",
                                           "value": "msg"
                                         },
@@ -4507,10 +4507,10 @@ const ConsensusGraphABI =
                                                 }
                                               ],
                                               "overloadedDeclarations": [
-                                                304,
-                                                305
+                                                307,
+                                                308
                                               ],
-                                              "referencedDeclaration": 305,
+                                              "referencedDeclaration": 308,
                                               "type": "function (string memory) pure",
                                               "value": "revert"
                                             },
@@ -4779,7 +4779,7 @@ const ConsensusGraphABI =
                                       "overloadedDeclarations": [
                                         null
                                       ],
-                                      "referencedDeclaration": 299,
+                                      "referencedDeclaration": 302,
                                       "type": "msg",
                                       "value": "msg"
                                     },
@@ -5038,7 +5038,7 @@ const ConsensusGraphABI =
                               "overloadedDeclarations": [
                                 null
                               ],
-                              "referencedDeclaration": 293,
+                              "referencedDeclaration": 296,
                               "type": "function (bytes memory) pure returns (bytes32)",
                               "value": "keccak256"
                             },
@@ -5084,7 +5084,7 @@ const ConsensusGraphABI =
                                       "overloadedDeclarations": [
                                         null
                                       ],
-                                      "referencedDeclaration": 286,
+                                      "referencedDeclaration": 289,
                                       "type": "abi",
                                       "value": "abi"
                                     },
@@ -5364,7 +5364,7 @@ const ConsensusGraphABI =
                                           "overloadedDeclarations": [
                                             null
                                           ],
-                                          "referencedDeclaration": 299,
+                                          "referencedDeclaration": 302,
                                           "type": "msg",
                                           "value": "msg"
                                         },
@@ -5410,10 +5410,10 @@ const ConsensusGraphABI =
                                                 }
                                               ],
                                               "overloadedDeclarations": [
-                                                304,
-                                                305
+                                                307,
+                                                308
                                               ],
-                                              "referencedDeclaration": 305,
+                                              "referencedDeclaration": 308,
                                               "type": "function (string memory) pure",
                                               "value": "revert"
                                             },
@@ -5682,7 +5682,7 @@ const ConsensusGraphABI =
                                       "overloadedDeclarations": [
                                         null
                                       ],
-                                      "referencedDeclaration": 299,
+                                      "referencedDeclaration": 302,
                                       "type": "msg",
                                       "value": "msg"
                                     },
@@ -5829,8 +5829,7 @@ const ConsensusGraphABI =
     }
   },
   "schemaVersion": "3.3.4",
-  "updatedAt": "2021-03-18T02:56:32.956Z",
-  "networkType": "ethereum",
+  "updatedAt": "2021-03-18T08:23:42.985Z",
   "devdoc": {
     "methods": {}
   },
