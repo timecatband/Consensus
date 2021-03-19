@@ -20,7 +20,7 @@ compile_contracts:
 	make public_square_abi
 
 migrate:
-	npm run migrate
+	npm run migrate-timecat
 	make consensus_abi
 	make public_square_abi
 

@@ -25,4 +25,3 @@ abi:
 
 ganache:
 	make -C ./public_square ganache
-
