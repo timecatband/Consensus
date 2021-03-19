@@ -4,9 +4,63 @@ import GraphDataSvc from '../../services/GraphData'
 
 function FilterPanel(props: any): any {
 
+  // the control for creating a new community
+  const [newGraphName, setNewGraphName] = useState("")
+  // the list of active graphs which can be filtered
+  const [loadedGraphs, setLoadedGraphs] = useState({})
+
+  useEffect(() => {
+    //initialize
+    setLoadedGraphs(GraphDataSvc.graphs)
+
+    // called any time a new sub-graph is loaded
+    GraphDataSvc.on('graph-loaded', (e) => {
+      //stay up to date when graphs are added
+      setLoadedGraphs(GraphDataSvc.graphs)
+    })
+  },[])
+
+  async function createConsensusGraph() {
+    if (newGraphName.length > 0) {
+      await GraphDataSvc.createGraph(newGraphName);
+      console.log('created the new graph!', newGraphName)
+    }
+  }
+
   return (
-    <div>
-      Filters and sub-graphs not yet implemented
+    <div className="panelContainer">
+
+      <div className="panelContainer section">
+        <div className="panelHeaderText">
+          Active graphs
+        </div>
+        {_.values(_.mapValues(loadedGraphs, (g) => {
+          return <div className="filterItem btnLink">{g.key}</div>
+        }))}
+        <div className="filterItem btnLink">My personal view</div>
+      </div>
+
+      <div className="panelContainer section">
+        <div className="panelHeaderText">
+          Filter actions
+        </div>
+        <div>..</div>
+        <div>..</div>
+      </div>
+
+      <div className="panelContainer section">
+        <div className="panelHeaderText">
+          Create a new community
+        </div>
+        <div className="inputControl">
+          <input type='text'
+            placeholder="new..."
+            value={newGraphName}
+            onChange={e => {setNewGraphName(e.target.value)}} />
+          <button onClick={createConsensusGraph}>Send request</button>
+        </div>
+      </div>
+
     </div>
   )
 }

@@ -11,7 +11,7 @@ install:
 	mv ../client/dist .
 
 test:
-	@echo Nothing to test here.
+	@echo "Nothing to test in client build server."
 
 deploy: install
 	# builds and pushes the code up to gcp app engine

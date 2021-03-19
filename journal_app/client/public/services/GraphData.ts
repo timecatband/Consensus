@@ -1,6 +1,6 @@
 import _ from 'lodash'
 //import ServerAPI from './external_data/ServerAPI'
-import ServerAPI from './external_data/BlockchainAPI'
+import BlockchainAPISvc from './external_data/BlockchainAPI'
 import GraphModel from '@timecat/graph-journal-shared/src/models/GraphModel'
 import JournalNode from '@timecat/graph-journal-shared/src/models/JournalNode'
 import JournalEdge from '@timecat/graph-journal-shared/src/models/JournalEdge'
@@ -19,7 +19,7 @@ class GraphData { // this thing should probably just extend EventEmitter
   externalAPI: any;
   emitter: EventEmitter; // allows react components (and anything) to subscribe to changes in the graph model
 
-  graphs: GraphModel[]; // a collection of sub-graphs that have been loaded or created
+  graphs: Record<string, GraphModel>; // a collection of sub-graphs that have been loaded or created
   DisplayedGraph: G6.Graph; // the graph which is being displayed on the canvas
   DisplayedGraphKey: string // the key of the graph where user edits should be written
   selectedItems: any;
@@ -32,7 +32,7 @@ class GraphData { // this thing should probably just extend EventEmitter
 
 
   constructor(externalAPI: any) {
-    this.graphs = []
+    this.graphs = {}
     this.externalAPI = externalAPI;
     this.emitter = new EventEmitter();
     this.filterPanelOpen = false;
@@ -65,10 +65,19 @@ class GraphData { // this thing should probably just extend EventEmitter
     this.emitter.on(event,fn)
   };
 
+
+  /*
+    filter panel display controls
+  */
+  hideFilterPanel() {
+    this.filterPanelOpen = false;
+    this.emit("filter-panel-change", this.filterPanelOpen)
+  }
   toggleFilterPanel() {
     this.filterPanelOpen = !this.filterPanelOpen;
-    this.emit("filter-panel-toggle", this.filterPanelOpen)
+    this.emit("filter-panel-change", this.filterPanelOpen)
   }
+
 
   // TODO: this extracts a serializable object, doesnt really serialize. Not sure exactly what pattern is needed around here yet.
   serializeSelected(items: any) {
@@ -82,6 +91,12 @@ class GraphData { // this thing should probably just extend EventEmitter
     this.emit("selected-items", this.serializeSelected(items))
   }
 
+  /*
+    provide access to externalAPI
+  */
+  createGraph(graphName: string) {
+    this.externalAPI.createGraph(graphName)
+  }
 
   /*
     This is an important method, because it sets the DisplayedGraphKey
@@ -101,14 +116,17 @@ class GraphData { // this thing should probably just extend EventEmitter
   // The initial graph load response
   handleServerGraphResponse(graphData: GraphModel) {
     const newGraph = GraphModel.deSerialize(graphData)
-    console.log("got graph from external", newGraph)
-    this.graphs.push(newGraph)
+
     this.setDisplayedGraph(newGraph)
-    this.activeGraphId = graphData.key;
+    this.contract = graphData.contract;
+    this.graphs[newGraph.key] = newGraph;
+
+    //TODO: get graph names from contract
+    this.emit("graph-loaded", newGraph.key)
   }
 
   handleServerNoGraphResponse() {
-    console.log("there are no graphs. please create one!")
+    console.log("There are no consensus communities. You could be the first!")
   }
 
   // when the socket informs us that a peer has changed part of the graph
@@ -163,7 +181,7 @@ class GraphData { // this thing should probably just extend EventEmitter
     return this.DisplayedGraph.find('edge', fn);
   }
 
-  
+
   async createGraph(graphName: string) {
     await this.externalAPI.createGraph(graphName);
   }
@@ -286,6 +304,6 @@ class GraphData { // this thing should probably just extend EventEmitter
 // end of class
 }
 
-const GraphDataSvc = new GraphData(ServerAPI);
+const GraphDataSvc = new GraphData(BlockchainAPISvc);
 
 export default GraphDataSvc;

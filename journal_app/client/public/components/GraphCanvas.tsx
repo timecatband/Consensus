@@ -172,6 +172,8 @@ const GraphCanvas = (props) => {
     })
 
     graphCanvas.on('click', (evt:any) => {
+      GraphDataSvc.hideFilterPanel()
+
       // if an edge is clicked, set its connected nodes to selected, and deselect other things
       if (evt.target.cfg.type == 'path') {
         let selectedNodes;
@@ -211,8 +213,8 @@ const GraphCanvas = (props) => {
 
 
     GraphDataSvc.DisplayedGraph = graphCanvas;
-    GraphDataSvc.on('set-displayed-graph', () => {
-      renderGraph(graphCanvas, GraphDataSvc.graphs[0])
+    GraphDataSvc.on('set-displayed-graph', (graph) => {
+      renderGraph(graphCanvas, graph)
     })
 
     // Handler to call on window resize

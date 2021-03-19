@@ -52,7 +52,6 @@ class BlockchainAPI extends EventEmitter {
 
     // prevent junk data, and prevent edges that refer to non-existant nodes as that will fuck g6
     let nodeIds = _.values(_.mapValues(filteredNodes, (n) => {return n.id}));
-    console.log("nodeids", nodeIds)
     edges = _.map(edges, (e) => JournalEdge.fromBlockchain(e.json))
     let filteredEdges = _.filter(edges, (e) => {
       return e.source != undefined && nodeIds.includes(e.source) && nodeIds.includes(e.target)

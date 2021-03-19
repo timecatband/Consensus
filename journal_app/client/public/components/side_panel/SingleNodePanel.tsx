@@ -6,7 +6,7 @@ function SingleNodePanel(props: any): any {
 
   return (
     <div>
-      <div className='panelHeader'>
+      <div className='panelContainer'>
         <div className="panelText">
           Label:
         </div>

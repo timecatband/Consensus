@@ -12,8 +12,15 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 
+  .btnLink {
+    text-decoration: underline;
+    cursor: pointer;
+    &:hover {
+      color: $teal;
+    }
+  }
+
   button {
-    outline: none;
     cursor: pointer;
     background: white;
     border: 2px solid black;
@@ -22,13 +29,10 @@ body {
     background: $light-teal;
   }
 
-  select {
-    outline: none;
-  }
-
-  // fuck outlines they are gross
-  textarea {
-    outline: none;
+  select, textarea, input, button {
+    &:focus {
+      outline: none;
+    }
   }
 
   .muteText {

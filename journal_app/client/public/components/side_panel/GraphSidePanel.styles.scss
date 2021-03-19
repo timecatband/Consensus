@@ -20,7 +20,7 @@
     }
     padding: 0 5px;
 
-    .panelHeader {
+    .panelContainer {
       margin: 10px 0;
       input {
         font-size: 1.1em;
@@ -28,7 +28,31 @@
         width: 100%;
       }
     }
-    
+
+    .section {
+      margin-bottom: 40px;
+    }
+
+    .createGraphContainer {
+      border: 1px solid $gray;
+      padding: 5px;
+    }
+
+    .inputControl {
+      input {
+        display: block;
+        margin: 10px 0;
+      }
+    }
+
+    .filterItem {
+      padding:2px 5px;
+    }
+
+    .panelHeaderText {
+      font-weight: bold;
+    }
+
     .panelText {
       font-size: 0.7em;
       font-style: normal;
