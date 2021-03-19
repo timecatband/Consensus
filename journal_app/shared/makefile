@@ -11,4 +11,4 @@ install:
 
 
 test:
-	NODE_ENV=test npm run spectest
+	NODE_ENV=test npm run test

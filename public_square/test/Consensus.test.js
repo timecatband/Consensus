@@ -1,6 +1,7 @@
 const Consensus = artifacts.require('ConsensusGraph');
-const assert = require("chai").assert;
 const truffleAssert = require('truffle-assertions');
+const assert = require("chai").assert;
+const sinon = require("sinon");
 
 contract('Consensus', (accounts) => {
     let testContract;
@@ -9,7 +10,11 @@ contract('Consensus', (accounts) => {
 
     // build up and tear down a new Casino contract before each test
     beforeEach(async () => {
-        testContract = await Consensus.new({ from: fundingAccount });
+      testContract = await Consensus.new(
+        web3.utils.fromAscii('connor'),
+        'testName',
+        accounts[0]
+      );
     });
 
     /*
@@ -18,19 +23,11 @@ contract('Consensus', (accounts) => {
     });
     */
 
-    it("should revert with message if a non-owner tries to edit the node", async () => {
+    it("should prove that testing contracts is possible", async () => {
       let json = "{owner:'you dont own me bro'}";
       let id = "testId";
 
       await testContract.upsertNode(id, json)
-
-      // TODO: actually test the revert behavior
-      /*
-      await truffleAssert.reverts(
-        testContract.upsertNode(id, json),
-        "Only owner can update"
-      );
-      */
 
       let test = await testContract.getNodeIds()
 

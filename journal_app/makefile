@@ -1,7 +1,7 @@
 .PHONY: clean install test docker-build-server docker-run-server
 
 
-DIRS = shared client server client_web_app
+DIRS = shared client server build_server
 
 
 clean:
@@ -24,7 +24,7 @@ run-server-local:
 	docker run -p 3000:3000 timecat/graph-socket-server:latest
 
 
-# the update-container command can fill up the disk of the compute engine instance. 
+# the update-container command can fill up the disk of the compute engine instance.
 # it should be reset with "docker image prune -a -f" from time to time (todo: fix this)
 deploy-server: cook-server-image
 	docker tag timecat/graph-socket-server:latest gcr.io/consensus-307005/graph-server:latest

@@ -16,7 +16,6 @@ install:
 test:
 	-for d in $(DIRS); do $(MAKE) -C $$d test || exit 1; done
 
-
 blockchain:
 	make -C ./public_square migrate
 
