@@ -20,4 +20,9 @@ blockchain:
 	make -C ./public_square migrate
 
 abi:
-	make -C ./public_square abi
+	make -C ./public_square consensus_abi
+	make -C ./public_square public_square_abi
+
+ganache:
+	make -C ./public_square ganache
+

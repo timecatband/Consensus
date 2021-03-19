@@ -29,3 +29,6 @@ install:
 
 test:
 	truffle test
+
+ganache:
+	npm run test:ethereum
