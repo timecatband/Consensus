@@ -5,11 +5,11 @@ let metamaskWeb3 = new Web3('http://localhost:8545')
 let account = null;
 let publicSquareContract = null;
 
-export const web3 = () => {
+export const getWeb3 = () => {
   return metamaskWeb3;
 }
 
-export const accountAddress = () => {
+export const getAccountAddress = () => {
   return account;
 }
 
@@ -39,10 +39,6 @@ export async function setProvider() {
   publicSquareContract = new metamaskWeb3.eth.Contract(PublicSquareABI.abi, publicSquareContractAddress);
 }
 
-export function getContract(abi, address) {
-    return new metamaskWeb3.eth.Contract(abi, address);
-}
-
 export async function getAllConsensusGraphIds() {
   const contract = getPublicSquareContract();
   
@@ -54,7 +50,7 @@ export async function getAllConsensusGraphIds() {
 export async function createGraph(graphName) {
   const publicSquareContract = getPublicSquareContract();
   await publicSquareContract.methods.createConsensusGraph(graphName).send({
-    from: accountAddress()[0]
+    from: getAccountAddress()[0]
   })
 }
 
