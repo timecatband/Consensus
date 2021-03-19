@@ -1,4 +1,14 @@
-import { accountAddress } from './PublicSquareContract'
+import { getPublicSquareContract, getAccountAddress, getWeb3 } from './PublicSquareContract'
+import ConsensusGraphABI from './ConsensusGraphABI'
+
+
+export async function getGraphContract(graphId) {
+  // Is it weird that we need the public square in order to get a graph?
+  const publicSquareContract = getPublicSquareContract();
+  const graphAddress = await publicSquareContract.methods.consensusGraphs(graphId).call();
+  const web3 = getWeb3();
+  return new web3.eth.Contract(ConsensusGraphABI.abi, graphAddress);
+}
 
 export async function getNode(contract, id) {
   return await contract.methods.nodes(id).call();
@@ -30,21 +40,22 @@ export async function getEdges(contract) {
 
 export async function upsertNode(contract, id, json) {
   await contract.methods.upsertNode(id, JSON.stringify(json)).send({
-    from: accountAddress()[0]
+    from: getAccountAddress()[0]
   })
 }
 
 export async function upsertEdge(contract, id, json) {
   await contract.methods.upsertEdge(id, JSON.stringify(json)).send({
-      from: accountAddress()[0]
+      from: getAccountAddress()[0]
   })
 }
 
-export async function elonMusk(contract) {
+export async function elonMusk(graphId) {
+  const contract = await getGraphContract(graphId)
   console.log(await contract.methods.tokenContract().call())
 
   await contract.methods.airdropMe().send({
-    from: accountAddress()[0]
+    from: getAccountAddress()[0]
   })
 }
 
