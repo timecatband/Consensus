@@ -24,7 +24,7 @@ class GraphData { // this thing should probably just extend EventEmitter
   DisplayedGraphKey: string // the key of the graph where user edits should be written
   selectedItems: any;
   filterPanelOpen: boolean;
-  activeGraphId: any; // the graph id
+  activeGraphId: any; // the currently active graph id
 
   // write cache to prevent frequent small writes to db
   dirtyNodes: Record<string, JournalNode>;

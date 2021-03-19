@@ -1,22 +1,50 @@
 import PublicSquareABI from './PublicSquareABI'
-import { web3, accountAddress } from './MetaMask';
 
-export async function getPublicSquareContract() {
-  const metamaskWeb3 = web3();
-  const publicSquareContractAddress = await getPublicSquareContractAddress();
-  const publicSquareContract = new metamaskWeb3.eth.Contract(PublicSquareABI.abi, publicSquareContractAddress);
+let Web3 = require('Web3');
+let metamaskWeb3 = new Web3('http://localhost:8545')
+let account = null;
+let publicSquareContract = null;
+
+export const web3 = () => {
+  return metamaskWeb3;
+}
+
+export const accountAddress = () => {
+  return account;
+}
+
+export const getPublicSquareContract = () => {
   return publicSquareContract;
 }
 
-async function getPublicSquareContractAddress() {
-  const metamaskWeb3 = web3();
+export async function setProvider() {
+  if (window.ethereum) {
+    metamaskWeb3 = new Web3(ethereum);
+    try {
+      // Request account access if needed
+      await ethereum.enable();
+    }
+    catch (error) {
+      // User denied account access...
+    }
+  } else if (window.web3) {
+    metamaskWeb3 = new Web3(web3.currentProvider);
+  }
+  account = await metamaskWeb3.eth.getAccounts()
+  metamaskWeb3.eth.handleRevert = true;
+  
+  // Initialize the public square contract
   let id = await metamaskWeb3.eth.net.getId();
   const publicSquareContractAddress = PublicSquareABI.networks[id]["address"];
-  return publicSquareContractAddress;
+  publicSquareContract = new metamaskWeb3.eth.Contract(PublicSquareABI.abi, publicSquareContractAddress);
+}
+
+export function getContract(abi, address) {
+    return new metamaskWeb3.eth.Contract(abi, address);
 }
 
 export async function getAllConsensusGraphIds() {
-  const contract = await getPublicSquareContract();
+  const contract = getPublicSquareContract();
   
   // todo: think about retrieving a tuple of (id/name) here instead of just id, so we don't need to go fetching all graph contracts
   const graphIds = await contract.methods.getConsensusGraphIds().call();
@@ -24,7 +52,7 @@ export async function getAllConsensusGraphIds() {
 }
 
 export async function createGraph(graphName) {
-  const publicSquareContract = await getPublicSquareContract();
+  const publicSquareContract = getPublicSquareContract();
   await publicSquareContract.methods.createConsensusGraph(graphName).send({
     from: accountAddress()[0]
   })

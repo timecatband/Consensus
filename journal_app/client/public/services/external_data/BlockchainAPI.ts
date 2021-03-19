@@ -5,13 +5,7 @@ import JournalNode from '@timecat/graph-journal-shared/src/models/JournalNode'
 import JournalEdge from '@timecat/graph-journal-shared/src/models/JournalEdge'
 import PublicSquare from '@timecat/graph-journal-shared/src/models/PublicSquare'
 import {getGraphContract, upsertNode, upsertEdge, getNodes, getEdges} from './ConsensusGraphContract'
-import {getAllConsensusGraphIds, createGraph} from './PublicSquareContract'
-import {setProvider} from './MetaMask'
-// require('./MetaMask');
-
-// async function getMetaMaskWeb3() {
-  
-// }
+import {getAllConsensusGraphIds, createGraph, setProvider} from './PublicSquareContract'
 
 /*
   Singleton service ServerAPI provides methods for reading/writing via Web3 blockchain shenanigans
@@ -19,17 +13,10 @@ import {setProvider} from './MetaMask'
 class BlockchainAPI extends EventEmitter {
   ready: any;
 
-  // graphIdToContract: { [id: string]: any };
-
   constructor() {
     super()
     this.ready = setProvider();
   }
-
-  //on(key: string, handler: Function): Promise<void> {
-  //   return this.socketClient.on(key, handler)
-  //}
-
 
   ping(data: any) {
     this.ready.then(() => {
@@ -86,7 +73,6 @@ class BlockchainAPI extends EventEmitter {
     let consensusGraphIds = await getAllConsensusGraphIds();
     if (consensusGraphIds.length > 0) {
       // just use the first one we find, for now
-      console.log('consensusGraphIds[0]', consensusGraphIds[0])
       await this.getGraph(consensusGraphIds[0])
     } else {
       this.emit("NO_GRAPHS", {})

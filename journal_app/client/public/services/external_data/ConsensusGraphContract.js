@@ -1,10 +1,9 @@
-import { getPublicSquareContract } from './PublicSquareContract'
+import { getPublicSquareContract, accountAddress, getContract } from './PublicSquareContract'
 import ConsensusGraphABI from './ConsensusGraphABI'
-import { getContract, accountAddress } from './MetaMask';
 
 
 export async function getGraphContract(graphId) {
-  const publicSquareContract = await getPublicSquareContract();
+  const publicSquareContract = getPublicSquareContract();
   const graphAddress = await publicSquareContract.methods.consensusGraphs(graphId).call();
   return getContract(ConsensusGraphABI.abi, graphAddress);
 }
