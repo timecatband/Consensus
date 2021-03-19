@@ -13,7 +13,7 @@ function GraphControlBar(props: any): any {
   }
 
   function plzGimmeMoreMrYang() {
-    yangGang(GraphDataSvc.contract);
+    yangGang(GraphDataSvc.DisplayedGraphKey);
   }
 
   return  (

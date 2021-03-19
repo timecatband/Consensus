@@ -50,7 +50,8 @@ export async function upsertEdge(contract, id, json) {
   })
 }
 
-export async function yangGang(contract) {
+export async function yangGang(graphId) {
+  const contract = await getGraphContract(graphId)
   console.log(await contract.methods.tokenContract().call())
   await contract.methods.airdropMe().send({
     from: getAccountAddress()[0]

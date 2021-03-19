@@ -41,7 +41,7 @@ class GraphData { // this thing should probably just extend EventEmitter
     this.externalAPI.on('GET_GRAPH_RSP', this.handleServerGraphResponse.bind(this))
     this.externalAPI.on('NO_GRAPHS', this.handleServerNoGraphResponse.bind(this))
     this.externalAPI.ready.then( () => {
-      this.externalAPI.getPublicSquare();
+      this.externalAPI.getFirstGraphFromPublicSquare();
     });
 
     this.externalAPI.on('PEER_SAVED_GRAPH', this.handlePeerUpdate.bind(this))
@@ -94,9 +94,11 @@ class GraphData { // this thing should probably just extend EventEmitter
   /*
     provide access to externalAPI
   */
-  createGraph(graphName: string) {
-    this.externalAPI.createGraph(graphName)
+  createGraph(graphName: string): Promise<any> {
+    //return the promise, dont await it
+    return this.externalAPI.createGraph(graphName)
   }
+
 
   /*
     This is an important method, because it sets the DisplayedGraphKey
@@ -117,8 +119,9 @@ class GraphData { // this thing should probably just extend EventEmitter
   handleServerGraphResponse(graphData: GraphModel) {
     const newGraph = GraphModel.deSerialize(graphData)
 
+    console.log("testes", newGraph)
+
     this.setDisplayedGraph(newGraph)
-    this.contract = graphData.contract;
     this.graphs[newGraph.key] = newGraph;
 
     //TODO: get graph names from contract
@@ -181,10 +184,6 @@ class GraphData { // this thing should probably just extend EventEmitter
     return this.DisplayedGraph.find('edge', fn);
   }
 
-
-  async createGraph(graphName: string) {
-    await this.externalAPI.createGraph(graphName);
-  }
 
   /*
     any keys in the update object should replace the same keys on the given node

@@ -35,7 +35,7 @@ function FilterPanel(props: any): any {
           Active graphs
         </div>
         {_.values(_.mapValues(loadedGraphs, (g) => {
-          return <div className="filterItem btnLink">{g.key}</div>
+          return <div key={g.key} className="filterItem btnLink">{g.name}</div>
         }))}
         <div className="filterItem btnLink">My personal view</div>
       </div>

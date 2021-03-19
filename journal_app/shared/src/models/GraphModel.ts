@@ -8,15 +8,17 @@ class GraphModel implements I.GraphData {
 
   contract: any;
   key: string;
+  name: string;
   nodes: JournalNode[];
   edges: JournalEdge[];
   meta: object;
 
-  constructor(nodes?:JournalNode[], edges?:JournalEdge[], meta?: any, key?: string) {
+  constructor(nodes?:JournalNode[], edges?:JournalEdge[], meta?:any, key?:string, name?:string) {
     this.nodes = nodes || [];
     this.edges = edges || [];
     this.meta = meta || {};
     this.key = key || uuid.v4()
+    this.name = name || 'Unnamed graph'
   }
 
   serializeGraph() {
@@ -36,7 +38,8 @@ class GraphModel implements I.GraphData {
       _.map(grObj.nodes, JournalNode.deSerialize),
       _.map(grObj.edges, JournalEdge.deSerialize),
       grObj.meta,
-      grObj.key
+      grObj.key,
+      grObj.name
     )
   }
 

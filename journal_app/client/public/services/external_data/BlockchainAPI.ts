@@ -41,6 +41,7 @@ class BlockchainAPI extends EventEmitter {
     const graphContract = await getGraphContract(graphId);
     let nodes = await Promise.all(await getNodes(graphContract))
     let edges = await Promise.all(await getEdges(graphContract))
+    let graphName = await graphContract.methods.name().call()
 
     // make sure we didn't get junk data back
     nodes = _.map(nodes, (n) => JournalNode.fromBlockchain(n.json))
@@ -63,12 +64,13 @@ class BlockchainAPI extends EventEmitter {
 
     this.emit("GET_GRAPH_RSP", {
       key: graphId,
+      name: graphName,
       nodes: filteredNodes,
       edges: filteredEdges
     });
   }
 
-  async getPublicSquare() {
+  async getFirstGraphFromPublicSquare() {
     let consensusGraphIds = await getAllConsensusGraphIds();
     if (consensusGraphIds.length > 0) {
       // just use the first one we find, for now
@@ -85,7 +87,7 @@ class BlockchainAPI extends EventEmitter {
   async createGraph(publicSquareName: string) {
     await createGraph(publicSquareName);
     // refresh public square
-    await this.getPublicSquare();
+    await this.getFirstGraphFromPublicSquare();
   }
 
   /*
