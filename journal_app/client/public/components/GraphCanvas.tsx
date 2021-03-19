@@ -213,8 +213,8 @@ const GraphCanvas = (props) => {
 
 
     GraphDataSvc.DisplayedGraph = graphCanvas;
-    GraphDataSvc.on('set-displayed-graph', () => {
-      renderGraph(graphCanvas, GraphDataSvc.graphs[0])
+    GraphDataSvc.on('set-displayed-graph', (graph) => {
+      renderGraph(graphCanvas, graph)
     })
 
     // Handler to call on window resize

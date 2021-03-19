@@ -117,16 +117,11 @@ class GraphData { // this thing should probably just extend EventEmitter
   handleServerGraphResponse(graphData: GraphModel) {
     const newGraph = GraphModel.deSerialize(graphData)
 
-    console.log("AAAAA", newGraph)
-
     this.setDisplayedGraph(newGraph)
-    //this.contract = graphData.contract;
-
-    console.log("BBB", newGraph.key)
-    //this.graphs[newGraph.key] = newGraph;
+    this.contract = graphData.contract;
+    this.graphs[newGraph.key] = newGraph;
 
     //TODO: get graph names from contract
-    console.log("got graph from external", this.graphs)
     this.emit("graph-loaded", newGraph.key)
   }
 

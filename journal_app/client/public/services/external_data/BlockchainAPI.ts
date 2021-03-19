@@ -53,7 +53,6 @@ class BlockchainAPI extends EventEmitter {
 
     // prevent junk data, and prevent edges that refer to non-existant nodes as that will fuck g6
     let nodeIds = _.values(_.mapValues(filteredNodes, (n) => {return n.id}));
-    console.log("nodeids", nodeIds)
     edges = _.map(edges, (e) => JournalEdge.fromBlockchain(e.json))
     let filteredEdges = _.filter(edges, (e) => {
       return e.source != undefined && nodeIds.includes(e.source) && nodeIds.includes(e.target)
@@ -62,8 +61,6 @@ class BlockchainAPI extends EventEmitter {
     if ( filteredEdges.length != edges.length ) {
       console.warn("Warning: apparently bad edges loaded from blockchain")
     }
-
-    console.log("wt freakin f", typeof(filteredNodes))
 
     this.emit("GET_GRAPH_RSP", {
       key: 'firstBlockchainGraph',
@@ -76,7 +73,6 @@ class BlockchainAPI extends EventEmitter {
   async getPublicSquare() {
     let consensusGraphContracts = await getAllConsensusGraphContracts();
     if (consensusGraphContracts.length > 0) {
-      console.log("what have we got here", consensusGraphContracts)
       // just use the first one we find, for now
       await this.getGraph(consensusGraphContracts[0])
     } else {
