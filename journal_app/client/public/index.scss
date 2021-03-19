@@ -13,7 +13,6 @@ body {
   -moz-osx-font-smoothing: grayscale;
 
   button {
-    outline: none;
     cursor: pointer;
     background: white;
     border: 2px solid black;
@@ -22,13 +21,10 @@ body {
     background: $light-teal;
   }
 
-  select {
-    outline: none;
-  }
-
-  // fuck outlines they are gross
-  textarea {
-    outline: none;
+  select, textarea, input, button {
+    &:focus {
+      outline: none;
+    }
   }
 
   .muteText {

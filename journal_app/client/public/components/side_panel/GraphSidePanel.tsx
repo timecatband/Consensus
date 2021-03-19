@@ -99,7 +99,7 @@ function GraphSidePanel(props: any): any {
       }
     })
 
-    GraphDataSvc.on('filter-panel-toggle', (filterState) => {
+    GraphDataSvc.on('filter-panel-change', (filterState) => {
       setShowFilters(filterState);
     })
 
@@ -138,7 +138,7 @@ function GraphSidePanel(props: any): any {
   } else if ( numItems == 2) {
     component = (
       <div>
-        <div className='panelHeader'>
+        <div className='panelContainer'>
           {numItems} nodes selected
         </div>
         <div>{selectedItems['0']?.label}</div>
@@ -155,7 +155,7 @@ function GraphSidePanel(props: any): any {
   } else if ( numItems > 2) {
     component = (
       <div>
-        <div className='panelHeader'>
+        <div className='panelContainer'>
           {numItems} nodes selected
         </div>
         <div className="codeBlock comparison">

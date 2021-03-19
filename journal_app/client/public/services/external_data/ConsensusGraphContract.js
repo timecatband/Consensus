@@ -40,7 +40,7 @@ export async function upsertEdge(contract, id, json) {
   })
 }
 
-export async function elonMusk(contract) {
+export async function yangGang(contract) {
   console.log(await contract.methods.tokenContract().call())
 
   await contract.methods.airdropMe().send({
