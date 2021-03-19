@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react'
 import GraphDataSvc from '../services/GraphData'
-import BlockchainAPISvc from '../services/external_data/BlockchainAPI'
 import { elonMusk } from '../services/external_data/ConsensusGraphContract'
 
 function GraphControlBar(props: any): any {
@@ -14,7 +13,7 @@ function GraphControlBar(props: any): any {
     const inputElement = document.getElementById('newGraphName') as HTMLInputElement;
     const graphName = inputElement.value
     if (graphName.length > 0) {
-      await BlockchainAPISvc.createGraph(graphName);
+      await GraphDataSvc.createGraph(graphName);
       console.log('created the new graph!', graphName)
     }
   }
@@ -24,7 +23,7 @@ function GraphControlBar(props: any): any {
   }
 
   function gimmeElonMusk() {
-    elonMusk(GraphDataSvc.contract);
+    elonMusk(GraphDataSvc.activeGraphId);
   }
 
   return  (

@@ -1,10 +1,17 @@
+let Web3 = require('Web3');
 import _ from 'lodash'
 import EventEmitter from '@timecat/graph-journal-shared/src/models/EventEmitter'
 import JournalNode from '@timecat/graph-journal-shared/src/models/JournalNode'
 import JournalEdge from '@timecat/graph-journal-shared/src/models/JournalEdge'
 import PublicSquare from '@timecat/graph-journal-shared/src/models/PublicSquare'
-import {setProvider, upsertNode, upsertEdge, getNodes, getEdges} from './ConsensusGraphContract'
-import {setProviderPublicSquare, getAllConsensusGraphContracts, createGraph} from './PublicSquareContract'
+import {getGraphContract, upsertNode, upsertEdge, getNodes, getEdges} from './ConsensusGraphContract'
+import {getAllConsensusGraphIds, createGraph} from './PublicSquareContract'
+import {setProvider} from './MetaMask'
+// require('./MetaMask');
+
+// async function getMetaMaskWeb3() {
+  
+// }
 
 /*
   Singleton service ServerAPI provides methods for reading/writing via Web3 blockchain shenanigans
@@ -12,14 +19,17 @@ import {setProviderPublicSquare, getAllConsensusGraphContracts, createGraph} fro
 class BlockchainAPI extends EventEmitter {
   ready: any;
 
+  // graphIdToContract: { [id: string]: any };
+
   constructor() {
     super()
-    this.ready = setProviderPublicSquare();
+    this.ready = setProvider();
   }
 
   //on(key: string, handler: Function): Promise<void> {
   //   return this.socketClient.on(key, handler)
   //}
+
 
   ping(data: any) {
     this.ready.then(() => {
@@ -28,7 +38,8 @@ class BlockchainAPI extends EventEmitter {
     })
   }
 
-  saveGraph(graphContract: any, graphData: any) {
+  async saveGraph(graphId: any, graphData: any) {
+    const graphContract = await getGraphContract(graphId);
     for (let i = 0; i < graphData.nodes.length; i++) {
         const node = graphData.nodes[i];
         upsertNode(graphContract, node.id, node);
@@ -39,7 +50,8 @@ class BlockchainAPI extends EventEmitter {
     }
   }
 
-  async getGraph(graphContract) {
+  async getGraph(graphId) {
+    const graphContract = await getGraphContract(graphId);
     let nodes = await Promise.all(await getNodes(graphContract))
     let edges = await Promise.all(await getEdges(graphContract))
 
@@ -64,18 +76,18 @@ class BlockchainAPI extends EventEmitter {
     }
 
     this.emit("GET_GRAPH_RSP", {
-      key: 'firstBlockchainGraph',
+      key: graphId,
       nodes: filteredNodes,
-      edges: filteredEdges,
-      contract: graphContract
+      edges: filteredEdges
     });
   }
 
   async getPublicSquare() {
-    let consensusGraphContracts = await getAllConsensusGraphContracts();
-    if (consensusGraphContracts.length > 0) {
+    let consensusGraphIds = await getAllConsensusGraphIds();
+    if (consensusGraphIds.length > 0) {
       // just use the first one we find, for now
-      await this.getGraph(consensusGraphContracts[0])
+      console.log('consensusGraphIds[0]', consensusGraphIds[0])
+      await this.getGraph(consensusGraphIds[0])
     } else {
       this.emit("NO_GRAPHS", {})
     }

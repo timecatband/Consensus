@@ -1,59 +1,32 @@
-
-let Web3 = require('Web3');
-let metamaskWeb3 = new Web3('http://localhost:8545')
 import PublicSquareABI from './PublicSquareABI'
-import ConsensusGraphABI from './ConsensusGraphABI'
-let account = null
-let publicSquareContract
-let publicSquareContractAddress
+import { web3, accountAddress } from './MetaMask';
 
-export function web3() {
-  return metamaskWeb3
-}
-
-export const accountAddress = () => {
-  return account
-}
-
-export async function setProviderPublicSquare() {
-  if (window.ethereum) {
-    metamaskWeb3 = new Web3(ethereum);
-    try {
-      // Request account access if needed
-      await ethereum.enable();
-    }
-    catch (error) {
-      // User denied account access...
-    }
-  } else if (window.web3) {
-    metamaskWeb3 = new Web3(web3.currentProvider);
-  }
-  account = await metamaskWeb3.eth.getAccounts()
-  let id = await metamaskWeb3.eth.net.getId()
-  metamaskWeb3.eth.handleRevert = true;
-  publicSquareContractAddress = PublicSquareABI.networks[id]["address"]
-}
-
-function getPublicSquareContract() {
-  publicSquareContract = publicSquareContract || new metamaskWeb3.eth.Contract(PublicSquareABI.abi, publicSquareContractAddress);
+export async function getPublicSquareContract() {
+  const metamaskWeb3 = web3();
+  const publicSquareContractAddress = await getPublicSquareContractAddress();
+  const publicSquareContract = new metamaskWeb3.eth.Contract(PublicSquareABI.abi, publicSquareContractAddress);
   return publicSquareContract;
 }
 
-export async function getAllConsensusGraphContracts() {
-  const contract = getPublicSquareContract();
-  const graphIds = await contract.methods.getConsensusGraphIds().call();
+async function getPublicSquareContractAddress() {
+  const metamaskWeb3 = web3();
+  let id = await metamaskWeb3.eth.net.getId();
+  const publicSquareContractAddress = PublicSquareABI.networks[id]["address"];
+  return publicSquareContractAddress;
+}
 
-  const graphContracts = [];
-  for (const graphId of graphIds) {
-    const graphAddress = await contract.methods.consensusGraphs(graphId).call();
-    graphContracts.push(new metamaskWeb3.eth.Contract(ConsensusGraphABI.abi, graphAddress));
-  }
-  return graphContracts;  
+export async function getAllConsensusGraphIds() {
+  const contract = await getPublicSquareContract();
+  
+  // todo: think about retrieving a tuple of (id/name) here instead of just id, so we don't need to go fetching all graph contracts
+  const graphIds = await contract.methods.getConsensusGraphIds().call();
+  return graphIds;
 }
 
 export async function createGraph(graphName) {
-  await getPublicSquareContract().methods.createConsensusGraph(graphName).send({
-    from: account[0]
+  const publicSquareContract = await getPublicSquareContract();
+  await publicSquareContract.methods.createConsensusGraph(graphName).send({
+    from: accountAddress()[0]
   })
 }
 

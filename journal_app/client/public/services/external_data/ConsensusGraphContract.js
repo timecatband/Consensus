@@ -1,4 +1,13 @@
-import { accountAddress } from './PublicSquareContract'
+import { getPublicSquareContract } from './PublicSquareContract'
+import ConsensusGraphABI from './ConsensusGraphABI'
+import { getContract, accountAddress } from './MetaMask';
+
+
+export async function getGraphContract(graphId) {
+  const publicSquareContract = await getPublicSquareContract();
+  const graphAddress = await publicSquareContract.methods.consensusGraphs(graphId).call();
+  return getContract(ConsensusGraphABI.abi, graphAddress);
+}
 
 export async function getNode(contract, id) {
   return await contract.methods.nodes(id).call();
@@ -40,7 +49,8 @@ export async function upsertEdge(contract, id, json) {
   })
 }
 
-export async function elonMusk(contract) {
+export async function elonMusk(graphId) {
+  const contract = await getGraphContract(graphId)
   console.log(await contract.methods.tokenContract().call())
 
   await contract.methods.airdropMe().send({

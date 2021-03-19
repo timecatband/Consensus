@@ -24,7 +24,7 @@ class GraphData { // this thing should probably just extend EventEmitter
   DisplayedGraphKey: string // the key of the graph where user edits should be written
   selectedItems: any;
   filterPanelOpen: boolean;
-  contract: any; // the graph contract
+  activeGraphId: any; // the graph id
 
   // write cache to prevent frequent small writes to db
   dirtyNodes: Record<string, JournalNode>;
@@ -104,7 +104,7 @@ class GraphData { // this thing should probably just extend EventEmitter
     console.log("got graph from external", newGraph)
     this.graphs.push(newGraph)
     this.setDisplayedGraph(newGraph)
-    this.contract = graphData.contract;
+    this.activeGraphId = graphData.key;
   }
 
   handleServerNoGraphResponse() {
@@ -161,6 +161,11 @@ class GraphData { // this thing should probably just extend EventEmitter
   */
   findItem(type:string, fn: any) {
     return this.DisplayedGraph.find('edge', fn);
+  }
+
+  
+  async createGraph(graphName: string) {
+    await this.externalAPI.createGraph(graphName);
   }
 
   /*
@@ -246,7 +251,7 @@ class GraphData { // this thing should probably just extend EventEmitter
     }
 
     console.log("Debounced write firing to server")
-    this.externalAPI.saveGraph(this.contract, graphObj)
+    this.externalAPI.saveGraph(this.activeGraphId, graphObj)
   }, 3000)
 
 
@@ -256,7 +261,7 @@ class GraphData { // this thing should probably just extend EventEmitter
       this method will still be useful because its a "save subgraph" method, it can save any collection of nodes and edges
   */
   saveGraph() {
-    this.externalAPI.saveGraph(this.contract, this.serializeG6graph(this.DisplayedGraphKey, this.DisplayedGraph))
+    this.externalAPI.saveGraph(this.activeGraphId, this.serializeG6graph(this.DisplayedGraphKey, this.DisplayedGraph))
   }
 
 
