@@ -9,14 +9,16 @@ import ConsensusGraph from './ConsensusGraph'
 class PublicSquare {
   web3: any; // web3 library
   contract: any; // instance of deployed contract on the blockchain
-  account: string // the account address of the current user
+  account: string; // the account address of the current user
+  networkId: string;
 
-  constructor(web3:Web3, account:string) {
+  constructor(web3:any, account:string, networkId:string) {
     this.web3 = web3;
-    this.account = account
+    this.account = account;
+    this.networkId = networkId;
     this.contract = new this.web3.eth.Contract(
       PublicSquareABI.abi,
-      PublicSquareABI.networks[id]["address"]
+      PublicSquareABI.networks[this.networkId]["address"]
     );
   }
 
@@ -25,9 +27,9 @@ class PublicSquare {
   }
 
   async getGraphContract(graphId: string):Promise<any> {
-    address = await this.contract.methods.consensusGraphs(graphId).call();
-    graphContract = new web3.eth.Contract(ConsensusGraphABI.abi, address);
-    return new ConsensusGraph(graphContract)
+    let address = await this.contract.methods.consensusGraphs(graphId).call();
+    let graphContract = new this.web3.eth.Contract(ConsensusGraphABI.abi, address);
+    return new ConsensusGraph(graphContract, this.account)
   }
 
   async getAllConsensusGraphIds():Promise<any> {

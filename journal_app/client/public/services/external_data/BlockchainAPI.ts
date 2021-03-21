@@ -1,4 +1,4 @@
-let Web3 = require('Web3');
+import Web3 from 'Web3';
 import _ from 'lodash'
 import EventEmitter from '@timecat/graph-journal-shared/src/models/EventEmitter'
 import JournalNode from '@timecat/graph-journal-shared/src/models/JournalNode'
@@ -11,6 +11,7 @@ import PublicSquare from '@timecat/graph-journal-shared/src/external_data/Public
 */
 class BlockchainAPI extends EventEmitter {
   ready: any;
+  readyResolver: Function;
   metamaskWeb3: any;
   accounts: any[];
   networkId: string;
@@ -19,27 +20,19 @@ class BlockchainAPI extends EventEmitter {
 
   constructor() {
     super();
-    this.ready = this.setup().then(() => {
-      this.publicSquare = new PublicSquare(this.metamaskWeb3, this.accounts[0])
-    });
+    this.graphContracts = {}
+    this.ready = new Promise((resolve) => {
+      this.readyResolver = resolve
+    })
   }
 
-  async setup() {
-    if (window.ethereum) {
-      this.metamaskWeb3 = new Web3(ethereum);
-      try {
-        // Request account access if needed
-        await ethereum.enable();
-      }
-      catch (error) {
-        console.error("User denied access", error)
-      }
-    } else if (window.web3) {
-      this.metamaskWeb3 = new Web3(web3.currentProvider);
-    }
+  async setWeb3(web3:any) {
+    this.metamaskWeb3 = web3;
     this.metamaskWeb3.eth.handleRevert = true;
     this.networkId = await metamaskWeb3.eth.net.getId();
     this.accounts = await this.metamaskWeb3.eth.getAccounts()
+    this.publicSquare = new PublicSquare(this.metamaskWeb3, this.accounts[0], this.networkId)
+    this.readyResolver()
   }
 
   yangGang(graphId: string) {
@@ -70,9 +63,11 @@ class BlockchainAPI extends EventEmitter {
     if (this.graphContracts[graphId]) {
 
       let graphContract = this.graphContracts[graphId]
-      let nodes = await Promise.all(await graphContract.getNodes())
-      let edges = await Promise.all(await graphContract.getEdges())
+      let nodes = await graphContract.getNodes()
+      let edges = await graphContract.getEdges()
       let graphName = graphContract.name
+
+      console.log("blockchainapi loadGraphData", nodes)
 
       // make sure we didn't get junk data back
       nodes = _.map(nodes, (n) => JournalNode.fromBlockchain(n.json))
@@ -118,5 +113,28 @@ class BlockchainAPI extends EventEmitter {
 }
 
 var BlockchainAPISvc = new BlockchainAPI()
+
+declare global {
+  interface Window {
+    ethereum:any;
+    web3:any;
+  }
+}
+
+let metamaskWeb3;
+if (window.ethereum) {
+  metamaskWeb3 = new Web3(window.ethereum);
+  try {
+    // Request account access if needed
+    window.ethereum.enable();
+  }
+  catch (error) {
+    console.error("User denied access", error)
+  }
+} else if (window.web3) {
+  metamaskWeb3 = new Web3(window.web3.currentProvider);
+}
+
+BlockchainAPISvc.setWeb3(metamaskWeb3)
 
 export default BlockchainAPISvc;

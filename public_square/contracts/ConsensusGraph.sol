@@ -77,7 +77,7 @@ contract ConsensusGraph {
     } else {
       NodeIds.push(id);
     }
-    Nodes[id] = Node(json, tx.origin, stringId);
+    Nodes[id] = Node(stringId, tx.origin, json);
     emit NewNode(stringId);
   }
 
@@ -90,7 +90,7 @@ contract ConsensusGraph {
       } else {
         EdgeIds.push(id);
       }
-      Edges[id] = Edge(json, tx.origin, stringId);
+      Edges[id] = Edge(stringId, tx.origin, json);
       emit NewEdge(stringId);
   }
 
@@ -99,10 +99,9 @@ contract ConsensusGraph {
       upsertNode(nodes[i].id, nodes[i].json);
     }
 
-    for (uint i=0; i < edges.length; i++) {
-      upsertEdge(edges[i].id, edges[i].json);
+    for (uint j=0; j < edges.length; j++) {
+      upsertEdge(edges[j].id, edges[j].json);
     }
-
   }
 
 }

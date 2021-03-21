@@ -1,3 +1,4 @@
+import _ from 'lodash'
 import ConsensusGraphABI from './ABI/ConsensusGraphABI'
 
 /*
@@ -13,26 +14,50 @@ class ConsensusGraph {
   constructor(contract:any, account:string) {
     this.contract = contract
     this.account = account
-    this.ready = this.getName().then( (name) => {
+    this.ready = this.getName().then( (name:string) => {
       this.name = name
     })
   }
 
-  async getName() {
-    this.contract.methods.name().call()
+  async getName():Promise<string> {
+    return this.contract.methods.name().call()
   }
 
   async yangGang() {
     console.log(await this.contract.methods.tokenContract().call())
-    return contract.methods.airdropMe().send({from: this.account})
+    return this.contract.methods.airdropMe().send({from: this.account})
+  }
+
+  formatCollectionForSend(collection) {
+
   }
 
   async upsertCollections(nodes, edges) {
+    console.log("upsert collection reached", nodes, edges)
+
+    _.each( nodes, n => {
+      if (n.owner === undefined) {
+        // TODO: this setting of owner needs to happen when the node is actually created
+        n.owner = this.account
+        n.json.owner = this.account
+      }
+      n.json = JSON.stringify(n.json)
+    })
+
+    _.each( edges, e => {
+      if (e.owner === undefined) {
+        // TODO: this setting of owner needs to happen when the node is actually created
+        e.owner = this.account
+        e.json.owner = this.account
+      }
+      e.json = JSON.stringify(e.json)
+    })
+
     return this.contract.methods.upsertCollections(nodes, edges).send({from: this.account})
   }
 
-  async getNode() {
-    return this.contract.methods.nodes(id).call();
+  async getNode(nodeId) {
+    return this.contract.methods.Nodes(nodeId).call();
   }
 
   async getNodes() {
@@ -43,14 +68,16 @@ class ConsensusGraph {
     for (let i = 0; i < nodeIds.length; i++) {
       nodes.push(this.getNode(nodeIds[i]));
     }
+    nodes = await Promise.all(nodes)
+    console.log("getNodes in graph contract", nodes)
     return nodes;
   }
 
-  async getEdge(contract, id) {
-    return this.contract.methods.edges(id).call();
+  async getEdge(edgeId) {
+    return this.contract.methods.Edges(edgeId).call();
   }
 
-  async getEdges(contract) {
+  async getEdges() {
     // TODO: add batch get to contract
     let edgeIds = await this.contract.methods.getEdgeIds().call();
 
@@ -61,18 +88,18 @@ class ConsensusGraph {
     return edges;
   }
 
-  async onNewNode(contract, callback) {
+  async onNewNode(callback:Function) {
     this.contract.events.NewNode({},
       async(id) => {
-        node = await getNode(contract, id);
+        let node = await this.getNode(id);
         callback(node)
       });
   }
 
-  async onNewEdge(contract, callback) {
+  async onNewEdge(callback:Function) {
     this.contract.events.NewNode({},
       async(id) => {
-        edge = await getEdge(contract, id);
+        let edge = await this.getEdge(id);
         callback(edge)
       });
   }
