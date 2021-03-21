@@ -69,7 +69,6 @@ class ConsensusGraph {
       nodes.push(this.getNode(nodeIds[i]));
     }
     nodes = await Promise.all(nodes)
-    console.log("getNodes in graph contract", nodes)
     return nodes;
   }
 
@@ -85,6 +84,7 @@ class ConsensusGraph {
     for (let i = 0; i < edgeIds.length; i++) {
       edges.push(this.getEdge(edgeIds[i]));
     }
+    edges = await Promise.all(edges)
     return edges;
   }
 
