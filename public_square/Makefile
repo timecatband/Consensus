@@ -5,14 +5,14 @@ consensus_abi:
 	echo "const ConsensusGraphABI = " >> ConsensusGraphABI.js
 	cat build/contracts/ConsensusGraph.json >> ConsensusGraphABI.js
 	echo "\n export default ConsensusGraphABI" >> ConsensusGraphABI.js
-	cp ConsensusGraphABI.js ../journal_app/client/public/services/external_data/
+	cp ConsensusGraphABI.js ../journal_app/shared/src/external_data/ABI/
 
 public_square_abi:
 	rm -f PublicSquareABI.js
 	echo "const PublicSquareABI = " >> PublicSquareABI.js
 	cat build/contracts/PublicSquare.json >> PublicSquareABI.js
 	echo "\n export default PublicSquareABI" >> PublicSquareABI.js
-	cp PublicSquareABI.js ../journal_app/client/public/services/external_data/
+	cp PublicSquareABI.js ../journal_app/shared/src/external_data/ABI/
 
 compile_contracts:
 	npm run compile

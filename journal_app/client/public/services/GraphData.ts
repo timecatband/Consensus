@@ -54,6 +54,10 @@ class GraphData { // this thing should probably just extend EventEmitter
     this.externalAPI.ping()
   }
 
+  yangGang( graphKey:string ) {
+    this.externalAPI.yangGang(graphKey)
+  }
+
   //shortcut to the emitter
   emit(event:string, data?:any) {
     this.emitter.emit(event, data)
@@ -117,6 +121,8 @@ class GraphData { // this thing should probably just extend EventEmitter
   // The initial graph load response
   handleServerGraphResponse(graphData: GraphModel) {
     const newGraph = GraphModel.deSerialize(graphData)
+
+    console.log("what have we got", newGraph)
 
     this.setDisplayedGraph(newGraph)
     this.graphs[newGraph.key] = newGraph;
@@ -266,10 +272,12 @@ class GraphData { // this thing should probably just extend EventEmitter
     let nodes = _.values(this.dirtyNodes);
     let edges = _.values(this.dirtyEdges);
 
+    console.log("GraphDataSvc saving AAAAAAA", nodes)
+
     const graphObj = {
       key: this.DisplayedGraphKey,
-      nodes: _.map(nodes,(n) => n.serialize()),
-      edges: _.map(edges,(e) => e.serialize())
+      nodes: _.map(nodes,(n) => {return n.jsonForBlockchain()}),
+      edges: _.map(edges,(e) => {return e.jsonForBlockchain()})
     }
 
     this.dirtyNodes = {};
