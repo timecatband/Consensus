@@ -1,4 +1,4 @@
-.PHONY: clean install test blockchain
+.PHONY: clean install test blockchain deploy-client
 
 
 DIRS = public_square journal_app
@@ -25,3 +25,6 @@ abi:
 
 ganache:
 	make -C ./public_square ganache
+
+deploy-client:
+	make -C ./journal_app/build_server deploy
