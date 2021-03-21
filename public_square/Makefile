@@ -38,6 +38,7 @@ migrate:
 .PHONY: install
 install:
 	npm install
+	make abi
 
 .PHONY: test
 test:
