@@ -67,8 +67,6 @@ class BlockchainAPI extends EventEmitter {
       let edges = await graphContract.getEdges()
       let graphName = graphContract.name
 
-      console.log("blockchainapi loadGraphData", nodes)
-
       // make sure we didn't get junk data back
       nodes = _.map(nodes, (n) => JournalNode.fromBlockchain(n.json))
       let filteredNodes = _.filter(nodes, (n) => { return n.label != undefined })

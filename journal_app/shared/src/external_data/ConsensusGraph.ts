@@ -56,7 +56,7 @@ class ConsensusGraph {
   }
 
   async getNode(nodeId) {
-    return await this.contract.methods.Nodes(nodeId).call();
+    return this.contract.methods.Nodes(nodeId).call();
   }
 
   async getNodes() {
@@ -65,15 +65,14 @@ class ConsensusGraph {
 
     let nodes = []
     for (let i = 0; i < nodeIds.length; i++) {
-      nodes.push(await this.getNode(nodeIds[i]));
+      nodes.push(this.getNode(nodeIds[i]));
     }
     nodes = await Promise.all(nodes)
-    console.log("getNodes in graph contract", nodes)
     return nodes;
   }
 
   async getEdge(edgeId) {
-    return await this.contract.methods.Edges(edgeId).call();
+    return this.contract.methods.Edges(edgeId).call();
   }
 
   async getEdges() {
@@ -82,8 +81,9 @@ class ConsensusGraph {
 
     let edges = []
     for (let i = 0; i < edgeIds.length; i++) {
-      edges.push(await this.getEdge(edgeIds[i]));
+      edges.push(this.getEdge(edgeIds[i]));
     }
+    edges = await Promise.all(edges)
     return edges;
   }
 
