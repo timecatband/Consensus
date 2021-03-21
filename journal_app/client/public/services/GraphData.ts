@@ -54,6 +54,10 @@ class GraphData { // this thing should probably just extend EventEmitter
     this.externalAPI.ping()
   }
 
+  yangGang( graphKey:string ) {
+    this.externalAPI.yangGang(graphKey)
+  }
+
   //shortcut to the emitter
   emit(event:string, data?:any) {
     this.emitter.emit(event, data)

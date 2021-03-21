@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react'
 import GraphDataSvc from '../services/GraphData'
-import { yangGang } from '../services/external_data/ConsensusGraphContract'
 
 function GraphControlBar(props: any): any {
 
@@ -13,7 +12,7 @@ function GraphControlBar(props: any): any {
   }
 
   function plzGimmeMoreMrYang() {
-    yangGang(GraphDataSvc.DisplayedGraphKey);
+    GraphDataSvc.yangGang(GraphDataSvc.DisplayedGraphKey);
   }
 
   return  (

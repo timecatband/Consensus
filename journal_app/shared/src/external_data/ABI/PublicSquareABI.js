@@ -1,4 +1,4 @@
-const PublicSquareABI =
+const PublicSquareABI = 
 {
   "contractName": "PublicSquare",
   "abi": [
