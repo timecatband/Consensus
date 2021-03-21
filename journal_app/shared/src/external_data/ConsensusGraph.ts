@@ -1,5 +1,4 @@
 import _ from 'lodash'
-import ConsensusGraphABI from './ABI/ConsensusGraphABI'
 
 /*
   Represents an instance of a ConsensusGraph contract deployed on a blockchain somewhere
@@ -57,7 +56,7 @@ class ConsensusGraph {
   }
 
   async getNode(nodeId) {
-    return this.contract.methods.Nodes(nodeId).call();
+    return await this.contract.methods.Nodes(nodeId).call();
   }
 
   async getNodes() {
@@ -66,14 +65,14 @@ class ConsensusGraph {
 
     let nodes = []
     for (let i = 0; i < nodeIds.length; i++) {
-      nodes.push(this.getNode(nodeIds[i]));
+      nodes.push(await this.getNode(nodeIds[i]));
     }
     nodes = await Promise.all(nodes)
     return nodes;
   }
 
   async getEdge(edgeId) {
-    return this.contract.methods.Edges(edgeId).call();
+    return await this.contract.methods.Edges(edgeId).call();
   }
 
   async getEdges() {
@@ -82,7 +81,7 @@ class ConsensusGraph {
 
     let edges = []
     for (let i = 0; i < edgeIds.length; i++) {
-      edges.push(this.getEdge(edgeIds[i]));
+      edges.push(await this.getEdge(edgeIds[i]));
     }
     edges = await Promise.all(edges)
     return edges;
