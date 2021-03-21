@@ -23,7 +23,7 @@ contract('Consensus', (accounts) => {
     });
     */
 
-    it("should prove that testing contracts is possible", async () => {
+    it("upsertNode should result in something added to the nodeIds array", async () => {
       let json = "{owner:'you dont own me bro'}";
       let id = "testId";
 
@@ -34,8 +34,54 @@ contract('Consensus', (accounts) => {
       assert.equal(
         test.length,
         1,
-        "This test is stupid and meaningless"
+        "This test is so basic :eyeroll:"
       );
-
     });
+
+    it("upsertNode should replace a node if the same node id is sent twice (and not duplicate it)", async () => {
+      let json = "{owner:'you dont own me bro'}";
+      let id = "testId";
+
+      await testContract.upsertNode(id, json)
+      await testContract.upsertNode(id, json)
+      await testContract.upsertNode('newId', json)
+
+      let test = await testContract.getNodeIds()
+
+      assert.equal(
+        test.length,
+        2,
+        "Upsert did something wrong"
+      );
+    });
+
+
+    it("upsertCollections should add multiple items from one call", async () => {
+      let id1 = "one";
+      let id2 = "two";
+      let data = "{stuff: 'random ass data in here yo'}";
+
+      let nodes = [
+        {id: id1, owner: accounts[0], json: data},
+        {id: id2, owner: accounts[0], json: data}
+      ]
+
+      let edges = [
+        {id: id1, owner: accounts[0], json: data},
+        {id: id2, owner: accounts[0], json: data}
+      ]
+
+      await testContract.upsertCollections(nodes, edges)
+
+      let testNodes = await testContract.getNodeIds()
+      let testEdges = await testContract.getEdgeIds()
+
+      assert.equal(
+        testNodes.length + testEdges.length,
+        4,
+        "Upsert collections failed"
+      );
+    });
+
+
 });

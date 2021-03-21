@@ -1,10 +1,11 @@
 // SPDX-License-Identifier: GPL-3.0
 pragma solidity ^0.5.16 <0.9.0;
+pragma experimental ABIEncoderV2;
 
 import "./ConsensusToken.sol";
 
 contract ConsensusGraph {
-  
+
   bytes32 public id;
   string public name;
   address public creator;
@@ -16,42 +17,42 @@ contract ConsensusGraph {
   }
 
   struct Node {
-    // JSON representation sent from client. Opaque here.
-    string json;
+    // String UUID sent from client, and used as client ID.
+    // server side ID is keccak hash of this.
+    string id;
 
     // Original owner. Only owner can update node itself.
     // TODO: node ownership should be handled by rules around invested stake insted of this? -KW-2021-03
     address owner;
 
-    // String UUID sent from client, and used as client ID.
-    // server side ID is keccak hash of this.
-    string id;
+    // JSON representation sent from client. Opaque here.
+    string json;
   }
+
   struct Edge {
     // Mirrors node struct
-    string json;
-    address owner;
     string id;
+    address owner;
+    string json;
   }
 
   // Mapping from keccak256(ids) to Node
-  mapping(bytes32 => Node) public nodes;
+  mapping(bytes32 => Node) public Nodes;
   // List of all IDs, so client can query all nodes.
-  bytes32[] public nodeIds;
+  bytes32[] public NodeIds;
 
   // Mirrors nodes
-  mapping(bytes32 => Edge) public edges;
-  bytes32[] public edgeIds;
+  mapping(bytes32 => Edge) public Edges;
+  bytes32[] public EdgeIds;
 
   function getNodeIds() public view returns(bytes32[] memory) {
-    return nodeIds;
+    return NodeIds;
   }
   function getEdgeIds() public view returns(bytes32[] memory) {
-    return edgeIds;
+    return EdgeIds;
   }
 
-  // Since getNode takes a "client ID", NewNode should also
-  // speak client IDs
+  // Since getNode takes a "client ID", NewNode should also speak client IDs
   event NewNode (
     string indexed nodeId
   );
@@ -68,28 +69,39 @@ contract ConsensusGraph {
   }
 
   function upsertNode(string memory stringId, string memory json) public {
-      bytes32 id = keccak256(abi.encodePacked(stringId));
-      if (nodes[id].owner != address(0)) {
-        if (nodes[id].owner != msg.sender) {
-          revert("Only owner can update node");
-        }
-      } else {
-        nodeIds.push(id);
+    bytes32 id = keccak256(abi.encodePacked(stringId));
+    if (Nodes[id].owner != address(0)) {
+      if (Nodes[id].owner != tx.origin) {
+        revert("Only owner can update node");
       }
-      nodes[id] = Node(json, msg.sender, stringId);
-      emit NewNode(stringId);
+    } else {
+      NodeIds.push(id);
+    }
+    Nodes[id] = Node(stringId, tx.origin, json);
+    emit NewNode(stringId);
   }
 
   function upsertEdge(string memory stringId, string memory json) public {
       bytes32 id = keccak256(abi.encodePacked(stringId));
-      if (edges[id].owner != address(0)) {
-        if (edges[id].owner != msg.sender) {
+      if (Edges[id].owner != address(0)) {
+        if (Edges[id].owner != tx.origin) {
           revert("Only owner can update edge");
         }
       } else {
-        edgeIds.push(id);
+        EdgeIds.push(id);
       }
-      edges[id] = Edge(json, msg.sender, stringId);
+      Edges[id] = Edge(stringId, tx.origin, json);
       emit NewEdge(stringId);
   }
+
+  function upsertCollections(Node[] memory nodes, Edge[] memory edges) public {
+    for (uint i=0; i < nodes.length; i++) {
+      upsertNode(nodes[i].id, nodes[i].json);
+    }
+
+    for (uint j=0; j < edges.length; j++) {
+      upsertEdge(edges[j].id, edges[j].json);
+    }
+  }
+
 }
