@@ -4,18 +4,43 @@ import EventEmitter from '@timecat/graph-journal-shared/src/models/EventEmitter'
 import JournalNode from '@timecat/graph-journal-shared/src/models/JournalNode'
 import JournalEdge from '@timecat/graph-journal-shared/src/models/JournalEdge'
 import PublicSquare from '@timecat/graph-journal-shared/src/models/PublicSquare'
-import {getGraphContract, upsertNode, upsertEdge, getNodes, getEdges} from './ConsensusGraphContract'
-import {getAllConsensusGraphIds, createGraph, setProvider} from './PublicSquareContract'
+import {getGraphContract, upsertcollections, upsertNode, upsertEdge, getNodes, getEdges} from './ConsensusGraphContract'
+import {getAllConsensusGraphIds, getAccountAddress, createGraph, setProvider} from './PublicSquareContract'
+
 
 /*
   Singleton service ServerAPI provides methods for reading/writing via Web3 blockchain shenanigans
 */
 class BlockchainAPI extends EventEmitter {
   ready: any;
+  metamaskWeb3: any;
+  accounts: any[];
+  networkId: string;
+  publicSquare: PublicSquare;
 
   constructor() {
-    super()
-    this.ready = setProvider();
+    super();
+    this.ready = this.setup().then(() => {
+      this.publicSquare = new PublicSquare(this.metamaskWeb3, this.accounts[0])
+    });
+  }
+
+  async setup() {
+    if (window.ethereum) {
+      this.metamaskWeb3 = new Web3(ethereum);
+      try {
+        // Request account access if needed
+        await ethereum.enable();
+      }
+      catch (error) {
+        console.error("User denied access", error)
+      }
+    } else if (window.web3) {
+      this.metamaskWeb3 = new Web3(web3.currentProvider);
+    }
+    this.metamaskWeb3.eth.handleRevert = true;
+    this.networkId = await metamaskWeb3.eth.net.getId();
+    this.accounts = await this.metamaskWeb3.eth.getAccounts()
   }
 
   ping(data: any) {
@@ -27,14 +52,10 @@ class BlockchainAPI extends EventEmitter {
 
   async saveGraph(graphId: any, graphData: any) {
     const graphContract = await getGraphContract(graphId);
-    for (let i = 0; i < graphData.nodes.length; i++) {
-        const node = graphData.nodes[i];
-        upsertNode(graphContract, node.id, node);
-    }
-    for (let i = 0; i < graphData.edges.length; i++) {
-        const edge = graphData.edges[i];
-        upsertEdge(graphContract, edge.id, edge);
-    }
+    upsertCollections(graphContract, graphData.nodes, graphData.edges);
+    await graphContract.methods.upsertCollections(node, edges).send({
+      from: getAccountAddress()[0]
+    })
   }
 
   async getGraph(graphId) {
@@ -89,20 +110,6 @@ class BlockchainAPI extends EventEmitter {
     // refresh public square
     await this.getFirstGraphFromPublicSquare();
   }
-
-  /*
-  upsertNode(data: any) {
-  }
-
-  deleteNodes( nodeIds: string[] ) {
-  }
-
-  deleteEdges( edgeIds: string[] ) {
-  }
-
-  querySql(query:string) {
-  }
-  */
 
 }
 
