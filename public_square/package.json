@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test:ethereum": "ganache-cli -h localhost -m 'layer post chase message demise fresh resource beyond bulb rose garden kite'",
+    "start-eth": "ganache-cli -h localhost -m 'layer post chase message demise fresh resource beyond bulb rose garden kite'",
     "compile": "truffle compile",
     "test": "truffle test",
     "migrate": "truffle migrate",

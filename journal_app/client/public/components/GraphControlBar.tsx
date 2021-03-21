@@ -30,6 +30,7 @@ function GraphControlBar(props: any): any {
       </div>
       <div className="rightBar">
         {/*<button onClick={onPingServerClick}>Ping server</button>*/}
+        <button onClick={GraphDataSvc.saveGraph.bind(GraphDataSvc)}>Save to chain</button>
         <button onClick={plzGimmeMoreMrYang}>Air DROP!</button>
         <button onClick={editFilters}>Filters and Settings</button>
       </div>

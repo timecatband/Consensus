@@ -24,7 +24,6 @@ class GraphData { // this thing should probably just extend EventEmitter
   DisplayedGraphKey: string // the key of the graph where user edits should be written
   selectedItems: any;
   filterPanelOpen: boolean;
-  activeGraphId: any; // the currently active graph id
 
   // write cache to prevent frequent small writes to db
   dirtyNodes: Record<string, JournalNode>;
@@ -118,8 +117,6 @@ class GraphData { // this thing should probably just extend EventEmitter
   // The initial graph load response
   handleServerGraphResponse(graphData: GraphModel) {
     const newGraph = GraphModel.deSerialize(graphData)
-
-    console.log("testes", newGraph)
 
     this.setDisplayedGraph(newGraph)
     this.graphs[newGraph.key] = newGraph;
@@ -257,7 +254,15 @@ class GraphData { // this thing should probably just extend EventEmitter
   */
   saveDebounced = _.debounce(() => {
     console.log("Debounced write firing", this.dirtyNodes, this.dirtyEdges)
+    // TODO: disabling auto-save for now. We should auto-save to p2p instead of to blockchain
+    //this.saveGraph()
+  }, 3000)
 
+
+  /*
+    called when the user manually click the button to save the whole graph
+  */
+  saveGraph() {
     let nodes = _.values(this.dirtyNodes);
     let edges = _.values(this.dirtyEdges);
 
@@ -267,20 +272,12 @@ class GraphData { // this thing should probably just extend EventEmitter
       edges: _.map(edges,(e) => e.serialize())
     }
 
-    console.log("Debounced write firing to server")
-    this.externalAPI.saveGraph(this.activeGraphId, graphObj)
-  }, 3000)
+    this.dirtyNodes = {};
+    this.dirtyEdges = {};
 
-
-  /*
-    called when the user manually click the button to save the whole graph
-    TOOD: Saving the entire graph should be made obsolete by individual auto-saving after each event type, however
-      this method will still be useful because its a "save subgraph" method, it can save any collection of nodes and edges
-  */
-  saveGraph() {
-    this.externalAPI.saveGraph(this.activeGraphId, this.serializeG6graph(this.DisplayedGraphKey, this.DisplayedGraph))
+    console.log("GraphDataSvc saving to external API", graphObj)
+    this.externalAPI.saveGraph(this.DisplayedGraphKey, graphObj)
   }
-
 
 
 

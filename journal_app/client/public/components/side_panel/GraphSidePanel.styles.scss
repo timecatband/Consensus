@@ -4,11 +4,11 @@
   .graph-side-panel {
     position: absolute;
     right: -3px;
-    top: $topBarHeight+13;
+    top: $topBarHeight+12;
     border: 3px solid black;
     width: 20%;
     min-width: 300px;
-    height: calc(100% - #{$topBarHeight+18});
+    height: calc(100% - #{$topBarHeight+15});
     overflow: scroll;
     background: $light-yellow;
     /* Hide scrollbar for IE, Edge and Firefox */

@@ -72,7 +72,7 @@ module.exports = {
       favicon: './public/static/handshake_favicon.png'
     })
   ],
-  devtool: 'cheap-module-eval-source-map',
+  devtool: 'source-map',
   devServer: {
     contentBase: './dist',
     port: 8080,
