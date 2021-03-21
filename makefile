@@ -23,8 +23,5 @@ abi:
 	make -C ./public_square consensus_abi
 	make -C ./public_square public_square_abi
 
-ganache:
-	make -C ./public_square ganache
-
 deploy-client:
 	make -C ./journal_app/build_server deploy
