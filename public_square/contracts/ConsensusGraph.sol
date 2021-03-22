@@ -173,6 +173,8 @@ contract ConsensusGraph {
       bool newItem = true;
       for (uint j=0; j < target.length; j++) {
 
+        // using keccak256 to compare strings is apparently gas efficient:
+        // https://ethereum.stackexchange.com/questions/4559/operator-not-compatible-with-type-string-storage-ref-and-literal-string
         if( keccak256(abi.encodePacked(update[i])) == keccak256(abi.encodePacked(target[j])) ) {
           newItem = false;
         }
