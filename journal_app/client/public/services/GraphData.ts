@@ -40,7 +40,7 @@ class GraphData { // this thing should probably just extend EventEmitter
     this.externalAPI.on('GET_GRAPH_RSP', this.handleServerGraphResponse.bind(this))
     this.externalAPI.on('NO_GRAPHS', this.handleServerNoGraphResponse.bind(this))
     this.externalAPI.ready.then( () => {
-      this.externalAPI.getFirstGraphFromPublicSquare();
+      this.requestDataEntrypoint();
     });
 
     this.externalAPI.on('PEER_SAVED_GRAPH', this.handlePeerUpdate.bind(this))
@@ -118,11 +118,26 @@ class GraphData { // this thing should probably just extend EventEmitter
     this.emit("set-displayed-graph", graph)
   }
 
+  /*
+    This is where we begin, we determine if the user has saved a preferred view to blockchain
+
+    If they have a saved view on blockchain, we will load all of views they have saved, process them into lists of Ids
+    and then request those actual objects back from peers or the blockchain itself.
+
+    If they do not have a saved view, we will start by requesting a default view from peers or blockchain
+    The default view could be "all nodes in the community"
+
+    TODO: implement all of this
+    TODO: may require UI for the user to select which community they want to load first
+  */
+  requestDataEntrypoint() {
+    console.error("Browsing and views not yet implemented, falling back to simple default request")
+    this.externalAPI.getFirstGraphFromPublicSquare();
+  }
+
   // The initial graph load response
   handleServerGraphResponse(graphData: GraphModel) {
     const newGraph = GraphModel.deSerialize(graphData)
-
-    console.log("what have we got", newGraph)
 
     this.setDisplayedGraph(newGraph)
     this.graphs[newGraph.key] = newGraph;
