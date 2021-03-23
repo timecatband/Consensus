@@ -1,6 +1,8 @@
 import _ from 'lodash'
 //import ServerAPI from './external_data/ServerAPI'
 import BlockchainAPISvc from './external_data/BlockchainAPI'
+import GraphIndexLib from './external_data/GraphIndexLib'
+import UserDataSvc from './UserData'
 import GraphModel from '@timecat/graph-journal-shared/src/models/GraphModel'
 import JournalNode from '@timecat/graph-journal-shared/src/models/JournalNode'
 import JournalEdge from '@timecat/graph-journal-shared/src/models/JournalEdge'
@@ -15,30 +17,32 @@ import Edge from '@antv/g6/lib/item/edge.d.ts';
   handy reference on the service pattern: https://medium.com/@alshdavid/react-state-and-services-edb95be48851
 */
 
-class GraphData { // this thing should probably just extend EventEmitter
+class GraphData extends EventEmitter {
   externalAPI: any;
-  emitter: EventEmitter; // allows react components (and anything) to subscribe to changes in the graph model
-
   graphs: Record<string, GraphModel>; // a collection of sub-graphs that have been loaded or created
   DisplayedGraph: G6.Graph; // the graph which is being displayed on the canvas
   DisplayedGraphKey: string // the key of the graph where user edits should be written
   selectedItems: any;
   filterPanelOpen: boolean;
 
-  // write cache to prevent frequent small writes to db
+  // clean cache for comparison to pending dirty writes
+  nodeCache: Record<string, JournalNode>;
+  edgeCache: Record<string, JournalEdge>;
+
+  // write buffer to prevent frequent small writes to db
   dirtyNodes: Record<string, JournalNode>;
   dirtyEdges: Record<string, JournalEdge>;
 
+  idx: GraphIndexLib;
+
 
   constructor(externalAPI: any) {
+    super()
     this.graphs = {}
     this.externalAPI = externalAPI;
-    this.emitter = new EventEmitter();
     this.filterPanelOpen = false;
 
     // call to the server for our initial graph, and register a listener for the socket response
-    this.externalAPI.on('GET_GRAPH_RSP', this.handleServerGraphResponse.bind(this))
-    this.externalAPI.on('NO_GRAPHS', this.handleServerNoGraphResponse.bind(this))
     this.externalAPI.ready.then( () => {
       this.requestDataEntrypoint();
     });
@@ -46,8 +50,13 @@ class GraphData { // this thing should probably just extend EventEmitter
     this.externalAPI.on('PEER_SAVED_GRAPH', this.handlePeerUpdate.bind(this))
     this.externalAPI.on('PEER_DELETED_ITEMS', this.handlePeerDelete.bind(this))
 
+    this.nodeCache = {}
+    this.edgeCache = {}
     this.dirtyNodes = {}
     this.dirtyEdges = {}
+    UserDataSvc.ready.then( () => {
+      this.idx = new GraphIndexLib(UserDataSvc.userKey, this.DisplayedGraphKey)
+    })
   }
 
   ping() {
@@ -58,41 +67,6 @@ class GraphData { // this thing should probably just extend EventEmitter
     this.externalAPI.yangGang(graphKey)
   }
 
-  //shortcut to the emitter
-  emit(event:string, data?:any) {
-    this.emitter.emit(event, data)
-  };
-
-  //shortcut to the emitter
-  on(event:string, fn:Function){
-    this.emitter.on(event,fn)
-  };
-
-
-  /*
-    filter panel display controls
-  */
-  hideFilterPanel() {
-    this.filterPanelOpen = false;
-    this.emit("filter-panel-change", this.filterPanelOpen)
-  }
-  toggleFilterPanel() {
-    this.filterPanelOpen = !this.filterPanelOpen;
-    this.emit("filter-panel-change", this.filterPanelOpen)
-  }
-
-
-  // TODO: this extracts a serializable object, doesnt really serialize. Not sure exactly what pattern is needed around here yet.
-  serializeSelected(items: any) {
-    return _.mapValues(items.nodes, (node) => {
-      return node._cfg.model
-    })
-  }
-
-  setSelected(items: object) {
-    this.selectedItems = items;
-    this.emit("selected-items", this.serializeSelected(items))
-  }
 
   /*
     provide access to externalAPI
@@ -132,12 +106,27 @@ class GraphData { // this thing should probably just extend EventEmitter
   */
   requestDataEntrypoint() {
     console.error("Browsing and views not yet implemented, falling back to simple default request")
-    this.externalAPI.getFirstGraphFromPublicSquare();
+    this.externalAPI.getFirstGraphFromPublicSquare().then(this.handleServerGraphResponse.bind(this))
+    .catch(this.handleServerNoGraphResponse);
+  }
+
+  cacheGraphData(nodes:any, edges:any) {
+    _.each(nodes, (n) => {
+      this.nodeCache[n.id] = _.cloneDeep(n);
+    });
+    _.each(edges, (e) => {
+      this.edgeCache[e.id] = _.cloneDeep(e);
+    });
   }
 
   // The initial graph load response
   handleServerGraphResponse(graphData: GraphModel) {
     const newGraph = GraphModel.deSerialize(graphData)
+
+    console.log("got graph from server", newGraph, this.graphs)
+    console.log("user", UserDataSvc.userKey)
+
+    this.cacheGraphData(newGraph.nodes, newGraph.edges)
 
     this.setDisplayedGraph(newGraph)
     this.graphs[newGraph.key] = newGraph;
@@ -146,8 +135,8 @@ class GraphData { // this thing should probably just extend EventEmitter
     this.emit("graph-loaded", newGraph.key)
   }
 
-  handleServerNoGraphResponse() {
-    console.log("There are no consensus communities. You could be the first!")
+  handleServerNoGraphResponse( err ) {
+    console.log("There are no consensus communities. You could be the first!", err)
   }
 
   // when the socket informs us that a peer has changed part of the graph
@@ -173,10 +162,7 @@ class GraphData { // this thing should probably just extend EventEmitter
         this.emit("new-edge-added", edge)
       }
     })
-
   }
-
-
 
   // when the socket informs us that a peer has changed part of the graph
   //TODO: we will want to only listen to peer changes for graph_key's that we are both looking at
@@ -193,14 +179,6 @@ class GraphData { // this thing should probably just extend EventEmitter
     }
   }
 
-
-  /*
-    Wrapper for the g6 method find, type can be 'node', 'edge', or 'combo'
-    https://g6.antv.vision/en/docs/api/graphFunc/find#graphfindtype-fn
-  */
-  findItem(type:string, fn: any) {
-    return this.DisplayedGraph.find('edge', fn);
-  }
 
 
   /*
@@ -227,23 +205,9 @@ class GraphData { // this thing should probably just extend EventEmitter
     if (alreadyExistingEdge === undefined) {
       let newEdge = new JournalEdge(source, target)
       this.DisplayedGraph.addItem('edge', newEdge)
-      this.emit("new-edge-added", newEdge)
       this.saveEdges([this.DisplayedGraph.findById(newEdge.id)])
+      this.emit("new-edge-added", newEdge)
     }
-  }
-
-
-  // returns a serializable object, e.g. non-circular literal object. The externalAPI will handle actual stringification
-  serializeG6graph(key, g6graph) {
-    let nodes = _.values(_.mapValues(g6graph.cfg.nodes, (node) => {
-      return node.serialize()
-    }));
-
-    let edges = _.values(_.mapValues(g6graph.cfg.edges, (edge) => {
-      return edge.serialize()
-    }))
-
-    return {key, nodes, edges}
   }
 
 
@@ -252,7 +216,10 @@ class GraphData { // this thing should probably just extend EventEmitter
   */
   saveNodes(nodes: any[]) {
     _.each(nodes, (node) => {
-      let n = node.getModel()
+      let n = node.getModel() // pull our model data out from the G6 model
+      let originalNode = this.nodeCache[n.id]
+      let newNode = this.idx.indexUpdate(n, originalNode)
+      console.log("result of merge", newNode)
       this.dirtyNodes[n.id] = n
     })
     this.saveDebounced()
@@ -274,7 +241,7 @@ class GraphData { // this thing should probably just extend EventEmitter
     gathers up any objects with pending changes, sends them for persistence, and clears the pending lists
   */
   saveDebounced = _.debounce(() => {
-    console.log("Debounced write firing", this.dirtyNodes, this.dirtyEdges)
+    console.log("Auto-save disabled", this.dirtyNodes, this.dirtyEdges)
     // TODO: disabling auto-save for now. We should auto-save to p2p instead of to blockchain
     //this.saveGraph()
   }, 3000)
@@ -295,13 +262,15 @@ class GraphData { // this thing should probably just extend EventEmitter
       edges: _.map(edges,(e) => {return e.jsonForBlockchain()})
     }
 
+    this.cacheGraphData(this.dirtyNodes, this.dirtyEdges)
+
+    // clear the write-buffer
     this.dirtyNodes = {};
     this.dirtyEdges = {};
 
     console.log("GraphDataSvc saving to external API", graphObj)
     this.externalAPI.saveGraph(this.DisplayedGraphKey, graphObj)
   }
-
 
 
   /*
@@ -319,6 +288,43 @@ class GraphData { // this thing should probably just extend EventEmitter
       this.externalAPI.deleteEdges(itemIds)
     }
   }
+
+
+
+  /*
+    filter panel display controls
+  */
+  hideFilterPanel() {
+    this.filterPanelOpen = false;
+    this.emit("filter-panel-change", this.filterPanelOpen)
+  }
+  toggleFilterPanel() {
+    this.filterPanelOpen = !this.filterPanelOpen;
+    this.emit("filter-panel-change", this.filterPanelOpen)
+  }
+
+
+  // TODO: this extracts a serializable object, doesnt really serialize. Not sure exactly what pattern is needed around here yet.
+  serializeSelected(items: any) {
+    return _.mapValues(items.nodes, (node) => {
+      return node._cfg.model
+    })
+  }
+
+  setSelected(items: object) {
+    this.selectedItems = items;
+    this.emit("selected-items", this.serializeSelected(items))
+  }
+
+
+  /*
+    Wrapper for the g6 method find, type can be 'node', 'edge', or 'combo'
+    https://g6.antv.vision/en/docs/api/graphFunc/find#graphfindtype-fn
+  */
+  findItem(type:string, fn: any) {
+    return this.DisplayedGraph.find('edge', fn);
+  }
+
 
 // end of class
 }

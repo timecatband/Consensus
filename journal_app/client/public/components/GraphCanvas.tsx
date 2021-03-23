@@ -10,9 +10,6 @@ let canvasWidth:number = 100 //initial value only, resizes on first render to co
 let canvasHeight:number = 500
 
 
-/////////////////////////////////////////////////////////////////
-// The React Element -------------------------------------------
-
 const GraphCanvas = (props) => {
   const canvasRef = React.useRef<HTMLDivElement>();
 
