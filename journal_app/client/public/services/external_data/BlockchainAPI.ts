@@ -86,14 +86,14 @@ class BlockchainAPI extends EventEmitter {
         console.warn("Warning: apparently bad edges loaded from blockchain")
       }
 
-      this.emit("GET_GRAPH_RSP", {
+      return {
         key: graphId,
         name: graphName,
         nodes: filteredNodes,
         edges: filteredEdges
-      });
+      }
     } else {
-      console.error("Could not find graph with this id", graphId)
+      return Promise.reject({msg:"Could not find graph with this id", graphId})
     }
   }
 
@@ -102,9 +102,9 @@ class BlockchainAPI extends EventEmitter {
     if (consensusGraphIds.length > 0) {
       // just use the first one we find, for now
       await this.loadGraphContract(consensusGraphIds[0])
-      await this.loadGraphData(consensusGraphIds[0])
+      return this.loadGraphData(consensusGraphIds[0])
     } else {
-      this.emit("NO_GRAPHS", {})
+      return Promise.reject({msg: "NO_GRAPHS"});
     }
   }
 
