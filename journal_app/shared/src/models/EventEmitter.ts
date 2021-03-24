@@ -1,4 +1,9 @@
 
+/*
+  TODO: make an 'off' cleanup method to avoid stacking up listeners when
+  components are re-created and listen to events
+*/
+
 class EventEmitter {
   subscribers: object;
 

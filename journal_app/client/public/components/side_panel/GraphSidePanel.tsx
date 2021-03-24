@@ -77,6 +77,10 @@ function GraphSidePanel(props: any): any {
     GraphDataSvc.deleteItemsByIds('edge', [existingEdge.id])
   }
 
+  /*
+    when the component initiates, set up listeners to determine when to show different
+    types of side panels
+  */
   useEffect(() => {
     GraphDataSvc.on('selected-items', (selected) => {
       let num = _.keys(selected)?.length
