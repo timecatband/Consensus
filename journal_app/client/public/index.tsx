@@ -1,13 +1,12 @@
 import './index.scss';
 import React from 'react';
 import ReactDOM from 'react-dom';
+import Router from './components/Router'
 import GraphData from './services/GraphData';
-import GraphContainer from './components/GraphContainer';
-// import SqlClientInterface from './components/SqlClientInterface';
 
 /*
   Note that services have a hierarchy, to avoid circular dependency,
-  each service layer may not be aware of those below it, only above:
+  each service layer should not be aware of those below it, only above:
     ExternalAPI
     User
     GraphData
@@ -16,11 +15,8 @@ import GraphContainer from './components/GraphContainer';
 */
 
 ReactDOM.render(
-
   <React.StrictMode>
-    <GraphContainer />
-    {/*<SqlClientInterface />*/}
+    <Router />
   </React.StrictMode>
-
-, document.getElementById('root')
+  , document.getElementById('root')
 );

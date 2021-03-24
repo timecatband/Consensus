@@ -1,4 +1,4 @@
-DIRS = shared client server build_server
+DIRS = shared client server
 
 .PHONY: all
 all:

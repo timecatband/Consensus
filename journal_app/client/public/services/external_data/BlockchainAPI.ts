@@ -17,10 +17,12 @@ class BlockchainAPI extends EventEmitter {
   networkId: string;
   publicSquare: PublicSquare;
   graphContracts: Record<string, any>; // a list of all currently loaded ConsesnusGraph contracts
+  graphContractIds: string[];
 
   constructor() {
     super();
     this.graphContracts = {}
+    this.graphContractIds = []
     this.ready = new Promise((resolve) => {
       this.readyResolver = resolve
     })
@@ -51,11 +53,23 @@ class BlockchainAPI extends EventEmitter {
     this.graphContracts[graphId].upsertCollections(graphData.nodes, graphData.edges);
   }
 
+
+
+  async getAllCommunities() {
+    this.graphContractIds = await this.publicSquare.getAllConsensusGraphIds();
+    let waitForLoad = []
+    _.each(this.graphContractIds, async (id) => {
+      waitForLoad.push(this.loadGraphContract(id))
+    })
+    await Promise.all(waitForLoad)
+    return this.graphContracts
+  }
+
   async loadGraphContract(graphId) {
     if (this.graphContracts[graphId] === undefined) {
       let graphContract = await this.publicSquare.getGraphContract(graphId)
       this.graphContracts[graphId] = graphContract
-      await graphContract.ready
+      return graphContract.ready
     }
   }
 
@@ -98,17 +112,15 @@ class BlockchainAPI extends EventEmitter {
   }
 
   async getFirstGraphFromPublicSquare() {
-    let consensusGraphIds = await this.publicSquare.getAllConsensusGraphIds();
-    if (consensusGraphIds.length > 0) {
+    if (this.graphContracts.length > 0) {
       // just use the first one we find, for now
-      await this.loadGraphContract(consensusGraphIds[0])
-      return this.loadGraphData(consensusGraphIds[0])
+      return this.loadGraphData(this.graphContractIds[0])
     } else {
       return Promise.reject({msg: "NO_GRAPHS"});
     }
   }
 
-}
+} // end of class
 
 var BlockchainAPISvc = new BlockchainAPI()
 

@@ -24,6 +24,7 @@ class GraphData extends EventEmitter {
   DisplayedGraphKey: string // the key of the graph where user edits should be written
   selectedItems: any;
   filterPanelOpen: boolean;
+  communities: any[];
 
   // clean cache for comparison to pending dirty writes
   nodeCache: Record<string, JournalNode>;
@@ -39,21 +40,23 @@ class GraphData extends EventEmitter {
   constructor(externalAPI: any) {
     super()
     this.graphs = {}
+    this.communities = []
     this.externalAPI = externalAPI;
     this.filterPanelOpen = false;
-
-    // call to the server for our initial graph, and register a listener for the socket response
-    this.externalAPI.ready.then( () => {
-      this.requestDataEntrypoint();
-    });
-
-    this.externalAPI.on('PEER_SAVED_GRAPH', this.handlePeerUpdate.bind(this))
-    this.externalAPI.on('PEER_DELETED_ITEMS', this.handlePeerDelete.bind(this))
 
     this.nodeCache = {}
     this.edgeCache = {}
     this.dirtyNodes = {}
     this.dirtyEdges = {}
+
+    this.externalAPI.on('PEER_SAVED_GRAPH', this.handlePeerUpdate.bind(this))
+    this.externalAPI.on('PEER_DELETED_ITEMS', this.handlePeerDelete.bind(this))
+
+    // call to the server for our initial graph, and register a listener for the socket response
+    this.externalAPI.ready.then( () => {
+      this.requestDataEntrypoint();
+    });
+    // intialize index lib tools with userKey
     UserDataSvc.ready.then( () => {
       this.idx = new GraphIndexLib(UserDataSvc.userKey, this.DisplayedGraphKey)
     })
@@ -93,6 +96,18 @@ class GraphData extends EventEmitter {
   }
 
   /*
+    Keep track of original data before any pending writes are applied to it
+  */
+  cacheGraphData(nodes:any, edges:any) {
+    _.each(nodes, (n) => {
+      this.nodeCache[n.id] = _.cloneDeep(n);
+    });
+    _.each(edges, (e) => {
+      this.edgeCache[e.id] = _.cloneDeep(e);
+    });
+  }
+
+  /*
     This is where we begin, we determine if the user has saved a preferred view to blockchain
 
     If they have a saved view on blockchain, we will load all of views they have saved, process them into lists of Ids
@@ -104,30 +119,20 @@ class GraphData extends EventEmitter {
     TODO: implement all of this
     TODO: may require UI for the user to select which community they want to load first
   */
-  requestDataEntrypoint() {
+  async requestDataEntrypoint() {
     console.error("Browsing and views not yet implemented, falling back to simple default request")
-    this.externalAPI.getFirstGraphFromPublicSquare().then(this.handleServerGraphResponse.bind(this))
-    .catch(this.handleServerNoGraphResponse);
-  }
-
-  cacheGraphData(nodes:any, edges:any) {
-    _.each(nodes, (n) => {
-      this.nodeCache[n.id] = _.cloneDeep(n);
-    });
-    _.each(edges, (e) => {
-      this.edgeCache[e.id] = _.cloneDeep(e);
-    });
+    this.communities = await this.externalAPI.getAllCommunities()
+    console.log("whats up here",  this.communities )
+    let firstGraphData = await this.externalAPI.loadGraphData(this.externalAPI.graphContractIds[0])
+    this.handleServerGraphResponse(firstGraphData)
   }
 
   // The initial graph load response
   handleServerGraphResponse(graphData: GraphModel) {
     const newGraph = GraphModel.deSerialize(graphData)
-
     console.log("got graph from server", newGraph, this.graphs)
-    console.log("user", UserDataSvc.userKey)
 
     this.cacheGraphData(newGraph.nodes, newGraph.edges)
-
     this.setDisplayedGraph(newGraph)
     this.graphs[newGraph.key] = newGraph;
 
@@ -135,9 +140,6 @@ class GraphData extends EventEmitter {
     this.emit("graph-loaded", newGraph.key)
   }
 
-  handleServerNoGraphResponse( err ) {
-    console.log("There are no consensus communities. You could be the first!", err)
-  }
 
   // when the socket informs us that a peer has changed part of the graph
   //TODO: we will want to only listen to peer changes for graph_key's that we are both looking at
@@ -253,8 +255,6 @@ class GraphData extends EventEmitter {
   saveGraph() {
     let nodes = _.values(this.dirtyNodes);
     let edges = _.values(this.dirtyEdges);
-
-    console.log("GraphDataSvc saving AAAAAAA", nodes)
 
     const graphObj = {
       key: this.DisplayedGraphKey,
