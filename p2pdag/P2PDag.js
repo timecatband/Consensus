@@ -161,7 +161,7 @@ class GameState {
         let accumulatedState = this.applyTransaction(data)
         if (accumulatedState) {
             console.log("Rebroadcasting!")
-            this.game.peerController.broadcastTransaction(data);
+            this.game.peerController.broadcast(data);
         }
         return false
     }
@@ -268,20 +268,26 @@ class ConsensusGame {
         console.log("current state: " + JSON.stringify(this.state.dht));
     }
 }
+let game = null;
 
-let game = new ConsensusGame("NoAddress")
-game.peerController.localListener.on("open", () => {
-    window.document.getElementById("my-peer-id").innerHTML = game.peerController.localListener.id;
-})
+function startGame() {
+    let address = crypto.subtle.exportKey("jwk", publicKey)["x"]
+    game = new ConsensusGame(address)
 
-game.onNewPeer = () => {
-    document.getElementById("peer-list").innerHTML = Object.keys(game.peerController.peers).length
+    game.peerController.localListener.on("open", () => {
+     window.document.getElementById("my-peer-id").innerHTML = game.peerController.localListener.id;
+    })
+
+    game.onNewPeer = () => {
+         document.getElementById("peer-list").innerHTML = Object.keys(game.peerController.peers).length
+    }
 }
 
 window.addEventListener('load', (event) => {
     window.document.getElementById("join-button").onclick = () => {
         let firstPeerId = document.getElementById("first-peer-id").value;
         let startingLocation = document.getElementById("starting-location").value
+
         game.joinGame(firstPeerId, startingLocation)
     }    
     window.document.getElementById("new-node-button").onclick = () => {
@@ -315,5 +321,6 @@ window.addEventListener('load', (event) => {
             {name:"ECDSA", namedCurve: "P-256"}, true, ["verify"])
         console.log("signing: " + signingKey)
         console.log("Public key: " + publicKey)
+        startGame();
     }
 })
