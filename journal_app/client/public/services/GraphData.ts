@@ -20,11 +20,13 @@ import Edge from '@antv/g6/lib/item/edge.d.ts';
 class GraphData extends EventEmitter {
   externalAPI: any;
   graphs: Record<string, GraphModel>; // a collection of sub-graphs that have been loaded or created
-  DisplayedGraph: G6.Graph; // the graph which is being displayed on the canvas
+  svcCanvas: G6.Graph; // ref to the canvas that is being displayed
+  DisplayedGraph: GraphModel; // the graph which is being displayed, may be a combination of things
   DisplayedGraphKey: string // the key of the graph where user edits should be written
   selectedItems: any;
   filterPanelOpen: boolean;
   communities: any[];
+  wtfTest: any[];
 
   // clean cache for comparison to pending dirty writes
   nodeCache: Record<string, JournalNode>;
@@ -79,6 +81,18 @@ class GraphData extends EventEmitter {
     return this.externalAPI.createGraph(graphName)
   }
 
+  /*
+    Keep track of original data before any pending writes are applied to it
+  */
+  cacheGraphData(nodes:any, edges:any) {
+    _.each(nodes, (n) => {
+      this.nodeCache[n.id] = _.cloneDeep(n);
+    });
+    _.each(edges, (e) => {
+      this.edgeCache[e.id] = _.cloneDeep(e);
+    });
+  }
+
 
   /*
     This is an important method, because it sets the DisplayedGraphKey
@@ -91,20 +105,9 @@ class GraphData extends EventEmitter {
   */
   setDisplayedGraph( graph: GraphModel ) {
     this.DisplayedGraphKey = graph.key
+    this.DisplayedGraph = graph
     //the event lets the canvas know that it should reset the render
     this.emit("set-displayed-graph", graph)
-  }
-
-  /*
-    Keep track of original data before any pending writes are applied to it
-  */
-  cacheGraphData(nodes:any, edges:any) {
-    _.each(nodes, (n) => {
-      this.nodeCache[n.id] = _.cloneDeep(n);
-    });
-    _.each(edges, (e) => {
-      this.edgeCache[e.id] = _.cloneDeep(e);
-    });
   }
 
   /*
@@ -131,8 +134,8 @@ class GraphData extends EventEmitter {
   handleServerGraphResponse(graphData: GraphModel) {
     const newGraph = GraphModel.deSerialize(graphData)
     console.log("got graph from server", newGraph, this.graphs)
-
     this.cacheGraphData(newGraph.nodes, newGraph.edges)
+
     this.setDisplayedGraph(newGraph)
     this.graphs[newGraph.key] = newGraph;
 
@@ -146,21 +149,21 @@ class GraphData extends EventEmitter {
   handlePeerUpdate(data: any) {
 
     data.nodes.forEach( (node) => {
-      let existingNode = this.DisplayedGraph.findById(node.id)
+      let existingNode = this.svcCanvas.findById(node.id)
       if (existingNode != undefined) {
-        this.DisplayedGraph.update(node.id, node)
+        this.svcCanvas.update(node.id, node)
       } else {
-        this.DisplayedGraph.addItem('node', node)
+        this.svcCanvas.addItem('node', node)
         this.emit("new-node-added", node)
       }
     })
 
     data.edges.forEach( (edge) => {
-      let existingEdge = this.DisplayedGraph.findById(edge.id)
+      let existingEdge = this.svcCanvas.findById(edge.id)
       if (existingEdge != undefined) {
-        this.DisplayedGraph.update(edge.id, edge)
+        this.svcCanvas.update(edge.id, edge)
       } else {
-        this.DisplayedGraph.addItem('edge', edge)
+        this.svcCanvas.addItem('edge', edge)
         this.emit("new-edge-added", edge)
       }
     })
@@ -171,12 +174,12 @@ class GraphData extends EventEmitter {
   handlePeerDelete(data: any) {
     if (data.nodes?.length > 0) {
       data.nodes.forEach( (i) => {
-        this.DisplayedGraph.removeItem(i);
+        this.svcCanvas.removeItem(i);
       })
     }
     if (data.edges?.length > 0) {
       data.edges.forEach( (i) => {
-        this.DisplayedGraph.removeItem(i);
+        this.svcCanvas.removeItem(i);
       })
     }
   }
@@ -188,26 +191,26 @@ class GraphData extends EventEmitter {
     this method will also call to save
   */
   updateAndSaveNode(nodeId:string, update: any) {
-    this.DisplayedGraph.update(nodeId, update)
-    this.saveNodes([this.DisplayedGraph.findById(nodeId)])
+    this.svcCanvas.update(nodeId, update)
+    this.saveNodes([this.svcCanvas.findById(nodeId)])
   }
 
   addNewNode(x, y) {
     let newNode = new JournalNode("Be kind, free minds", "", "", x, y)
-    this.DisplayedGraph.addItem('node', newNode)
-    this.saveNodes([this.DisplayedGraph.findById(newNode.id)])
+    this.svcCanvas.addItem('node', newNode)
+    this.saveNodes([this.svcCanvas.findById(newNode.id)])
     this.emit("new-node-added", newNode)
   }
 
   addNewEdge(source:string, target:string) {
     // we don't want to add duplicate edges, they would clutter up the db, so check that before adding
-    let alreadyExistingEdge = this.DisplayedGraph.find('edge', (edge: Edge, key) => {
+    let alreadyExistingEdge = this.svcCanvas.find('edge', (edge: Edge, key) => {
       return edge.getSource().getID() == source && edge.getTarget().getID() == target
     })
     if (alreadyExistingEdge === undefined) {
       let newEdge = new JournalEdge(source, target)
-      this.DisplayedGraph.addItem('edge', newEdge)
-      this.saveEdges([this.DisplayedGraph.findById(newEdge.id)])
+      this.svcCanvas.addItem('edge', newEdge)
+      this.saveEdges([this.svcCanvas.findById(newEdge.id)])
       this.emit("new-edge-added", newEdge)
     }
   }
@@ -243,8 +246,12 @@ class GraphData extends EventEmitter {
     gathers up any objects with pending changes, sends them for persistence, and clears the pending lists
   */
   saveDebounced = _.debounce(() => {
-    console.log("Auto-save disabled", this.dirtyNodes, this.dirtyEdges)
+    //TODO: we should merge the pending changes into the DisplayedGraph data (i.e. save locally)
+    // or just update that from the canvas somehow
+    // this.setDisplayedGraph(newGraph)
+
     // TODO: disabling auto-save for now. We should auto-save to p2p instead of to blockchain
+    console.log("Auto-save disabled", this.dirtyNodes, this.dirtyEdges)
     //this.saveGraph()
   }, 3000)
 
@@ -279,7 +286,7 @@ class GraphData extends EventEmitter {
   */
   deleteItemsByIds(type: string, itemIds: string[]) {
     itemIds.forEach( (i) => {
-      this.DisplayedGraph.removeItem(i);
+      this.svcCanvas.removeItem(i);
     })
 
     if (type == 'node') {
@@ -322,7 +329,7 @@ class GraphData extends EventEmitter {
     https://g6.antv.vision/en/docs/api/graphFunc/find#graphfindtype-fn
   */
   findItem(type:string, fn: any) {
-    return this.DisplayedGraph.find('edge', fn);
+    return this.svcCanvas.find('edge', fn);
   }
 
 

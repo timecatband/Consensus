@@ -1,4 +1,6 @@
+import _ from 'lodash'
 import React, { useEffect, useState, useContext } from 'react'
+import { useLocation } from 'react-router-dom';
 import G6 = require('@antv/g6');
 import * as I from '@antv/g6/lib/types';
 import GraphDataSvc from '../services/GraphData'
@@ -7,7 +9,7 @@ import GraphModel from '@timecat/graph-journal-shared/src/models/GraphModel'
 let graphCanvas: G6.Graph;
 let focusedNode: any = null;
 let canvasWidth:number = 100 //initial value only, resizes on first render to container width
-let canvasHeight:number = 500
+let canvasHeight:number = 500 // TODO: make dynamic, take this from props maybe?
 
 
 const GraphCanvas = (props) => {
@@ -20,7 +22,8 @@ const GraphCanvas = (props) => {
 
   // this use effect will only call once on load to set up the graph and window listeners
   useEffect(() => {
-    //const toolbar = new G6.ToolBar();
+    console.log("canvas UseEffect called")
+
     graphCanvas = new G6.Graph({
       container: 'graph-container',
       width: canvasWidth,
@@ -88,7 +91,7 @@ const GraphCanvas = (props) => {
       }
     })
 
-
+    // placing these here because you want to view their styles next to the above newGraph style lines
     function getDefaultNodeProperties() {
       return {
         shape: 'ellipse',
@@ -208,25 +211,29 @@ const GraphCanvas = (props) => {
       GraphDataSvc.setSelected(e.selectedItems);
     })
 
-
-    GraphDataSvc.DisplayedGraph = graphCanvas;
+    GraphDataSvc.svcCanvas = graphCanvas
     GraphDataSvc.on('set-displayed-graph', (graph) => {
       renderGraph(graphCanvas, graph)
     })
+    if (GraphDataSvc.DisplayedGraph) {
+      // if we already have a DisplayedGraph, render it on the new canvas
+      renderGraph(GraphDataSvc.svcCanvas, GraphDataSvc.DisplayedGraph)
+      // GraphDataSvc.graphs[GraphDataSvc.DisplayedGraphKey]
+    }
 
     // Handler to call on window resize
     function handleResize() {
       graphCanvas.changeSize(canvasRef?.current?.offsetWidth, canvasHeight)
     }
     window.addEventListener("resize", handleResize);
-
     // Call handler right away so state gets updated with initial window size
     handleResize();
 
+    // TODO: make GraphDataSvc listeners able to be cleaned up also
     // Remove event listener on cleanup
     return () => window.removeEventListener("resize", handleResize);
 
-  }, []); // Empty array ensures that effect is only run on mount
+  }, []); // End of useEffect
 
   return  (
     <div className="graph-canvas" ref={canvasRef} id="graph-container"></div>
