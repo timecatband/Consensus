@@ -1,6 +1,8 @@
 import _ from 'lodash'
 import React, { useEffect, useState } from 'react'
+import {Link} from "react-router-dom";
 import GraphDataSvc from '../services/GraphData'
+const A = require('hookrouter').A;
 
 function Hub(props: any): any {
 
@@ -37,7 +39,7 @@ function Hub(props: any): any {
         </div>
         <div className="communitiesList">
           {_.values(_.mapValues(communities, (c) => {
-            return <div key={c.id} className="btnLink">{c.name}</div>
+            return <Link to={`/c/${c.name}`} key={c.id} className="btnLink">{c.name}</Link>
           }))}
         </div>
       </div>

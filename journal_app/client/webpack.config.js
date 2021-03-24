@@ -9,6 +9,7 @@ module.exports = {
   entry:'./public/index.tsx',
   output: {
     filename: '[name].min.js',
+    publicPath: '/',
     path: resolve(process.cwd(), 'dist/'),
   },
   target: 'web',
