@@ -120,9 +120,9 @@ class GraphData extends EventEmitter {
     TODO: may require UI for the user to select which community they want to load first
   */
   async requestDataEntrypoint() {
-    console.error("Browsing and views not yet implemented, falling back to simple default request")
     this.communities = await this.externalAPI.getAllCommunities()
-    console.log("whats up here",  this.communities )
+    this.emit("communities-loaded", this.communities)
+
     let firstGraphData = await this.externalAPI.loadGraphData(this.externalAPI.graphContractIds[0])
     this.handleServerGraphResponse(firstGraphData)
   }

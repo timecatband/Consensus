@@ -62,6 +62,12 @@ class BlockchainAPI extends EventEmitter {
       waitForLoad.push(this.loadGraphContract(id))
     })
     await Promise.all(waitForLoad)
+
+    // make sure each community contract has access to its own id easily
+    _.each(this.graphContracts, (val, id) => {
+      val.id = id
+    })
+
     return this.graphContracts
   }
 

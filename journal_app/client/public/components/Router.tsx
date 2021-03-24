@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from 'react'
 const HookRouter = require('hookrouter');
-import SqlClientInterface from './SqlClientInterface';
+// import SqlClientInterface from './SqlClientInterface';
 import GraphContainer from './GraphContainer';
+import Hub from './Hub';
 
 const routes = {
-  '/': () => <GraphContainer />,
+  '/': () => <Hub />,
   '/c/:id': ({id}) => <GraphContainer id={id} />,
-  '/sqlClient': () => <SqlClientInterface />,
+  // '/sqlClient': () => <SqlClientInterface />,
 };
 
 function Router(props: any): any {
