@@ -1,8 +1,4 @@
 
-/*
-  TODO: make an 'off' cleanup method to avoid stacking up listeners when
-  components are re-created and listen to events
-*/
 
 class EventEmitter {
   subscribers: object;
@@ -26,20 +22,19 @@ class EventEmitter {
 
   // Subscriber
   on(eventName, callback) {
-
     if (!Array.isArray(this.subscribers[eventName])) {
       this.subscribers[eventName] = []
     }
     this.subscribers[eventName].push(callback);
 
-    // TODO: will this fail if two different subscribers try to unsub, because the index positions will have changed after the first one?
     const index = this.subscribers[eventName].length - 1
-    return {
-      unsubscribe() {
+
+    // return a method to cleanup the callback
+    return () => {
         this.subscribers[eventName].splice(index, 1);
-      },
     }
   }
+
 }
 
 export default EventEmitter;

@@ -14,10 +14,14 @@ function FilterPanel(props: any): any {
     setLoadedGraphs(GraphDataSvc.graphs)
 
     // called any time a new sub-graph is loaded
-    GraphDataSvc.on('graph-loaded', (e) => {
+    let cleanGraphLoad = GraphDataSvc.on('graph-loaded', (e) => {
       //stay up to date when graphs are added
       setLoadedGraphs(GraphDataSvc.graphs)
     })
+
+    return () => {
+      cleanGraphLoad()
+    }
   },[])
 
   async function createConsensusGraph() {

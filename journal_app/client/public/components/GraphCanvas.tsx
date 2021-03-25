@@ -212,7 +212,7 @@ const GraphCanvas = (props) => {
     })
 
     GraphDataSvc.svcCanvas = graphCanvas
-    GraphDataSvc.on('set-displayed-graph', (graph) => {
+    let cleanSetDisplayed = GraphDataSvc.on('set-displayed-graph', (graph) => {
       renderGraph(graphCanvas, graph)
     })
     if (GraphDataSvc.DisplayedGraph) {
@@ -231,8 +231,10 @@ const GraphCanvas = (props) => {
 
     // TODO: make GraphDataSvc listeners able to be cleaned up also
     // Remove event listener on cleanup
-    return () => window.removeEventListener("resize", handleResize);
-
+    return () => {
+      window.removeEventListener("resize", handleResize);
+      cleanSetDisplayed()
+    }
   }, []); // End of useEffect
 
   return  (

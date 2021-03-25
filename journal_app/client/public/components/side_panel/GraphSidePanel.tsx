@@ -82,7 +82,7 @@ function GraphSidePanel(props: any): any {
     types of side panels
   */
   useEffect(() => {
-    GraphDataSvc.on('selected-items', (selected) => {
+    let cleanSelected = GraphDataSvc.on('selected-items', (selected) => {
       let num = _.keys(selected)?.length
       setNumItems(num)
 
@@ -103,9 +103,14 @@ function GraphSidePanel(props: any): any {
       }
     })
 
-    GraphDataSvc.on('filter-panel-change', (filterState) => {
+    let cleanFilterChange = GraphDataSvc.on('filter-panel-change', (filterState) => {
       setShowFilters(filterState);
     })
+
+    return () => {
+      cleanFilterChange()
+      cleanSelected()
+    }
 
   },[])
 
