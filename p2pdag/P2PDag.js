@@ -2,9 +2,7 @@
 // GPLv3
 // Copyright 2021 racarr
 
-// TODO: Why isnt multisig working on edges?
-// TODO: Need to rework signature array to be a hash map so I can do an easy inclusion test.
-
+// TODO: Using crypto.subtle is SLOWER for small strings than native JS implementation...find + copy/paste one
 async function SHA256ForString(str) {
     var buffer = new TextEncoder("utf-8").encode(str);
     let hashBuffer = await crypto.subtle.digest("SHA-256", buffer);
@@ -13,6 +11,7 @@ async function SHA256ForString(str) {
     return hashHex;
 }
 
+// TODO: Like SHA256 we should probably have a native JS implementation for small string performance
 async function signString(str) {
     signature = await window.crypto.subtle.sign({
             name: "ECDSA",
@@ -27,6 +26,8 @@ async function signString(str) {
     let hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join(''); // convert bytes to hex string
     return hashHex;
 }
+
+// TODO: Use webstorage for first pass at persistent identity?
 let signingKey = null;
 let publicKey = null;
 
@@ -51,6 +52,7 @@ class PeerRecord {
         this.manager.removePeer(this);
         this.connection.close();
     }
+
     send(data) {
         this.connection.send(data)
     }
@@ -145,14 +147,10 @@ class NodeState {
     }
 
     // TODO: We have to valdiate these signatures somewhere!!!!!!!~!~!!!!!
+    // I think we validate the edge before it gets to this point.
     accumulateState(other) {
         let addedState = false;
         for (let key in other.edges) {
-            // TODO: Deduping and signature counting
-          //  if (this.edges[other.edges[key].id] == undefined) {
-            //    this.edges[other.edges[key].id] = other.edges[key];
-              //  addedState = true;
-            //}
             addedState |= this.mergeEdge(key, other.edges[key])
         }
         return addedState;
