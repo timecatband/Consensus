@@ -1,7 +1,10 @@
 <script src="https://unpkg.com/peerjs@1.3.1/dist/peerjs.min.js"></script>
 
 <html>
-    Welcome to Anarchy!
+    Private Key <input type="text" id="private-key-text"> Public Key </input><input type="text" id="public-key-text"></input><button id="generate-private-key-button">Generate</button><button id="load-private-key-button">Load</button>
+
+    <br/><br/>
+    <b>Welcome to Anarchy!</b>
     Your peer ID is: <div id="my-peer-id"></div>
     <script src="P2PDag.js"></script>
     <br/>
@@ -11,9 +14,7 @@
     <br/>
     Number of Peers: <div id="peer-list">0</div>
     <br/>
-    Private Key <input type="text" id="private-key-text"> Public Key </input><input type="text" id="public-key-text"></input><button id="generate-private-key-button">Generate</button><button id="load-private-key-button">Load</button>
-
-    <br/><br/>
+   
     <input type="text" id="new-node-title"></input><button id="new-node-button">Add node</button>
     <input type="text" id="new-edge-src"></input><input type="text" id="new-edge-dst"></input><button id="new-edge-button">Add-edge</button>
 </html>

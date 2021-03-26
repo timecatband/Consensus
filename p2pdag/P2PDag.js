@@ -186,14 +186,13 @@ class ReceiptDrawer {
     }
     async addReceipt(transaction) {
         let lastReceipt = this.receipts[this.receipts.length-1];
-        let lastReceiptHash = SHA256ForString(JSON.stringify(lastReceipt));
+        let lastReceiptHash = await SHA256ForString(JSON.stringify(lastReceipt));
         let newReceipt = [{
             previousReceiptHash: lastReceiptHash,
             myAddress: this.localAddress
         }]
         this.receipts.push(newReceipt);
     }
-
 }
 
 class ConsensusGame {
