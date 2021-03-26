@@ -2,6 +2,9 @@
 // GPLv3
 // Copyright 2021 racarr
 
+// TODO: Why isnt multisig working on edges?
+// TODO: Need to rework signature array to be a hash map so I can do an easy inclusion test.
+
 async function SHA256ForString(str) {
     var buffer = new TextEncoder("utf-8").encode(str);
     let hashBuffer = await crypto.subtle.digest("SHA-256", buffer);
@@ -9,8 +12,24 @@ async function SHA256ForString(str) {
     const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join(''); // convert bytes to hex string
     return hashHex;
 }
+
+async function signString(str) {
+    signature = await window.crypto.subtle.sign({
+            name: "ECDSA",
+             hash: {
+                name: "SHA-256"
+             }, //can be "SHA-1", "SHA-256", "SHA-384", or "SHA-512"
+        },
+         signingKey, //from generateKey or importKey above
+         new TextEncoder("utf-8").encode(str) //ArrayBuffer of data you want to sign
+    );
+    let hashArray = Array.from(new Uint8Array(signature))
+    let hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join(''); // convert bytes to hex string
+    return hashHex;
+}
 let signingKey = null;
 let publicKey = null;
+
 
 class PeerRecord {
     constructor(manager, connection, peerJsId) {
@@ -110,14 +129,31 @@ class NodeState {
         this.edges = {}
     }
 
+    mergeEdge(destId, edge) {
+        if (this.edges[destId] == undefined) {
+            this.edges[destId] = edge;
+            return true;
+        }
+        let modifiedState = false;
+        for (let i in edge.signatures) {
+            if (this.edges[destId].signatures[edge.signatures[i].pubKey] == undefined) {
+                this.edges[destId].signatures[edge.signatures[i].pubKey] = edge.signatures[i];
+                modifiedState = true;
+            }
+        }
+        return modifiedState;
+    }
+
+    // TODO: We have to valdiate these signatures somewhere!!!!!!!~!~!!!!!
     accumulateState(other) {
         let addedState = false;
         for (let key in other.edges) {
             // TODO: Deduping and signature counting
-            if (this.edges[other.edges[key].id] == undefined) {
-                this.edges[other.edges[key].id] = other.edges[key];
-                addedState = true;
-            }
+          //  if (this.edges[other.edges[key].id] == undefined) {
+            //    this.edges[other.edges[key].id] = other.edges[key];
+              //  addedState = true;
+            //}
+            addedState |= this.mergeEdge(key, other.edges[key])
         }
         return addedState;
     }
@@ -250,14 +286,26 @@ class ConsensusGame {
 
     async addEdge(source, dest) {
         let id = await SHA256ForString(source);
+        let destId = await SHA256ForString(dest);
         let transaction = {
             type: "ACCUMULATE_STATE",
             sender: this.localAddress,
             nodes: [{
                 id: id,
-                edges: [{id: await SHA256ForString(dest)}]
+                edges: {}
             }]
         }
+        transaction.nodes[0].edges[destId] = {data: {
+                destLabel: dest,
+                edgeHash: await SHA256ForString(source+dest)
+            },
+            signatures: {}
+        }
+        let signatureObj = {
+            sig: await signString(JSON.stringify(transaction.nodes[0].edges[destId].data)),
+            pubKey: pubKeyAddress
+        }
+        transaction.nodes[0].edges[destId].signatures[pubKeyAddress] = signatureObj;
         this.applyOwnTransaction(transaction);
     }
 
@@ -268,10 +316,11 @@ class ConsensusGame {
     }
 }
 let game = null;
+let pubKeyAddress = null;
 
-function startGame() {
-    let address = crypto.subtle.exportKey("jwk", publicKey)["x"]
-    game = new ConsensusGame(address)
+async function startGame() {
+    pubKeyAddress = (await crypto.subtle.exportKey("jwk", publicKey))["x"]
+    game = new ConsensusGame(pubKeyAddress)
 
     game.peerController.localListener.on("open", () => {
      window.document.getElementById("my-peer-id").innerHTML = game.peerController.localListener.id;
