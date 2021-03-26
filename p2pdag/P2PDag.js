@@ -2,6 +2,8 @@
 // GPLv3
 // Copyright 2021 racarr
 
+// TODO: Why the failed deduping on signed edges?
+
 // TODO: Using crypto.subtle is SLOWER for small strings than native JS implementation...find + copy/paste one
 async function SHA256ForString(str) {
     var buffer = new TextEncoder("utf-8").encode(str);
@@ -54,6 +56,7 @@ class PeerRecord {
     }
 
     send(data) {
+        console.log("About to send:" + JSON.stringify(data))
         this.connection.send(data)
     }
 }
@@ -99,8 +102,8 @@ class PeerController {
     // PEER_OK. Other peer accepted us. Joy!
     // We only handle base peering protocol at this level,
     // everything else is handled by gameState
-    handlePeerData(peer, data) {
-        let gameStateHandled = this.gameState.handleMessage(peer, data)
+    async handlePeerData(peer, data) {
+        let gameStateHandled = await this.gameState.handleMessage(peer, data)
         switch (data.type) {
             case "PEER_REQUEST":
                 peer.send({type: "PEER_OK"});
@@ -110,6 +113,31 @@ class PeerController {
             case "PEER_OK":
                 peer.acceptPeer();
                 this.gameState.game.handleNewPeer(peer)
+                return;
+            case "GET_PEERS":
+                let response = {
+                    type: "GET_PEERS_RESPONSE",
+                    peers: []
+                }
+                console.log("Got get peers")
+                for (let peerId in this.peers) {
+                    if (peerId != peer.peerJsId) {
+                        response.peers.push(peerId)
+                    }
+                }
+                peer.send(response)
+                return;
+            case "GET_PEERS_RESPONSE":
+                let jt = {
+                    type: "PEER_REQUEST",
+                    startingLocation: "TODO: Location"
+                }
+                console.log("Got get peers response")
+                for (let i = 0; i < data.peers.length; i++) {
+                    if (this.peers[data.peers[i]] == undefined) {
+                        this.dial(data.peers[i], jt);
+                    }
+                }
                 return;
         }
     }
@@ -138,8 +166,9 @@ class NodeState {
         }
         let modifiedState = false;
         for (let i in edge.signatures) {
-            if (this.edges[destId].signatures[edge.signatures[i].pubKey] == undefined) {
-                this.edges[destId].signatures[edge.signatures[i].pubKey] = edge.signatures[i];
+            // TODO: This is messed up...super messed up cant use X like this
+            if (this.edges[destId].signatures[edge.signatures[i].pubKey.x] == undefined) {
+                this.edges[destId].signatures[edge.signatures[i].pubKey.x] = edge.signatures[i];
                 modifiedState = true;
             }
         }
@@ -190,21 +219,57 @@ class GameState {
         return addedState;
     }
  
-    handleMessage(peer, data) {
+    async handleMessage(peer, data) {
         // Validate message
-        let accumulatedState = this.applyTransaction(data)
+        let accumulatedState = await this.applyTransaction(data)
         if (accumulatedState) {
-            console.log("Rebroadcasting!")
             this.game.peerController.broadcast(data);
         }
         return false
     }
 
+    async validateAccumulateStateTransaction(data) {
+        // TODO: Perf issues like crazy
+        for (let i = 0; i < data.nodes.length; i++) {
+            let node = data.nodes[i];
+
+            // TODO: Check if we have it locally before doing the hash
+            if (node.label != undefined && (await SHA256ForString(node.label) != node.id)) {
+                console.log("Forged node label")
+                return false;
+            }
+            for (let j in node.edges) {
+                let edge = node.edges[j];
+                if (await SHA256ForString(edge.data.destLabel) != j) {
+                    console.log("Forged destination on edge")
+                    return false;
+                }
+                let expectedEdgeHash = await SHA256ForString(node.label+edge.data.destLabel)
+                for (let k = 0; k < edge.signatures.length; k++) {
+                    let sig = edge.signatures[k];
+                    if (sig.data.edgeHash != expectedEdgeHash) {
+                        console.log("Forged edge hash")
+                        return false;
+                    }
+                    let opponentPublicKey = await window.crypto.subtle.importKey("jwk", sig.pubKey,
+                        {name:"ECDSA", namedCurve: "P-256"}, true, ["verify"])
+                    let sigToVerify = sig.sig;
+                    // TODO: Verify signature
+                }
+            }
+        }
+        return true;
+    }
+
     // Apply transaction also called internally
-    applyTransaction(data) {
+    async applyTransaction(data) {
         let accumulatedState = false;
         if (data.type == "ACCUMULATE_STATE") {
-            accumulatedState = this.accumulateState(data)
+            if (await this.validateAccumulateStateTransaction(data)) {
+                accumulatedState = this.accumulateState(data)
+            } else {
+                return accumulatedState;
+            }
         }
         return accumulatedState;
     }
@@ -250,15 +315,15 @@ class ConsensusGame {
     handleNewPeer(peer) {
         if (this.firstPeer == true) {
             this.firstPeer = false;
-            console.log("We got a peer!")
+            console.log("We got a first peer!")
+            peer.send({type: "GET_PEERS"})
         }
         this.onNewPeer();
-        // TODO: Clean up? We dont really need this right now
     }
 
-    applyOwnTransaction(data) {
+    async applyOwnTransaction(data) {
         // TODO: Clarify verification
-        let success = this.state.applyTransaction(data);
+        let success = await this.state.applyTransaction(data);
         if (success == true) {
             this.receiptDrawer.addReceipt(data);
             this.peerController.broadcast(data);
@@ -272,7 +337,7 @@ class ConsensusGame {
         let id = await SHA256ForString(label);
         let transaction = {
             type: "ACCUMULATE_STATE",
-            sender: this.localAddress,
+            sender: this.localAddress, // TODO: Is there a real reason to have sender?
             nodes: [{
                 id: id,
                 label: label,
@@ -301,7 +366,7 @@ class ConsensusGame {
         }
         let signatureObj = {
             sig: await signString(JSON.stringify(transaction.nodes[0].edges[destId].data)),
-            pubKey: pubKeyAddress
+            pubKey: await crypto.subtle.exportKey("jwk", publicKey)
         }
         transaction.nodes[0].edges[destId].signatures[pubKeyAddress] = signatureObj;
         this.applyOwnTransaction(transaction);
@@ -310,7 +375,7 @@ class ConsensusGame {
     // ID of node that was updated
     notifyStateChanged(id) {
         console.log("Hearing a rumor that: " + id + " has changed")
-        console.log("current state: " + JSON.stringify(this.state.dht));
+    //    console.log("current state: " + JSON.stringify(this.state.dht));
     }
 }
 let game = null;
