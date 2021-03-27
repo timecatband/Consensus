@@ -29,6 +29,36 @@ async function signString(str) {
     return hashHex;
 }
 
+function hex2buf(hex) {
+	var buffer = new ArrayBuffer(hex.length / 2);
+	var array = new Uint8Array(buffer);
+	var k = 0;
+	for (var i = 0; i < hex.length; i +=2 ) {
+		array[k] = parseInt(hex[i] + hex[i+1], 16);
+		k++;
+	}
+	
+	return buffer;
+}
+
+async function asciiToUint8Array(message) {
+    var buffer = new TextEncoder("utf-8").encode(message);
+    const hashArray = new Uint8Array(buffer);    
+
+}
+
+async function verifySignature(sig, message, pubKey) {
+    success = await window.crypto.subtle.verify({
+        name: "ECDSA",
+        hash: {name: "SHA-256"}, //can be "SHA-1", "SHA-256", "SHA-384", or "SHA-512"
+    },
+    pubKey, //from generateKey or importKey above
+    hex2buf(sig), //ArrayBuffer of the data
+    asciiToUint8Array(message)
+    )
+    return success
+}
+
 // TODO: Use webstorage for first pass at persistent identity?
 let signingKey = null;
 let publicKey = null;
@@ -56,7 +86,6 @@ class PeerRecord {
     }
 
     send(data) {
-        console.log("About to send:" + JSON.stringify(data))
         this.connection.send(data)
     }
 }
@@ -119,7 +148,6 @@ class PeerController {
                     type: "GET_PEERS_RESPONSE",
                     peers: []
                 }
-                console.log("Got get peers")
                 for (let peerId in this.peers) {
                     if (peerId != peer.peerJsId) {
                         response.peers.push(peerId)
@@ -132,7 +160,6 @@ class PeerController {
                     type: "PEER_REQUEST",
                     startingLocation: "TODO: Location"
                 }
-                console.log("Got get peers response")
                 for (let i = 0; i < data.peers.length; i++) {
                     if (this.peers[data.peers[i]] == undefined) {
                         this.dial(data.peers[i], jt);
@@ -254,7 +281,11 @@ class GameState {
                     let opponentPublicKey = await window.crypto.subtle.importKey("jwk", sig.pubKey,
                         {name:"ECDSA", namedCurve: "P-256"}, true, ["verify"])
                     let sigToVerify = sig.sig;
-                    // TODO: Verify signature
+                    let message = JSON.stringify(sig.data)
+                    if (!verifySignature(sigToVerify, message, opponentPublicKey)) {
+                        console.log("Invalid signature")
+                        return false;
+                    }
                 }
             }
         }
@@ -293,6 +324,8 @@ class ReceiptDrawer {
         this.receipts.push(newReceipt);
     }
 }
+
+let debugJsonTree = null;
 
 class ConsensusGame {
     constructor(localAddress) {
@@ -376,6 +409,12 @@ class ConsensusGame {
     notifyStateChanged(id) {
         console.log("Hearing a rumor that: " + id + " has changed")
     //    console.log("current state: " + JSON.stringify(this.state.dht));
+        if (debugJsonTree == null) {
+           let wrapper = document.getElementById("dht-state-tree")
+           debugJsonTree = jsonTree.create(this.state.dht, wrapper)
+        } else {
+            debugJsonTree.loadData(this.state.dht)
+        }
     }
 }
 let game = null;

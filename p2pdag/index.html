@@ -1,5 +1,6 @@
 <script src="https://unpkg.com/peerjs@1.3.1/dist/peerjs.min.js"></script>
-
+<link href="jsonTreeViewer/libs/jsonTree/jsonTree.css" rel="stylesheet" />
+<script src="jsonTreeViewer/libs/jsonTree/jsonTree.js"></script>
 <html>
     Private Key <input type="text" id="private-key-text"> Public Key </input><input type="text" id="public-key-text"></input><button id="generate-private-key-button">Generate</button><button id="load-private-key-button">Load</button>
 
@@ -17,4 +18,7 @@
    
     <input type="text" id="new-node-title"></input><button id="new-node-button">Add node</button>
     <input type="text" id="new-edge-src"></input><input type="text" id="new-edge-dst"></input><button id="new-edge-button">Add-edge</button>
+    <br/>
+    Current DHT State:
+    <div id="dht-state-tree"></div>
 </html>
