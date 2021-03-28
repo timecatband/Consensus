@@ -15,14 +15,23 @@ class JournalAttachment extends JournalNode {
     this.nodes = {};
   }
 
+  // convert to non-circular json object
+  serialize() {
+    let obj = super.serialize() as any // typescript lulz
+    obj.nodes = this.nodes
+    obj.isAttachment = this.isAttachment
+    return obj
+  }
+
   public static fromNode(current:JournalNode, original:JournalNode) {
     // do not cary forward id and owner onto the new key node
     let a = new JournalAttachment(current.label, current.text, current.link, current.x, current.y, undefined, undefined, current.meta)
-    a.nodes[current.id] = current;
+    a.nodes[original.id] = original;
     return a
   }
 
   public static fromAttachment(current:JournalAttachment, original:JournalAttachment) {
+    console.log("sup", original)
     // do not cary forward id and owner onto the new key node
     let a = new JournalAttachment(current.label, current.text, current.link, current.x, current.y, undefined, undefined, current.meta)
     a.nodes = current.nodes;

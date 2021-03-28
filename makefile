@@ -18,6 +18,12 @@ install:
 test:
 	-for d in $(DIRS); do $(MAKE) -C $$d test || exit 1; done
 
+
+# deploys client to gcloud
+.PHONY: abi
+abi:
+	make -C ./public_square compile_contracts
+
 # compile contracts, publish to timecat-dev blockchain
 .PHONY: blockchain
 blockchain:

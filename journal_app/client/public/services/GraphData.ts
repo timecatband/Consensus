@@ -127,13 +127,17 @@ class GraphData extends EventEmitter {
     this.emit("communities-loaded", this.communities)
 
     let firstGraphData = await this.externalAPI.loadGraphData(this.externalAPI.graphContractIds[0])
-    this.handleServerGraphResponse(firstGraphData)
+    this.handleExternalGraphLoad(firstGraphData)
   }
 
   // The initial graph load response
-  handleServerGraphResponse(graphData: GraphModel) {
+  handleExternalGraphLoad(graphData: GraphModel) {
+    console.log("got graph from server", graphData, this.graphs)
+
+    // TOOD: Here we should group nodes/edges by owner or graph_key or something to split into separate views
+    // and then store them for browsing in UI
+
     const newGraph = GraphModel.deSerialize(graphData)
-    console.log("got graph from server", newGraph, this.graphs)
     this.cacheGraphData(newGraph.nodes, newGraph.edges)
 
     this.setDisplayedGraph(newGraph)
@@ -145,7 +149,7 @@ class GraphData extends EventEmitter {
 
 
   // when the socket informs us that a peer has changed part of the graph
-  //TODO: we will want to only listen to peer changes for graph_key's that we are both looking at
+  //TODO: we will want to decide whether or not to accept and display peer nodes
   handlePeerUpdate(data: any) {
 
     data.nodes.forEach( (node) => {
@@ -191,6 +195,8 @@ class GraphData extends EventEmitter {
     this method will also call to save
   */
   updateAndSaveNode(nodeId:string, update: any) {
+    console.log("hm wut", nodeId, update)
+    console.log("test 2",this.svcCanvas.findById(nodeId))
     this.svcCanvas.update(nodeId, update)
     this.saveNodes([this.svcCanvas.findById(nodeId)])
   }
@@ -198,6 +204,7 @@ class GraphData extends EventEmitter {
   addNewNode(x, y) {
     let newNode = new JournalNode("Be kind, free minds", "", "", x, y)
     this.svcCanvas.addItem('node', newNode)
+    this.cacheGraphData([newNode],[])
     this.saveNodes([this.svcCanvas.findById(newNode.id)])
     this.emit("new-node-added", newNode)
   }
@@ -207,9 +214,11 @@ class GraphData extends EventEmitter {
     let alreadyExistingEdge = this.svcCanvas.find('edge', (edge: Edge, key) => {
       return edge.getSource().getID() == source && edge.getTarget().getID() == target
     })
+
     if (alreadyExistingEdge === undefined) {
       let newEdge = new JournalEdge(source, target)
       this.svcCanvas.addItem('edge', newEdge)
+      this.cacheGraphData([],[newEdge])
       this.saveEdges([this.svcCanvas.findById(newEdge.id)])
       this.emit("new-edge-added", newEdge)
     }
@@ -222,10 +231,39 @@ class GraphData extends EventEmitter {
   saveNodes(nodes: any[]) {
     _.each(nodes, (node) => {
       let n = node.getModel() // pull our model data out from the G6 model
+
+      // check if we are trying to edit someone elses node, create an attachment instead
       let originalNode = this.nodeCache[n.id]
       let newNode = this.idx.indexUpdate(n, originalNode)
+
+      if (newNode.id != originalNode.id) {
+        newNode.owner = UserDataSvc.userKey
+
+        //replace the node on the graph with our new one
+        this.svcCanvas.removeItem(n.id)
+        this.svcCanvas.addItem('node', newNode)
+
+        // any edges that existed for the previous node should now exist for the new one
+        _.each(this.edgeCache, (e) => {
+          if (e.source == n.id) {
+            let sourceCheck = this.svcCanvas.findById(newNode.id)
+            let targetCheck = this.svcCanvas.findById(e.target)
+            if(sourceCheck && targetCheck) {
+              this.addNewEdge(newNode.id, e.target)
+            }
+          } else if (e.target == n.id) {
+            let sourceCheck = this.svcCanvas.findById(e.source)
+            let targetCheck = this.svcCanvas.findById(newNode.id)
+            if(sourceCheck && targetCheck) {
+              this.addNewEdge(e.source, newNode.id)
+            }
+          }
+        })
+      }
+
       console.log("result of merge", newNode)
-      this.dirtyNodes[n.id] = n
+      this.nodeCache[newNode.id] = newNode
+      this.dirtyNodes[newNode.id] = newNode
     })
     this.saveDebounced()
   }
@@ -251,7 +289,7 @@ class GraphData extends EventEmitter {
     // this.setDisplayedGraph(newGraph)
 
     // TODO: disabling auto-save for now. We should auto-save to p2p instead of to blockchain
-    console.log("Auto-save disabled", this.dirtyNodes, this.dirtyEdges)
+    console.log("Auto-saving locally, not yet implemented", this.dirtyNodes, this.dirtyEdges)
     //this.saveGraph()
   }, 3000)
 

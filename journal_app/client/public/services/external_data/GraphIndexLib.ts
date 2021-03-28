@@ -23,9 +23,9 @@ class GraphIndexLib {
 
     TODO: handle the types better here, overload signature?
   */
-  copyAndAttach(current:any, original:any) {
+  copyAndAttach(current:JournalNode, original:JournalNode) {
     if( current.isAttachment ) {
-      return JournalAttachment.fromAttachment(current, original);
+      return JournalAttachment.fromAttachment(current as JournalAttachment, original as JournalAttachment);
     }
     else {
       return JournalAttachment.fromNode(current, original);
