@@ -57,7 +57,7 @@ class GraphIndexLib {
     This will take a list of nodes from the graph, which may be both nodes and attachments
     and it will remove any from the view which are included in a higher attachment
   */
-  determineView(graphData) {
+  getGlobalView(graphData) {
     let nodesDict = {}
     let replacedDict = {}
 
@@ -77,10 +77,21 @@ class GraphIndexLib {
     })
 
     graphData.nodes = _.values(nodesDict)
+    graphData.edges = _.filter(graphData.edges, (e) => {
+      return nodesDict[e.source] && nodesDict[e.target]
+    })
 
     return graphData
   }
 
+  getDisplayedViewData(graphData) {
+    return {
+      stringId: graphData.key,
+      label: "Friendly label hay", // TODO: UI for setting view label
+      nodes: _.map(graphData.nodes, (n) => {return n.id}),
+      edges: _.map(graphData.edges, (e) => {return e.id}),
+    }
+  }
 
 }
 

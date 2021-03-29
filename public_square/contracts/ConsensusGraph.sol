@@ -84,16 +84,6 @@ contract ConsensusGraph {
 
 
 
-  /*
-    Attachment is a declaration of equivalence between nodes across different users views/graphs
-    an attachment is one user saying "I think this list of nodes can be merged"
-  */
-  struct Attachment {
-    string id;
-    address owner;
-    string KeyNodeId; // The node within the attachment that will represent the attachment
-    string[] NodeIds; // the list of nodes that make up this attachment
-  }
 
   /*
     Allow reverse-lookup, given a node, how many attachments does it belong to?
@@ -101,9 +91,9 @@ contract ConsensusGraph {
     executed in the client, and attachments can be removed from a nodes index to remove them from
     the consensus
   */
-  struct AttachmentIndex {
+  struct nodeViewIndex {
     string NodeId;
-    string[] AttachmentIds;
+    string[] GraphViewIds;
   }
 
 
@@ -115,21 +105,20 @@ contract ConsensusGraph {
 
     Graphs which are owned by the contract can be edited by any user, they are meant to be updated by all clients according to stake/point-game rules
   */
-  struct Graph {
+  struct GraphView {
     string id;
     address owner; // can be address of a user, or of a contract. Contract graphs are maintained by all users via a points-game running from clients
     string label; // allow users to browse graph views, give them a nice label
-    string[] NodeIds;
+    string[] NodeIds; //Nodes may also be attachments
     string[] EdgeIds;
-    string[] AttachmentIds;
   }
 
-  mapping(bytes32 => Graph) public Graphs;
+  mapping(bytes32 => Graph) public GraphViews;
 
-  bytes32[] public GraphIds;
+  bytes32[] public GraphViewIds;
 
 
-  function getGraph(string memory stringId) public view returns(Graph memory) {
+  function getGraphView(string memory stringId) public view returns(Graph memory) {
     bytes32 id = keccak256(abi.encodePacked(stringId));
     return Graphs[id];
   }
@@ -139,7 +128,7 @@ contract ConsensusGraph {
     note we can only return fixed size arrays, so randomly setting 50 for now
     TODO: requires figure a different solution if we want to scale past a fixed number of saved views
   */
-  function getGraphs() public view returns(Graph[50] memory) {
+  function getGraphViews() public view returns(Graph[50] memory) {
     Graph[50] memory result;
     uint idx = 0;
     for (uint i=0; i < GraphIds.length; i++) {
@@ -186,27 +175,33 @@ contract ConsensusGraph {
     }
   }
 
-  function upsertGraph(
+  function upsertGraphView(
     string memory stringId,
     string memory label,
     string[] memory nodes,
-    string[] memory edges,
-    string[] memory attachments
+    string[] memory edges
   ) public {
     bytes32 id = keccak256(abi.encodePacked(stringId));
 
     // graph doesnt exist, so make it
-    if (Graphs[id].owner == address(0)) {
-      GraphIds.push(id);
-      Graphs[id] = Graph(stringId, tx.origin, label, nodes, edges, attachments);
+    if (GraphViews[id].owner == address(0)) {
+      GraphViewIds.push(id);
+      GraphViews[id] = GraphView(stringId, tx.origin, label, nodes, edges);
     }
 
-    // graph is owned by the contract (anyone allowed to update), or by the sender, so allow the update
+    /*
+      if graph is owned by the contract then anyone allowed to update. This lets
+      generic views be updated by any user. If the graph is oened by the sender
+      then they can update their own view
+    */
     else if ( Graphs[id].owner == address(this) || Graphs[id].owner == tx.origin ) {
       upsertArrays(Graphs[id].NodeIds, nodes);
       upsertArrays(Graphs[id].EdgeIds, edges);
-      upsertArrays(Graphs[id].AttachmentIds, attachments);
     }
+
+    // TODO: when saving a graphView, we should updated the nodeViewIndex
+    // if a node is in the view, or within an attachment in the view, it
+    // should be written to the index 
 
     // graph is owned by someone else, revert
     else {

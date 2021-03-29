@@ -149,7 +149,7 @@ class GraphData extends EventEmitter {
 
     // TOOD: Here we should group nodes/edges by owner or graph_key or something to split into separate views
     // and then store them for browsing in UI
-    let view = this.idx.determineView(newGraph)
+    let view = this.idx.getGlobalView(newGraph)
     this.setDisplayedGraph(view)
 
     //TODO: get graph names from contract
@@ -204,14 +204,13 @@ class GraphData extends EventEmitter {
     this method will also call to save
   */
   updateAndSaveNode(nodeId:string, update: any) {
-    console.log("hm wut", nodeId, update)
-    console.log("test 2",this.svcCanvas.findById(nodeId))
     this.svcCanvas.update(nodeId, update)
     this.saveNodes([this.svcCanvas.findById(nodeId)])
   }
 
   addNewNode(x, y) {
     let newNode = new JournalNode("Be kind, free minds", "", "", x, y)
+    this.DisplayedGraph.nodes.push(newNode)
     this.svcCanvas.addItem('node', newNode)
     this.cacheGraphData([newNode],[])
     this.saveNodes([this.svcCanvas.findById(newNode.id)])
@@ -226,6 +225,7 @@ class GraphData extends EventEmitter {
 
     if (alreadyExistingEdge === undefined) {
       let newEdge = new JournalEdge(source, target)
+      this.DisplayedGraph.edges.push(newEdge)
       this.svcCanvas.addItem('edge', newEdge)
       this.cacheGraphData([],[newEdge])
       this.saveEdges([this.svcCanvas.findById(newEdge.id)])
@@ -298,7 +298,8 @@ class GraphData extends EventEmitter {
     // this.setDisplayedGraph(newGraph)
 
     // TODO: disabling auto-save for now. We should auto-save to p2p instead of to blockchain
-    console.log("Auto-saving locally, not yet implemented", this.dirtyNodes, this.dirtyEdges)
+    let view = this.idx.getDisplayedViewData(this.DisplayedGraph)
+    console.log("Auto-saving locally, not yet implemented", this.dirtyNodes, this.dirtyEdges, "view", view)
     //this.saveGraph()
   }, 3000)
 
@@ -322,8 +323,11 @@ class GraphData extends EventEmitter {
     this.dirtyNodes = {};
     this.dirtyEdges = {};
 
-    console.log("GraphDataSvc saving to external API", graphObj)
+    let view = this.idx.getDisplayedViewData(this.DisplayedGraph)
+
+    console.log("GraphDataSvc saving to external API", graphObj, "view", view)
     this.externalAPI.saveGraph(this.DisplayedGraphKey, graphObj)
+    this.externalAPI.saveView(view)
   }
 
 

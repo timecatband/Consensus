@@ -38,7 +38,8 @@ class JournalAttachment extends JournalNode {
 
   public static fromNode(current:JournalNode, original:JournalNode) {
     // do not cary forward id and owner onto the new key node
-    let a = new JournalAttachment(current.label, current.text, current.link, current.x, current.y, undefined, undefined, current.meta)
+    let a = new JournalAttachment(current.label, current.text, current.link, current.x, current.y, undefined, undefined, undefined, current.meta)
+    console.log("hm wtf", a, a.nodes)
     a.nodes[original.id] = original;
     return a
   }

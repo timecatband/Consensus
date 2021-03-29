@@ -49,7 +49,8 @@ class BlockchainAPI extends EventEmitter {
     return this.publicSquare.createGraph(name);
   }
 
-  async saveGraph(graphId: any, graphData: any) {
+  async saveGraph(graphId:any, graphData:any, viewData:any) {
+    this.graphContracts[graphId].upsertCollections(graphData.nodes, graphData.edges);
     this.graphContracts[graphId].upsertCollections(graphData.nodes, graphData.edges);
   }
 
