@@ -124,24 +124,33 @@ class GraphData extends EventEmitter {
   */
   async requestDataEntrypoint() {
     this.communities = await this.externalAPI.getAllCommunities()
+    console.log("calling load community at initial entry", this.communities)
     this.emit("communities-loaded", this.communities)
+    this.loadCommunityGraph(this.externalAPI.graphContractIds[0])
+  }
 
-    let firstGraphData = await this.externalAPI.loadGraphData(this.externalAPI.graphContractIds[0])
-    this.handleExternalGraphLoad(firstGraphData)
+  async loadCommunityGraph(graphKey) {
+    console.log("loading graph...", graphKey)
+    if ( this.graphs[graphKey] === undefined ) {
+      let data = await this.externalAPI.loadGraphData(graphKey)
+      this.handleExternalGraphLoad(data)
+    } else {
+      this.setDisplayedGraph(this.graphs[graphKey])
+    }
   }
 
   // The initial graph load response
   handleExternalGraphLoad(graphData: GraphModel) {
     console.log("got graph from server", graphData, this.graphs)
 
-    // TOOD: Here we should group nodes/edges by owner or graph_key or something to split into separate views
-    // and then store them for browsing in UI
-
     const newGraph = GraphModel.deSerialize(graphData)
+    this.graphs[newGraph.key] = newGraph;
     this.cacheGraphData(newGraph.nodes, newGraph.edges)
 
-    this.setDisplayedGraph(newGraph)
-    this.graphs[newGraph.key] = newGraph;
+    // TOOD: Here we should group nodes/edges by owner or graph_key or something to split into separate views
+    // and then store them for browsing in UI
+    let view = this.idx.determineView(newGraph)
+    this.setDisplayedGraph(view)
 
     //TODO: get graph names from contract
     this.emit("graph-loaded", newGraph.key)

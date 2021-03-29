@@ -1,7 +1,7 @@
 import Web3 from 'Web3';
 import _ from 'lodash'
 import EventEmitter from '@timecat/graph-journal-shared/src/models/EventEmitter'
-import JournalNode from '@timecat/graph-journal-shared/src/models/JournalNode'
+import JournalAttachment from '@timecat/graph-journal-shared/src/models/JournalAttachment'
 import JournalEdge from '@timecat/graph-journal-shared/src/models/JournalEdge'
 import PublicSquare from '@timecat/graph-journal-shared/src/external_data/PublicSquare'
 
@@ -88,7 +88,7 @@ class BlockchainAPI extends EventEmitter {
       let graphName = graphContract.name
 
       // make sure we didn't get junk data back
-      nodes = _.map(nodes, (n) => JournalNode.fromBlockchain(n.json))
+      nodes = _.map(nodes, (n) => {return JournalAttachment.fromBlockchain(n.json)})
       let filteredNodes = _.filter(nodes, (n) => { return n.label != undefined })
 
       if ( filteredNodes.length != nodes.length ) {

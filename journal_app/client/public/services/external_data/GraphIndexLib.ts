@@ -51,6 +51,37 @@ class GraphIndexLib {
     console.log("indexDelete not implemented")
   }
 
+
+  /*
+    TODO: replace the entire data model with labels-as-keys and signature lists etc
+    This will take a list of nodes from the graph, which may be both nodes and attachments
+    and it will remove any from the view which are included in a higher attachment
+  */
+  determineView(graphData) {
+    let nodesDict = {}
+    let replacedDict = {}
+
+    _.each( graphData.nodes, (n) => {
+      nodesDict[n.id] = n
+      if (n.isAttachment) {
+        _.each(n.nodes, (nn) => {
+          replacedDict[nn.id] = true;
+        })
+      }
+    })
+
+    _.each( replacedDict, (r, key) => {
+      if (nodesDict[key]) {
+        delete nodesDict[key]
+      }
+    })
+
+    graphData.nodes = _.values(nodesDict)
+
+    return graphData
+  }
+
+
 }
 
 export default GraphIndexLib;

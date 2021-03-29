@@ -25,9 +25,9 @@ function Router(props: any): any {
       <Switch>
         <Route exact path="/" component={Hub}/>
         <Route exact path="/c" component={Hub}/>
-        <Route path="/c/:id" children={<GraphContainer />}/>
+        <Route path="/c/:graphId" children={<GraphContainer />}/>
         <Route path="*">
-          Page not found
+          <div className="lost404"> Not all who wander are lost <br/> but you are. <br/><br/> the page your are looking for is not here. </div>
         </Route>
       </Switch>
     </BrowserRouter>

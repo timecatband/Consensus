@@ -22,6 +22,14 @@ body {
     }
   }
 
+  .lost404 {
+    margin-top: 100px;
+    width: 100%;
+    text-align: center;
+    font-size: 2em;
+    color: $gray;
+  }
+
   .btnLink {
     display: block;
     text-decoration: underline;

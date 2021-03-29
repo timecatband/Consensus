@@ -33,7 +33,7 @@ class JournalEdge implements I.EdgeConfig {
       source: this.source,
       target: this.target,
       strength: this.strength,
-      meta: JSON.stringify(this.meta || {})
+      meta: this.meta
     }
   }
 

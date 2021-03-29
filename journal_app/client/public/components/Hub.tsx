@@ -18,13 +18,19 @@ function Hub(props: any): any {
     }
   }
 
+  function requestGraph(graphKey) {
+    console.log("Uder requested graph load", graphKey)
+    GraphDataSvc.loadCommunityGraph(graphKey)
+  }
+
   useEffect(() => {
     //initialize
     setCommunities(GraphDataSvc.communities)
+    console.log("hey communities loaded in hub1!", GraphDataSvc.communities)
 
     // called when communities are updated
     GraphDataSvc.on('communities-loaded', (e) => {
-      console.log("heyo!", GraphDataSvc.communities)
+      console.log("hey communities loaded in hub!", GraphDataSvc.communities)
       //stay up to date when graphs are added
       setCommunities(GraphDataSvc.communities)
     })
@@ -39,7 +45,7 @@ function Hub(props: any): any {
         </div>
         <div className="communitiesList">
           {_.values(_.mapValues(communities, (c) => {
-            return <Link to={`/c/${c.name}`} key={c.id} className="btnLink">{c.name}</Link>
+            return <Link to={`/c/${c.name}`} key={c.id} onClick={() => {requestGraph(c.id)}} className="btnLink">{c.name}</Link>
           }))}
         </div>
       </div>

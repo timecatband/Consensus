@@ -1,6 +1,6 @@
 import _ from 'lodash'
 import React, { useEffect, useState, useContext } from 'react'
-import { useLocation } from 'react-router-dom';
+import { useLocation, useParams } from 'react-router-dom';
 import G6 = require('@antv/g6');
 import * as I from '@antv/g6/lib/types';
 import GraphDataSvc from '../services/GraphData'
@@ -20,9 +20,11 @@ const GraphCanvas = (props) => {
     g6graph.render()
   }
 
+  let {graphId} = useParams()
+
   // this use effect will only call once on load to set up the graph and window listeners
   useEffect(() => {
-    console.log("canvas UseEffect called")
+    console.log("canvas UseEffect called", graphId)
 
     graphCanvas = new G6.Graph({
       container: 'graph-container',
@@ -215,7 +217,14 @@ const GraphCanvas = (props) => {
     let cleanSetDisplayed = GraphDataSvc.on('set-displayed-graph', (graph) => {
       renderGraph(graphCanvas, graph)
     })
+
+    /*
+      TODO: there is sometimes a race between the set-displayed-graph listener and the canvas load
+      this check here will ensure that whatever the dataService has is rendered, but to avoid jumping UX
+      we should get a single streamlined async transition between graphs that can wait for both canvas and load
+    */
     if (GraphDataSvc.DisplayedGraph) {
+      console.log("what does the canvas have?", GraphDataSvc.DisplayedGraph)
       // if we already have a DisplayedGraph, render it on the new canvas
       renderGraph(GraphDataSvc.svcCanvas, GraphDataSvc.DisplayedGraph)
       // GraphDataSvc.graphs[GraphDataSvc.DisplayedGraphKey]
