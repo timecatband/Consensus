@@ -22,11 +22,12 @@ class GraphData extends EventEmitter {
   graphs: Record<string, GraphModel>; // a collection of sub-graphs that have been loaded or created
   svcCanvas: G6.Graph; // ref to the canvas that is being displayed
   DisplayedGraph: GraphModel; // the graph which is being displayed, may be a combination of things
-  DisplayedGraphKey: string // the key of the graph where user edits should be written
+  DisplayedGraphKey: string; // the key of the graph where user edits should be written
+  DisplayedCommunityName: string; // set by canvas, maybe an anti-pattern, just trying to get something going now
   selectedItems: any;
   filterPanelOpen: boolean;
   communities: any[];
-  wtfTest: any[];
+  views: Record<string, any>;
 
   // clean cache for comparison to pending dirty writes
   nodeCache: Record<string, JournalNode>;
@@ -124,9 +125,8 @@ class GraphData extends EventEmitter {
   */
   async requestDataEntrypoint() {
     this.communities = await this.externalAPI.getAllCommunities()
-    console.log("calling load community at initial entry", this.communities)
     this.emit("communities-loaded", this.communities)
-    this.loadCommunityGraph(this.externalAPI.graphContractIds[0])
+    //this.loadCommunityGraph(this.externalAPI.graphContractIds[0])
   }
 
   async loadCommunityGraph(graphKey) {
@@ -149,11 +149,42 @@ class GraphData extends EventEmitter {
 
     // TOOD: Here we should group nodes/edges by owner or graph_key or something to split into separate views
     // and then store them for browsing in UI
-    let view = this.idx.getGlobalView(newGraph)
+    let view = this.idx.getGlobalUnion(newGraph)
     this.setDisplayedGraph(view)
+
+    this.views = _.extend(
+      this.idx.getUserViews(view),
+      {
+        union: view,
+        intersection: this.idx.getGlobalIntersection(view)
+      }
+    );
 
     //TODO: get graph names from contract
     this.emit("graph-loaded", newGraph.key)
+  }
+
+  setView(viewKey: string) {
+    console.log("setview in service", this.svcCanvas)
+    let view = this.views[viewKey]
+
+    // in order to prevent the canvas zoom and position resetting, we will remove and add items individually
+    // first remove
+    _.each(this.svcCanvas.getNodes(), (n)=>{
+      this.svcCanvas.removeItem(n)
+    })
+    _.each(this.svcCanvas.getEdges(), (e)=>{
+      this.svcCanvas.removeItem(e)
+    })
+
+    // second add
+    _.each(view.nodes, (n)=>{
+      this.svcCanvas.addItem('node',n)
+    })
+    _.each(view.edges, (e)=>{
+      this.svcCanvas.addItem('edge',e)
+    })
+
   }
 
 
@@ -293,14 +324,10 @@ class GraphData extends EventEmitter {
     gathers up any objects with pending changes, sends them for persistence, and clears the pending lists
   */
   saveDebounced = _.debounce(() => {
-    //TODO: we should merge the pending changes into the DisplayedGraph data (i.e. save locally)
-    // or just update that from the canvas somehow
-    // this.setDisplayedGraph(newGraph)
-
     // TODO: disabling auto-save for now. We should auto-save to p2p instead of to blockchain
+    // TODO: this line is a placeholder for writing a view index to the blockchain. TBD if this will be used
     let view = this.idx.getDisplayedViewData(this.DisplayedGraph)
     console.log("Auto-saving locally, not yet implemented", this.dirtyNodes, this.dirtyEdges, "view", view)
-    //this.saveGraph()
   }, 3000)
 
 

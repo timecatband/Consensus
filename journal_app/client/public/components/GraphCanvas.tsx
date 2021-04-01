@@ -92,6 +92,7 @@ const GraphCanvas = (props) => {
         },
       }
     })
+    GraphDataSvc.DisplayedCommunityName = graphId;
 
     // placing these here because you want to view their styles next to the above newGraph style lines
     function getDefaultNodeProperties() {
@@ -218,13 +219,19 @@ const GraphCanvas = (props) => {
       renderGraph(graphCanvas, graph)
     })
 
+    let cleanCommunitiesLoaded = GraphDataSvc.on('communities-loaded', () => {
+      let toLoad = _.find(GraphDataSvc.communities, (c) => {
+        return c.name == graphId
+      })
+      GraphDataSvc.loadCommunityGraph(toLoad.id)
+    })
+
     /*
       TODO: there is sometimes a race between the set-displayed-graph listener and the canvas load
       this check here will ensure that whatever the dataService has is rendered, but to avoid jumping UX
       we should get a single streamlined async transition between graphs that can wait for both canvas and load
     */
     if (GraphDataSvc.DisplayedGraph) {
-      console.log("what does the canvas have?", GraphDataSvc.DisplayedGraph)
       // if we already have a DisplayedGraph, render it on the new canvas
       renderGraph(GraphDataSvc.svcCanvas, GraphDataSvc.DisplayedGraph)
       // GraphDataSvc.graphs[GraphDataSvc.DisplayedGraphKey]
@@ -243,6 +250,7 @@ const GraphCanvas = (props) => {
     return () => {
       window.removeEventListener("resize", handleResize);
       cleanSetDisplayed()
+      cleanCommunitiesLoaded()
     }
   }, []); // End of useEffect
 
