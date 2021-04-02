@@ -94,8 +94,18 @@ class GraphIndexLib {
   getGlobalIntersection(graphData) {
     let data = _.cloneDeep(graphData)
     data.nodes = _.filter(data.nodes, (n) => {
-      n.isAttachment == true;
+      return n.isAttachment == true;
     })
+
+    let nodeDict = {}
+    _.each(data.nodes, (n)=>{
+      nodeDict[n.id] = true;
+    })
+
+    data.edges = _.filter(data.edges, (e) => {
+      return nodeDict[e.source] && nodeDict[e.target]
+    })
+
     data.key = 'intersection' //useful for react
     data.name = "Intersection"
     return data
@@ -110,13 +120,22 @@ class GraphIndexLib {
       views[u] = {
         key: u,
         name: `${u.substring(0,5)}'s view`, //just use shortended version as name for now
-        nodes: _.filter(graphData.nodes, (n) => {
-          return n.owner == u
-        }),
-        edges: _.filter(graphData.edges, (e) => {
-          return e.owner == u
+        nodes: _.filter(_.cloneDeep(graphData.nodes), (n) => {
+          return ( n.owner == u || //this node is owned by the user
+            // TODO: if the user owns a node within the attachment, the displayed label should be that one rather than the top level attachment label
+            ( n.isAttachment == true && _.some(n.nodes, (nn)=>{return nn.owner == u}) )
+          ) //or the user owns a node within the attachment
         })
       }
+
+      let nodeDict = {}
+      _.each(views[u].nodes, (n)=>{
+        nodeDict[n.id] = true;
+      })
+
+      views[u].edges = _.filter(_.cloneDeep(graphData.edges), (e) => {
+        return e.owner == u && nodeDict[e.source] && nodeDict[e.target]
+      })
     })
     return views
   }

@@ -10,7 +10,6 @@ function FilterPanel(props: any): any {
   const [loadedGraphs, setLoadedGraphs] = useState({})
 
   function onViewClick(key) {
-    console.log("onview click", key)
     GraphDataSvc.setView(key)
   }
 

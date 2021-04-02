@@ -153,7 +153,7 @@ class GraphData extends EventEmitter {
     this.setDisplayedGraph(view)
 
     this.views = _.extend(
-      this.idx.getUserViews(view),
+      this.idx.getUserViews(graphData),
       {
         union: view,
         intersection: this.idx.getGlobalIntersection(view)
@@ -165,26 +165,8 @@ class GraphData extends EventEmitter {
   }
 
   setView(viewKey: string) {
-    console.log("setview in service", this.svcCanvas)
     let view = this.views[viewKey]
-
-    // in order to prevent the canvas zoom and position resetting, we will remove and add items individually
-    // first remove
-    _.each(this.svcCanvas.getNodes(), (n)=>{
-      this.svcCanvas.removeItem(n)
-    })
-    _.each(this.svcCanvas.getEdges(), (e)=>{
-      this.svcCanvas.removeItem(e)
-    })
-
-    // second add
-    _.each(view.nodes, (n)=>{
-      this.svcCanvas.addItem('node',n)
-    })
-    _.each(view.edges, (e)=>{
-      this.svcCanvas.addItem('edge',e)
-    })
-
+    this.svcCanvas.changeData(view)
   }
 
 

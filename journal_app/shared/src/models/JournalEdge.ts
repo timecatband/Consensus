@@ -12,11 +12,12 @@ class JournalEdge implements I.EdgeConfig {
   meta?: object;
 
 
-  constructor(source: string, target: string, strength?: number, meta?: object, id?: string) {
+  constructor(source: string, target: string, strength?: number, meta?: object, id?: string, owner?: string) {
     this.source = source;
     this.target = target;
     this.strength = strength;
-    this.meta = meta
+    this.meta = meta;
+    this.owner = owner;
 
     if ( id == undefined ) {
       this.id = uuid.v4()
@@ -51,7 +52,7 @@ class JournalEdge implements I.EdgeConfig {
   }
 
   public static deSerialize(obj: any) {
-    return new JournalEdge(obj.source, obj.target, obj.strength, obj.meta, obj.id)
+    return new JournalEdge(obj.source, obj.target, obj.strength, obj.meta, obj.id, obj.owner)
   }
 
 }
