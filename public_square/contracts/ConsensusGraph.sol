@@ -113,14 +113,14 @@ contract ConsensusGraph {
     string[] EdgeIds;
   }
 
-  mapping(bytes32 => Graph) public GraphViews;
+  mapping(bytes32 => GraphView) public GraphViews;
 
   bytes32[] public GraphViewIds;
 
 
-  function getGraphView(string memory stringId) public view returns(Graph memory) {
+  function getGraphView(string memory stringId) public view returns(GraphView memory) {
     bytes32 id = keccak256(abi.encodePacked(stringId));
-    return Graphs[id];
+    return GraphViews[id];
   }
 
   /*
@@ -128,11 +128,11 @@ contract ConsensusGraph {
     note we can only return fixed size arrays, so randomly setting 50 for now
     TODO: requires figure a different solution if we want to scale past a fixed number of saved views
   */
-  function getGraphViews() public view returns(Graph[50] memory) {
-    Graph[50] memory result;
+  function getGraphViews() public view returns(GraphView[50] memory) {
+    GraphView[50] memory result;
     uint idx = 0;
-    for (uint i=0; i < GraphIds.length; i++) {
-      result[idx] = Graphs[GraphIds[i]];
+    for (uint i=0; i < GraphViewIds.length; i++) {
+      result[idx] = GraphViews[GraphViewIds[i]];
       idx++;
     }
     return result;
@@ -194,14 +194,14 @@ contract ConsensusGraph {
       generic views be updated by any user. If the graph is oened by the sender
       then they can update their own view
     */
-    else if ( Graphs[id].owner == address(this) || Graphs[id].owner == tx.origin ) {
-      upsertArrays(Graphs[id].NodeIds, nodes);
-      upsertArrays(Graphs[id].EdgeIds, edges);
+    else if ( GraphViews[id].owner == address(this) || GraphViews[id].owner == tx.origin ) {
+      upsertArrays(GraphViews[id].NodeIds, nodes);
+      upsertArrays(GraphViews[id].EdgeIds, edges);
     }
 
     // TODO: when saving a graphView, we should updated the nodeViewIndex
     // if a node is in the view, or within an attachment in the view, it
-    // should be written to the index 
+    // should be written to the index
 
     // graph is owned by someone else, revert
     else {
